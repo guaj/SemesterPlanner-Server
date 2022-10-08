@@ -6,7 +6,7 @@ orbs:
   
  
 jobs:
-  build_and_test: # this can be any name you choose
+  test: # this can be any name you choose
     docker:
       - image: cimg/node:17.2.0
     steps:
@@ -16,16 +16,13 @@ jobs:
       - run:
           command: npm run test
           name: Run tests
-      - run:
-          command: npm run build
-          name: Build app
       - persist_to_workspace:
-          root: ~/covidtrackingappp
+          root: ~/SemesterPlanner-Server
           paths: .
           
          
 workflows:
   test_my_app:
     jobs:
-      - build_and_test
+      - test
    
