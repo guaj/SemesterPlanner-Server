@@ -1,28 +1,11 @@
-
 version: 2.1
 
 orbs:
-  node: circleci/node@4.7.0
-  
- 
-jobs:
-  test: # this can be any name you choose
-    docker:
-      - image: cimg/node:17.2.0
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          command: npm run test
-          name: Run tests
-      - persist_to_workspace:
-          root: ~/SemesterPlanner-Server
-          paths: .
-          
-         
+  node: circleci/node@4.7
+
 workflows:
-  test_my_app:
+  test:
     jobs:
-      - test
-   
+      - node/test:
+          version: '16.10'
+          pkg-manager: npm
