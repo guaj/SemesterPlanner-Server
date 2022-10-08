@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "test": "jest",
+    "build": "react-scripts --max_old_space_size=4096 build",
     "start": "node server"
   },
   "repository": {
