@@ -2,17 +2,17 @@
   "name": "semesterplanner-server",
   "version": "1.0.0",
   "description": "Backend repository for the Semester Planner App",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node server"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/guaj/SemesterPlanner-Server.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Jasmin Guay, & al.",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/guaj/SemesterPlanner-Server/issues"
   },
@@ -20,5 +20,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "jest": "^29.1.2"
   }
 }
