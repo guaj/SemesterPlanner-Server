@@ -3,6 +3,8 @@ Backend repository for the Semester Planner App
 
 # Commands
 From the root folder you can run the following commands :
+### `npm install`
+then :
 ### `npm start`
 
 Runs the app in the development mode.\
