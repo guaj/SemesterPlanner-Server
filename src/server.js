@@ -1,27 +1,33 @@
-// Dummy server to test the CI CD pipeline.
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
 
-const express = require("express");
-const cors = require("cors");
-
-
+// Allows us to include environment variables in .env file
+require('dotenv').config();
 
 const app = express();
+const port = process.env.PORT || 5000
 
+// Middlewares
 app.use(cors());
+app.use(express.json());    // Allows us to parse json for our Mongo DB
 
-// Body parser
-app.use(express.json());
+// Connect to MongoDB
+const uri = process.env.ATLAS_URI;
+mongoose.connect(uri, { useNewUrlParser: true });
+const connection = mongoose.connection;
+connection.once('open', () => {
+  console.log("MongoDB database connection established successfully")
+})
 
-const PORT = process.env.PORT || 5000;
+// Routes
+const usersRouter = require('./routes/users');
 
-const server = app.listen(
-PORT,
-console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
-)
-);
+app.use('/users', usersRouter);
 
-app.get("/", (req, res) => res.send("API Running"));
+const server = app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`);
+})
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {
