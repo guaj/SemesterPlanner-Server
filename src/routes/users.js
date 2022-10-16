@@ -13,8 +13,26 @@ router.route('/').get((req, res) => {
 /**
  * Get user by ID
  */
-router.route('/:id').get((req, res) => {
+router.route('/id/:id').get((req, res) => {
     User.findById(req.params.id)
+        .then(user => res.json(user))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+/**
+ * Get user by username
+ */
+ router.route('/username/:username').get((req, res) => {
+    User.findOne({username: req.params.username})
+        .then(user => res.json(user))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+/**
+ * Get user by email
+ */
+ router.route('/email/:email').get((req, res) => {
+    User.findOne({email: req.params.email})
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
