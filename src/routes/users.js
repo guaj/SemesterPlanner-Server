@@ -1,5 +1,6 @@
 const router = require('express').Router();
 let User = require('../models/user.model');
+const bcrypt = require('bcrypt');
 
 /**
  * Get all users
@@ -51,10 +52,12 @@ router.route('/update/:id').post((req, res) => {
 /**
  * Add a user
  */
-router.route('/add').post((req, res) => {
+router.route('/add').post( async (req, res) => {
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
     const email = req.body.email;
-    const password = req.body.password;
+    const password = hashedPassword;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
     const program = req.body.program;
