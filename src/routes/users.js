@@ -1,6 +1,8 @@
 const router = require('express').Router();
 let User = require('../models/user.model');
+const bcrypt = require('bcrypt');
 
+const TokenVerify = require('./tokenVerification').verifyJWTAuth;
 /**
  * Get all users
  */
@@ -15,6 +17,12 @@ router.route('/').get((req, res) => {
  */
 router.route('/id/:id').get((req, res) => {
     User.findById(req.params.id)
+        .then(user => res.json(user))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/email/:email').get((req, res) => {
+    User.findOne({email: req.params.email})
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -49,15 +57,24 @@ router.route('/:id').delete((req, res) => {
 /**
  * Update a user
  */
-router.route('/update/:id').post((req, res) => {
-    User.findById(req.params.id)
+router.route('/update/:email').post( TokenVerify, async (req, res) => {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    User.findOne({email: req.params.email})
         .then(user => {
-            user.username = req.body.username;
-            user.email = req.body.email;
-            user.password = req.body.password;
-            user.firstName = req.body.firstName;
-            user.lastName = req.body.lastName;
-            user.program = req.body.program;
+            if (req.body.username) {
+                user.username = req.body.username;
+            }
+            if (req.body.email) {
+                user.email = req.body.email;
+            }
+            if (req.body.password) {
+                user.password = hashedPassword;
+            }
+            if (req.body.program) {
+                user.program = req.body.program;
+            }
+            
 
             user.save()
                 .then(() => res.json(`User ${user.email} updated`))
@@ -69,20 +86,18 @@ router.route('/update/:id').post((req, res) => {
 /**
  * Add a user
  */
-router.route('/add').post((req, res) => {
+router.route('/add').post( async (req, res) => {
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
     const email = req.body.email;
-    const password = req.body.password;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
+    const password = hashedPassword;
     const program = req.body.program;
 
     const newUser = new User({
         username,
         email,
         password,
-        firstName,
-        lastName,
         program,
     })
 
