@@ -21,6 +21,12 @@ router.route('/:id').get((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/email/:email').get((req, res) => {
+    User.findOne({email: req.params.email})
+        .then(user => res.json(user))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
 /**
  * Delete a user by ID
  */
@@ -33,15 +39,24 @@ router.route('/:id').delete((req, res) => {
 /**
  * Update a user
  */
-router.route('/update').post( TokenVerify, async (req, res) => {
+router.route('/update/:email').post( TokenVerify, async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
-    User.findOne({"email":req.body.email})
+    User.findOne({email: req.params.email})
         .then(user => {
-            user.username = req.body.username;
-            user.email = req.body.email;
-            user.password = hashedPassword;
-            user.program = req.body.program;
+            if (req.body.username) {
+                user.username = req.body.username;
+            }
+            if (req.body.email) {
+                user.email = req.body.email;
+            }
+            if (req.body.password) {
+                user.password = hashedPassword;
+            }
+            if (req.body.program) {
+                user.program = req.body.program;
+            }
+            
 
             user.save()
                 .then(() => res.json(`User ${user.email} updated`))
