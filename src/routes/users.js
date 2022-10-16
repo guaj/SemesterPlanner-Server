@@ -40,8 +40,6 @@ router.route('/update').post( async (req, res) => {
             user.username = req.body.username;
             user.email = req.body.email;
             user.password = hashedPassword;
-            user.firstName = req.body.firstName;
-            user.lastName = req.body.lastName;
             user.program = req.body.program;
 
             user.save()
@@ -60,16 +58,12 @@ router.route('/add').post( async (req, res) => {
     const username = req.body.username;
     const email = req.body.email;
     const password = hashedPassword;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
     const program = req.body.program;
 
     const newUser = new User({
         username,
         email,
         password,
-        firstName,
-        lastName,
         program,
     })
 
