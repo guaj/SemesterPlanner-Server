@@ -32,12 +32,14 @@ router.route('/:id').delete((req, res) => {
 /**
  * Update a user
  */
-router.route('/update/:id').post((req, res) => {
-    User.findById(req.params.id)
+router.route('/update').post( async (req, res) => {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    User.findOne({"email":req.body.email})
         .then(user => {
             user.username = req.body.username;
             user.email = req.body.email;
-            user.password = req.body.password;
+            user.password = hashedPassword;
             user.firstName = req.body.firstName;
             user.lastName = req.body.lastName;
             user.program = req.body.program;
