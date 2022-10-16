@@ -11,26 +11,24 @@ router.route('/').get((req, res) => {
 });
 
 /**
- * Get user by ID
+ * Get user information
  */
+
+//By id
 router.route('/id/:id').get((req, res) => {
     User.findById(req.params.id)
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-/**
- * Get user by username
- */
+//By username
  router.route('/username/:username').get((req, res) => {
     User.findOne({username: req.params.username})
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-/**
- * Get user by email
- */
+//By email
  router.route('/email/:email').get((req, res) => {
     User.findOne({email: req.params.email})
         .then(user => res.json(user))
@@ -46,18 +44,28 @@ router.route('/:id').delete((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+
+
 /**
  * Update a user
  */
-router.route('/update/:id').post((req, res) => {
+//By id
+router.route('/update/id/:id').post((req, res) => {
     User.findById(req.params.id)
         .then(user => {
-            user.username = req.body.username;
-            user.email = req.body.email;
-            user.password = req.body.password;
-            user.firstName = req.body.firstName;
-            user.lastName = req.body.lastName;
-            user.program = req.body.program;
+
+            if (req.body.username) {
+                user.username = req.body.username;
+            }
+            if (req.body.email) {
+                user.email = req.body.email;
+            }
+            if (req.body.password) {
+                user.password = req.body.password;
+            }
+            if (req.body.program) {
+                user.program = req.body.program;
+            }
 
             user.save()
                 .then(() => res.json(`User ${user.email} updated`))
@@ -66,6 +74,55 @@ router.route('/update/:id').post((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+//By username
+router.route('/update/username/:username').post((req, res) => {
+    User.findOne({username: req.params.username})
+        .then(user => {
+            if (req.body.username) {
+                user.username = req.body.username;
+            }
+            if (req.body.email) {
+                user.email = req.body.email;
+            }
+            if (req.body.password) {
+                user.password = req.body.password;
+            }
+            if (req.body.program) {
+                user.program = req.body.program;
+            }
+
+            user.save()
+                .then(() => res.json(`User ${user.username} updated`))
+                .catch(err => res.status(400).json('Error: ' + err));
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+//By email
+router.route('/update/email/:email').post((req, res) => {
+    User.findOne({email: req.params.email})
+        .then(user => {
+            if (req.body.username) {
+                user.username = req.body.username;
+            }
+            if (req.body.email) {
+                user.email = req.body.email;
+            }
+            if (req.body.password) {
+                user.password = req.body.password;
+            }
+            if (req.body.program) {
+                user.program = req.body.program;
+            }
+            console.log(req.body)
+            user.save()
+                .then(() => res.json(`User ${user.email} updated`))
+                .catch(err => res.status(400).json('Error: ' + err));
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+
 /**
  * Add a user
  */
@@ -73,16 +130,12 @@ router.route('/add').post((req, res) => {
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
     const program = req.body.program;
 
     const newUser = new User({
         username,
         email,
         password,
-        firstName,
-        lastName,
         program,
     })
 

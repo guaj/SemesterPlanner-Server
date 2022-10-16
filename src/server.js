@@ -1,4 +1,5 @@
 const express = require('express');
+var bodyParser = require('body-parser')
 const cors = require('cors');
 const mongoose = require('mongoose');
 
@@ -11,6 +12,9 @@ const port = process.env.PORT || 5000
 // Middlewares
 app.use(cors());
 app.use(express.json());    // Allows us to parse json for our Mongo DB
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 // Connect to MongoDB
 const uri = process.env.ATLAS_URI;
