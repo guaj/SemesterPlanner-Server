@@ -2,6 +2,7 @@ const router = require('express').Router();
 let User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 
+const TokenVerify = require('./tokenVerification').verifyJWTAuth;
 /**
  * Get all users
  */
@@ -32,7 +33,7 @@ router.route('/:id').delete((req, res) => {
 /**
  * Update a user
  */
-router.route('/update').post( async (req, res) => {
+router.route('/update').post( TokenVerify, async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     User.findOne({"email":req.body.email})

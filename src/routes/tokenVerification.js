@@ -1,4 +1,3 @@
-const authRouter = require('express').Router();
 const jwt = require('jsonwebtoken');
 
 const verifyJWTAuth = (request, response, next) => {
@@ -21,8 +20,6 @@ const verifyJWTAuth = (request, response, next) => {
   }
 };
 
-authRouter.get('/validate', verifyJWTAuth, async (request, response) => {
-  response.status(200).json({ auth: true, message: 'User authentication successful' });
-});
 
-module.exports = { authRouter, verifyJWTAuth };
+
+module.exports = { verifyJWTAuth };
