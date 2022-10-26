@@ -21,10 +21,10 @@ connection.once('open', () => {
 })
 
 // Routes
-const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/Student');
 const loginRouter = require('./routes/login');
 
-app.use('/users', usersRouter);
+app.use('/student', usersRouter);
 app.use('/login', loginRouter);
 
 const server = app.listen(port, () => {
