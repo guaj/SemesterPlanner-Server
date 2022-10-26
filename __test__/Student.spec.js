@@ -1,4 +1,4 @@
-const {registerPayload, loginPayload} =  require("./Student_test_data");
+const {registerPayload, loginPayload, deletePayload} =  require("./Student_test_data");
 const axios = require("axios");
 
 
@@ -8,8 +8,7 @@ test("add a new Student ", async () => {
     .then( response =>{
           return response.data
     });
-    
-    expect(httpResponse).toBe("Student ram@b.ca added");
+  expect(httpResponse).toBe("Student ram@b.ca added");
  });
 
 
@@ -24,6 +23,16 @@ test("student login test ", async () => {
   expect(httpResponse).toBe("test45");
  
 });
+
+//works as cleanup of previous test too.
+test("delete a Student ", async () => {
+  
+  let httpResponse = await axios.delete('http://localhost:5000/student/email/ram@b.ca')
+    .then( response =>{
+          return response.data
+    });
+  expect(httpResponse).toBe("Student deleted");
+ });
 
 
 

@@ -52,6 +52,15 @@ router.route('/:id').delete((req, res) => {
     Student.findByIdAndDelete(req.params.id)
         .then(user => res.json(`Student deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
+})
+
+/**
+ * Delete a user by email
+ */
+router.route('/email/:email').delete((req, res) => {
+    Student.findOneAndDelete(req.params.email)
+        .then(user => res.json(`Student deleted`))
+        .catch(err => res.status(400).json('Error: ' + err));
 });
 
 /**
