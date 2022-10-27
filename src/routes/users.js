@@ -57,10 +57,12 @@ router.route('/:id').delete((req, res) => {
 /**
  * Update a user
  */
-router.route('/update/:email').post( TokenVerify, async (req, res) => {
+router.route('/update').post( TokenVerify, async (req, res) => {
+    if(req.body.password){
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+                         }
 
-    User.findOne({email: req.params.email})
+    User.findOne({email: req.body.email})
         .then(user => {
             if (req.body.username) {
                 user.username = req.body.username;
@@ -73,6 +75,12 @@ router.route('/update/:email').post( TokenVerify, async (req, res) => {
             }
             if (req.body.program) {
                 user.program = req.body.program;
+            }
+            if (req.body.faculty) {
+                user.faculty = req.body.faculty;
+            }
+            if (req.body.privateProfile) {
+                user.privateProfile= req.body.privateProfile;
             }
             
 
@@ -93,12 +101,16 @@ router.route('/add').post( async (req, res) => {
     const email = req.body.email;
     const password = hashedPassword;
     const program = req.body.program;
+    const faculty = req.body.faculty;
+    const privateProfile= req.body.privateProfile;
 
     const newUser = new User({
         username,
         email,
         password,
         program,
+        faculty,
+        privateProfile
     })
 
     newUser.save()

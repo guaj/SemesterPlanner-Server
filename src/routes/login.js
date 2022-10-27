@@ -38,7 +38,7 @@ router.post('/', async (request, response) => {
       auth: true,
       token: tokenJWT,
       profile: {
-        firstName: user.firstName,
+        username: user.username,
         email: user.email,
        
       },
@@ -53,7 +53,7 @@ router.post('/', async (request, response) => {
 
 
 router.route('/yyy').post((req, res) => {
-    User.findOne({
+    User.findOne({ 
         email: req.body.email,
     })
         .then(user => {
