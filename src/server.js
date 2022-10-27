@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const { Server } = require("socket.io");
+
 
 // Allows us to include environment variables in .env file
 require('dotenv').config();
@@ -30,6 +32,15 @@ app.use('/login', loginRouter);
 const server = app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 })
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log('a user connected');
+    socket.on('message', (msg) => {
+      console.log(msg)
+      socket.broadcast.emit('Message received :)') //sends message to all connected sockets
+    })
+});
+
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {
