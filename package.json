@@ -4,8 +4,9 @@
   "description": "Backend repository for the Semester Planner App",
   "main": "src/server.js",
   "scripts": {
-    "test": "jest --forceExit",
-    "start": "nodemon src/server"
+    "test": "jest",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server"
   },
   "repository": {
     "type": "git",
