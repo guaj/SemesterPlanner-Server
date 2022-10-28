@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Student = require("../models/Student.model");
+const student = require("../models/student.model");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -12,7 +12,7 @@ router.post('/', async (request, response) => {
     const { body } = request;
   
     // Query MongoDb with email and get matching Student (will be null if none)
-    const user = await Student.findOne({
+    const user = await student.findOne({
       email: body.email,
     });
   
@@ -53,7 +53,7 @@ router.post('/', async (request, response) => {
 
 
 router.route('/yyy').post((req, res) => {
-    Student.findOne({ 
+    student.findOne({ 
         email: req.body.email,
     })
         .then(user => {
