@@ -21,8 +21,8 @@ connection.once('open', () => {
 })
 
 // Routes
-const usersRouter = require('./routes/student');
-const loginRouter = require('./routes/login');
+const usersRouter = require('./routes/student.js');
+const loginRouter = require('./routes/login.js');
 
 app.use('/student', usersRouter);
 app.use('/login', loginRouter);
