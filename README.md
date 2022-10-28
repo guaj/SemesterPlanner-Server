@@ -16,3 +16,8 @@ You may also see any lint errors in the console.
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.
+
+
+### Deployment
+
+Every push / merge to main will be deployed into production. This is the app URL [https://semesterplanner-server-production.up.railway.app/](https://semesterplanner-server-production.up.railway.app/) 
