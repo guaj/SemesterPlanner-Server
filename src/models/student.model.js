@@ -8,8 +8,11 @@ const studentSchema = new Schema({
     password: { type: String, required: true },
     program: { type: String },
     faculty: { type: String },
-    privateProfile: { type: Boolean }
-    
+    privateProfile: { type: Boolean },
+    friends:{type: [String]},
+    friendRequests:{type: [String]},
+    StudyRooms:{type: [String]},
+    cID: { type: String }
 
     // TODO
     // calendar -> id of calendar
