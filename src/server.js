@@ -23,9 +23,13 @@ connection.once('open', () => {
 // Routes
 const studentsRouter = require('./routes/student.js');
 const loginRouter = require('./routes/login.js');
+const roomRouter=require('./routes/room.js');
+const friendRouter=require('./routes/friend.js');
 
 app.use('/student', studentsRouter);
 app.use('/login', loginRouter);
+app.use('/room', roomRouter);
+app.use('/friend', friendRouter);
 
 const server = app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
