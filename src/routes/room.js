@@ -35,8 +35,8 @@ router.route('/').post((req, res) => {
 router.route('/').get(async(req, res) => {
   const username= req.body.username
 
-  const rooms = await Student.findMany({
-    username: username
+  const rooms = await StudyRoom.find({
+    owner: username
   });
 
   res.json(rooms)

@@ -12,7 +12,7 @@ router.route('/').get(async(req, res)=>{
     username:username
   });
 
-  res.json(Profile.friends)
+  res.json(Profil.friends)
 
 
 })
