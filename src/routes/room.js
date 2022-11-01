@@ -32,6 +32,22 @@ router.route('/').post((req, res) => {
 
 
 
+router.route('/').get(async(req, res) => {
+  const username= req.body.username
+
+  const rooms = await Student.findMany({
+    username: username
+  });
+
+  res.json(rooms)
+
+
+
+
+
+
+})
+
 
 router.route('/message').post(async(req, res) => {
 
