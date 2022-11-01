@@ -3,6 +3,23 @@ const Student = require('../models/student.model');
 
 
 
+router.route('/:username').get(async(req, res)=>{
+
+  const Profil = await Student.findOne({
+    username:username
+  });
+
+  res.json(Profile.friends)
+
+
+})
+
+
+
+
+
+
+
 
 router.route('/add').post(async(req, res) => {
 
