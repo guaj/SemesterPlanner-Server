@@ -2,6 +2,23 @@ const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 
 
+
+
+router.get('/fetch/:sID', async (req, res) => {
+
+  console.log(req.params.sID)
+
+  const sID= req.params.sID
+
+  const rooms = await StudyRoom.findOne({
+    sID: sID
+  });
+
+
+res.json(rooms);
+
+})
+
 router.route('/').post((req, res) => {
     
     let r = (Math.random() + 2).toString(36).substring(2);
@@ -63,13 +80,12 @@ router.route('/delete').post(async(req, res) => {
 
        res.send("deleted room "+roomID)
   
-
-
-
 })
 
 //Send a message to a chate it needs the username of the sender, the content of the message and
 //sID of the study room, the content of the message, and the username of the user
+
+
 
 router.route('/message').post(async(req, res) => {
 
@@ -109,10 +125,6 @@ router.route('/message').post(async(req, res) => {
         },
       );
        
-
-      
-
-    
 });
 
 
