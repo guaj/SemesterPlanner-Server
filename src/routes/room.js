@@ -18,7 +18,7 @@ router.route('/').post((req, res) => {
     
 
     const stdr = new StudyRoom({
-        sID ,
+        sID,
         owner,
         color,
         description,
@@ -45,18 +45,31 @@ router.route('/:username').get(async(req, res) => {
 })
 
 
-//test
-router.route('/handle').post(async(req, res) => {
-  const username= req
+//delete  the study room you need the username of the owner and the roomID
+router.route('/delete').post(async(req, res) => {
+  console.log(req.body)
+  const username= req.body.username
+  const roomID= req.body.sID
 
-  
 
-  res.send(username.data)
+
+  const room = await StudyRoom.deleteOne({
+        sID:roomID,
+        owner:username 
+
+      });
+
+
+
+       res.send("deleted room "+roomID)
   
 
 
 
 })
+
+//Send a message to a chate it needs the username of the sender, the content of the message and
+//sID of the study room, the content of the message, and the username of the user
 
 router.route('/message').post(async(req, res) => {
 
@@ -103,7 +116,8 @@ router.route('/message').post(async(req, res) => {
 });
 
 
-//upload a file to the database not yet complete
+//upload a file to the database  file needs to be transformed to a buffer be being sent
+// the user should send he ID of the study room, 
 router.route('/file').post(async(req, res) => {
 
     let notes;
@@ -112,6 +126,7 @@ router.route('/file').post(async(req, res) => {
 
     const roomID  = req.body.sID; 
     const file =  req.body.file;
+    const type = req.body.type;
     const username = req.body.username;
      
 
@@ -124,7 +139,8 @@ router.route('/file').post(async(req, res) => {
     let note = {
          cnID:r,
          username:username,
-         file:file
+         file:file,
+         type:type
       }
       console.log(room);
       notes = room.courseNotes
