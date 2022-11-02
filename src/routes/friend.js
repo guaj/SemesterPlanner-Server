@@ -3,10 +3,10 @@ const Student = require('../models/student.model');
 
 
 
-router.route('/').get(async(req, res)=>{
+router.route('/:username').get(async(req, res)=>{
 
 
-  const username= req.body.username
+  const username= req.params.username
 
   const Profil = await Student.findOne({
     username:username

@@ -18,8 +18,9 @@ const studyRoomSchema = new Schema({
        },{timestamps: true}],
 
     courseNotes:[{
-        nID:{ type: String, required: true, unique: true, sparse: true},
+        cnID:{ type: String, required: true, unique: true, sparse: true},
         username: String,
+        type:String,
         file: Buffer,
         },{timestamps: true}]
     

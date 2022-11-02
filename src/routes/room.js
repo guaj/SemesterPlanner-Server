@@ -30,24 +30,33 @@ router.route('/').post((req, res) => {
         .then(() => res.json(`Study room ${r} created`).status(200))
 });
 
-
-
-router.route('/').get(async(req, res) => {
-  const username= req.body.username
+//return room informations
+router.route('/:username').get(async(req, res) => {
+  
+  const username= req.params.username
 
   const rooms = await StudyRoom.find({
     owner: username
   });
-
+  console.log(rooms)
   res.json(rooms)
+  
+
+})
 
 
+//test
+router.route('/handle').post(async(req, res) => {
+  const username= req
 
+  
+
+  res.send(username.data)
+  
 
 
 
 })
-
 
 router.route('/message').post(async(req, res) => {
 
@@ -113,7 +122,7 @@ router.route('/file').post(async(req, res) => {
       });
 
     let note = {
-         nID:r,
+         cnID:r,
          username:username,
          file:file
       }
