@@ -10,7 +10,7 @@ const studyRoomSchema = new Schema({
     avatar: { type: String, required: true },
     color: { type: String, required: true },
     
-    paticipants:{type: [String]},
+    participants:{type: [String]},
     messages:[{
         mID:{ type: String, required: true, unique: true, sparse: true },
         username: String,

@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
+const Student = require('../models/student.model');
 
 
 
@@ -19,17 +20,46 @@ res.json(rooms);
 
 })
 
+// add a friend to study room
+router.route('/add').post(async(req, res)=>{
+  email  = req.body.email
+  ID = req.body.sID
+   console.log(email)
+   console.log(ID)
+
+  const room = await StudyRoom.findOne( { sID: ID })
+  const participants=room.participants.push(email)
+
+   StudyRoom.updateOne(
+    { sID: ID }, 
+    { participants: participants },
+  );
+
+  const student = await Student.findOne( { email:email })
+  const StudyRooms=student.StudyRooms.push(sID)
+
+   Student.updateOne(
+    { email: email }, 
+    { StudyRooms: StudyRooms },  
+  );
+
+})
+
+
+//create astudy room
+
 router.route('/').post((req, res) => {
     
     let r = (Math.random() + 2).toString(36).substring(2);
     console.log(r)
     
-    const sID = r;
+    const sID = r; 
     const owner = req.body.owner;
     const color = req.body.color
     const description=req.body.description
     const title =req.body.title
     const avatar= req.body.avatarText
+    const participants= req.body.participants
     
    /// const  participant= req.body.participant;
     
@@ -41,20 +71,24 @@ router.route('/').post((req, res) => {
         description,
         title,
         avatar,
+        participants
         })
 
     stdr.save()
         .then(() => res.json(`Study room ${r} created`).status(200))
 });
 
+
 //return room informations
-router.route('/:username').get(async(req, res) => {
+router.route('/:email').get(async(req, res) => {
   
-  const username= req.params.username
+  const email= req.params.email
 
   const rooms = await StudyRoom.find({
-    owner: username
+    owner: email
   });
+
+
   console.log(rooms)
   res.json(rooms)
   
