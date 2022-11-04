@@ -6,18 +6,12 @@ const Student = require('../models/student.model');
 
 
 router.get('/fetch/:sID', async (req, res) => {
-
   console.log(req.params.sID)
-
   const sID= req.params.sID
-
   const rooms = await StudyRoom.findOne({
     sID: sID
   });
-
-
-res.json(rooms);
-
+res.json(rooms).status(200);
 })
 
 // add a friend to study room
@@ -34,15 +28,13 @@ router.route('/add').post(async(req, res)=>{
     { sID: ID }, 
     { participants: participants },
   );
-
   const student = await Student.findOne( { email:email })
   const StudyRooms=student.StudyRooms.push(sID)
 
-   Student.updateOne(
+  Student.updateOne(
     { email: email }, 
     { StudyRooms: StudyRooms },  
   );
-
 })
 
 
@@ -60,10 +52,6 @@ router.route('/').post((req, res) => {
     const title =req.body.title
     const avatar= req.body.avatarText
     const participants= req.body.participants
-    
-   /// const  participant= req.body.participant;
-    
-
     const stdr = new StudyRoom({
         sID,
         owner,
@@ -87,13 +75,9 @@ router.route('/:email').get(async(req, res) => {
   const rooms = await StudyRoom.find({
     owner: email
   });
-
-
   console.log(rooms)
-  res.json(rooms)
-  
-
-})
+  res.json(rooms).status(200)
+  })
 
 
 //delete  the study room you need the username of the owner and the roomID
@@ -101,20 +85,13 @@ router.route('/delete').post(async(req, res) => {
   console.log(req.body)
   const username= req.body.username
   const roomID= req.body.sID
-
-
-
   const room = await StudyRoom.deleteOne({
         sID:roomID,
         owner:username 
 
       });
-
-
-
-       res.send("deleted room "+roomID)
-  
-})
+       res.send("deleted room "+ roomID)
+  })
 
 //Send a message to a chate it needs the username of the sender, the content of the message and
 //sID of the study room, the content of the message, and the username of the user

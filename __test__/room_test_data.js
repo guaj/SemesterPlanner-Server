@@ -3,7 +3,8 @@ roomdata = {
     "color":"red",
     "description":"2nd best room",
     "avatarText":"cr",
-    "title":"cool room"
+    "title":"cool room",
+    "participants":["t@mail.com", "j@mail.com"]
   }
 
 
