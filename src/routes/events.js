@@ -3,10 +3,10 @@ let Event = require('../models/event.model');
 const mongoose = require("mongoose");
 
 /**
- * Get all events
+ * Get all events of a certain student
  */
 router.route('/').get((req, res) => {
-    Event.find()
+    Event.find({ studentId: mongoose.Schema.Types.ObjectId(req.body.studentId) })
         .then(events => res.json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
