@@ -3,8 +3,47 @@ const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 
 
-//create astudy room
 
+
+router.route('/').put((req, res) => {
+
+
+
+  StudyRoom.findOne({sID: req.body.sID})
+  .then(room => {
+      if (req.body.owner) {
+          room.owner = req.body.owner;
+      }
+      if (req.body.color) {
+          room.color = req.body.color;
+      }
+      if (req.body.description) {
+          room.description = req.body.description;
+      }
+      if (req.body.title) {
+          room.title = req.body.title;
+      }
+      if (req.body.avatarText) {
+          room.avatarText = req.body.avatarText;
+      }
+      if (req.body.participants) {
+          room.participants= req.body.participants;
+      }
+      
+
+      room.save()
+          .then(() => res.json(`Room ${room.sID} updated`))
+          .catch(err => res.status(400).json('Error: ' + err));
+  })
+  .catch(err => res.status(400).json('Error: ' + err));
+
+
+
+
+
+})
+
+//create a study room
 router.route('/').post((req, res) => {
     
   const randomID = (Math.random() + 2).toString(36).substring(2);
@@ -84,11 +123,11 @@ router.route('/:email').get(async(req, res) => {
 //delete  the study room you need the username of the owner and the roomID
 router.route('/delete').post(async(req, res) => {
   console.log(req.body)
-  const username= req.body.username
+  const email= req.body.email
   const roomID= req.body.sID
   const room = await StudyRoom.deleteOne({
         sID:roomID,
-        owner:username 
+        owner:email
 
       });
        res.send("deleted room "+ roomID)
