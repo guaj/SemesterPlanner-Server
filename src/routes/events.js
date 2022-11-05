@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
  * Get all events of a certain student
  */
 router.route('/').get((req, res) => {
-    Event.find({ studentId: mongoose.Schema.Types.ObjectId(req.body.studentId) })
+    Event.find({ username: req.body.username })
         .then(events => res.json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -14,8 +14,8 @@ router.route('/').get((req, res) => {
 /**
  * Get event by eventId
  */
-router.route('/id/:id').get((req, res) => {
-    Event.find({ _id: new mongoose.Schema.Types.ObjectId(req.params.id) })
+router.route('/:username').get((req, res) => {
+    Event.find({ username: req.params.username })
         .then(event => res.json(event))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -23,8 +23,8 @@ router.route('/id/:id').get((req, res) => {
 /**
  * Delete an event by eventId
  */
-router.route('/:id').delete((req, res) => {
-    Event.findOneAndDelete({ _id: new mongoose.Schema.Types.ObjectId(req.params.eventId) })
+router.route('/:username').delete((req, res) => {
+    Event.findOneAndDelete({ username: req.params.username })
         .then(event => res.json(`Event deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -75,24 +75,32 @@ router.route('/update').post( async (req, res) => {
  */
 router.route('/add').post( async (req, res) => {
 
-    const eventId = req.body.eventId;
-    const title = req.body.title;
+    const username = req.body.username;
+    const eventHeader = req.body.eventHeader;
     const description = req.body.description;
+    const link = req.body.link;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
     const startTime = req.body.startTime;
     const endTime = req.body.endTime;
+    const reccurence = req.body.reccurence;
     const color = req.body.color;
 
     const newEvent = new Event({
-        eventId,
-        title,
+        username,
+        eventHeader,
         description,
+        link,
+        startDate,
+        endDate,
         startTime,
         endTime,
+        reccurence,
         color
     })
 
     newEvent.save()
-        .then(() => res.json(`Event ${title} added`))
+        .then(() => res.json(`Event ${eventHeader} added`))
 });
 
 module.exports = router;

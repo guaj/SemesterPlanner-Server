@@ -17,7 +17,7 @@ const ReccurencyTypes = {
 }
 
 const eventSchema = new Schema({
-    studentId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    username: { type: String, required: true },
     eventHeader: { type: String, required: true },
     description: { type: String },
     link: { type: String },
