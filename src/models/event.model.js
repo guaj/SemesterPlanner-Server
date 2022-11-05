@@ -24,8 +24,8 @@ const eventSchema = new Schema({
     endDate: { type: Date, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
-    reccurence: { type: ReccurencyTypes, required: true },
-    color: { type: Colors },
+    reccurence: { type: String, enum: ReccurencyTypes, required: true },
+    color: { type: String, enum: Colors },
 }, {
     timestamps: true,
 });
