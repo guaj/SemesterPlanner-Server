@@ -112,6 +112,7 @@ router.route('/add').post( async (req, res) => {
     const program = req.body.program;
     const faculty = req.body.faculty;
     const privateProfile= req.body.privateProfile;
+    const friends=req.body.friends;
 
     const newStudent = new student({
         username,
@@ -119,7 +120,8 @@ router.route('/add').post( async (req, res) => {
         password,
         program,
         faculty,
-        privateProfile
+        privateProfile,
+        friends
     })
 
     newStudent.save()

@@ -2,28 +2,19 @@ const router = require('express').Router();
 const Student = require('../models/student.model');
 
 
-
-router.route('/:username').get(async(req, res)=>{
-
-
-  const username= req.params.username
-
-  const Profil = await Student.findOne({
-    username:username
+// fetch the list of friends by email
+router.route('/:email').get(async(req, res)=>{
+const username= req.params.email
+const Profil = await Student.findOne({
+    email:email
   });
 
-  res.json(Profil.friends)
-
-
+  res.json(Profil.friends).status(200)
 })
 
 
 
-
-
-
-
-
+// send  a friend rerquest
 router.route('/add').post(async(req, res) => {
 
   const username = req.body.username;

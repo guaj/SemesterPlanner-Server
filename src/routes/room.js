@@ -3,8 +3,34 @@ const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 
 
+//create astudy room
+
+router.route('/').post((req, res) => {
+    
+  const randomID = (Math.random() + 2).toString(36).substring(2);
+  const sID = randomID; 
+  const owner = req.body.owner;
+  const color = req.body.color
+  const description=req.body.description
+  const title =req.body.title
+  const avatar= req.body.avatarText
+  const participants= req.body.participants
+  const stdr = new StudyRoom({
+      sID,
+      owner,
+      color,
+      description,
+      title,
+      avatar,
+      participants
+      })
+
+  stdr.save()
+      .then(() => res.json(`Study room ${randomID} created`).status(200))
+});
 
 
+// fetch email by sID
 router.get('/fetch/:sID', async (req, res) => {
   console.log(req.params.sID)
   const sID= req.params.sID
@@ -13,6 +39,7 @@ router.get('/fetch/:sID', async (req, res) => {
   });
 res.json(rooms).status(200);
 })
+
 
 // add a friend to study room
 router.route('/add').post(async(req, res)=>{
@@ -38,33 +65,7 @@ router.route('/add').post(async(req, res)=>{
 })
 
 
-//create astudy room
 
-router.route('/').post((req, res) => {
-    
-    let r = (Math.random() + 2).toString(36).substring(2);
-    console.log(r)
-    
-    const sID = r; 
-    const owner = req.body.owner;
-    const color = req.body.color
-    const description=req.body.description
-    const title =req.body.title
-    const avatar= req.body.avatarText
-    const participants= req.body.participants
-    const stdr = new StudyRoom({
-        sID,
-        owner,
-        color,
-        description,
-        title,
-        avatar,
-        participants
-        })
-
-    stdr.save()
-        .then(() => res.json(`Study room ${r} created`).status(200))
-});
 
 
 //return room informations
