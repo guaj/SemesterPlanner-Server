@@ -4,12 +4,26 @@ const app = require("../src/server");
 const { response } = require("../src/server");
 const request = supertest(app)
 const assert = require('assert');
+const dbHandler = require("./db-handler");
+
+/**
+ * Connect to a new in-memory database before running any tests.
+ */
+beforeAll(async () => await dbHandler.connect());
+
+/**
+ * Clear all test data after every test.
+ */
+afterEach(async () => await dbHandler.clearDatabase());
+
+/**
+ * Remove and close the db and server.
+ */
+afterAll(async () => await dbHandler.closeDatabase());
 
 //These tests will work locally, but not in CicleCI because we do not have a public API available.
 //Change the URL when that is setup.
 test("add a new Student ", async () => {
-
-
 
   expected = "Student ram@b.ca added"
 
