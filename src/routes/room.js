@@ -70,6 +70,11 @@ router.route('/').post((req, res) => {
 
 
 // fetch email by sID
+/**
+ * Study room info route
+ * @param sID: ID  of the study room
+ * @return room: the room matching the study room ID
+ */
 router.get('/fetch/:sID', async (req, res) => {
   console.log(req.params.sID)
   const sID= req.params.sID
@@ -107,13 +112,16 @@ router.route('/add').post(async(req, res)=>{
 
 
 
-//return room informations
+/**
+ * Email route
+ * @param email: email of the student
+ * @return rooms: that the student is part of
+*/
 router.route('/:email').get(async(req, res) => {
   
   const email= req.params.email
-
   const rooms = await StudyRoom.find({
-    owner: email
+    participants: {"$in": [email]}
   });
   console.log(rooms)
   res.json(rooms).status(200)
