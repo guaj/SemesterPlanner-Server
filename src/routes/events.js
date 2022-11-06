@@ -74,7 +74,7 @@ router.route('/update').post( async (req, res) => {
  * Add an event
  */
 router.route('/add').post( async (req, res) => {
-
+    console.log(req)
     const username = req.body.username;
     const eventHeader = req.body.eventHeader;
     const description = req.body.description;
