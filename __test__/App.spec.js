@@ -98,9 +98,8 @@ it("add a new Student ", async () => {
 
 
   it("add a new Student ", async () => {
-   let arr = ["user_"+random2+"@gmail.com", "user_"+random3+"@gmail.com","user_"+random0+"@gmail.com"]
-  
-    expected = "Student ram@b.ca added"
+   
+  expected = "Student ram@b.ca added"
   
     await request.post('/student/add').send(
     {"username":"test45",

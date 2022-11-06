@@ -208,7 +208,7 @@ router.route('/file').post(async(req, res) => {
       console.log(room);
       notes = room.courseNotes
       notes.push(note)
-
+      console.log(notes)
       StudyRoom.updateOne(
         { sID: roomID },
         { courseNotes: notes },
@@ -228,9 +228,21 @@ router.route('/file').post(async(req, res) => {
 });
 
 
+//get file
+
+router.route('/file/:sID&:cnID').get(async(req, res) => {
+
+  const sID= req.params.sID
+  const cnID= req.params.cnID
 
 
+ const room =  await StudyRoom.find({
+    sID:sID,
+    "courseNotes.cnID" : cnID
+})
 
+res.json(room).status(200);
+})
 
 
 
