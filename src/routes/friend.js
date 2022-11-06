@@ -51,7 +51,7 @@ router.route('/add').post(async(req, res) => {
             console.log('Updated Docs : ', docs);
           }
         },
-      );2
+      );
        
       Student.updateOne(
         { username: friend },
