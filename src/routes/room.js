@@ -140,7 +140,7 @@ router.route('/delete').post(async(req, res) => {
 
 router.route('/message').post(async(req, res) => {
 
-    let messages;
+    
     let r = (Math.random() + 1).toString(36).substring(7);
 
 
@@ -149,7 +149,7 @@ router.route('/message').post(async(req, res) => {
     const username = req.body.username;
 
 
-     console.log(roomID)
+     console.log(roomID) 
 
     const room = await StudyRoom.findOne({
         sID:roomID,
@@ -158,15 +158,16 @@ router.route('/message').post(async(req, res) => {
       let message = {
          mID:r,
          username:username,
-         content:content
+         content:content,
+         time:date.now()
       }
-      console.log(room);
-      messages = room.messages
-      messages.push(message)
-
+      console.log("mil ="+room.messages);
+      var mil = room.messages
+      mil.push(message) 
+     console.log(mil)
       StudyRoom.updateOne(
-        { sID: roomID },
-        { messages: messages },
+        { sID: roomID }, 
+        { messages: mil },
         (err, docs) => {
           if (err) {
             console.log(err);
@@ -179,11 +180,27 @@ router.route('/message').post(async(req, res) => {
 });
 
 
+router.route('message/:sID').get(async(req, res) => {
+
+
+     const sID= req.params.sID
+     const room =  await StudyRoom.findOne({sID:sID})
+     var chatmessages= room.messages
+     res.json(chatmessages).status(200)
+
+      
+})
+
+
+
+
+
+
 //upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send he ID of the study room, 
 router.route('/file').post(async(req, res) => {
 
-    let notes;
+    
     let r = (Math.random() + 1).toString(36).substring(7);
 
 
@@ -197,7 +214,7 @@ router.route('/file').post(async(req, res) => {
 
     const room = await StudyRoom.findOne({
         sID:roomID,
-      });
+      }); 
 
     let note = {
          cnID:r,
@@ -206,9 +223,11 @@ router.route('/file').post(async(req, res) => {
          type:type
       }
       console.log(room);
-      notes = room.courseNotes
+     var notes = room.courseNotes
       notes.push(note)
       console.log(notes)
+
+
       StudyRoom.updateOne(
         { sID: roomID },
         { courseNotes: notes },
@@ -243,6 +262,8 @@ router.route('/file/:sID&:cnID').get(async(req, res) => {
 
 res.json(room).status(200);
 })
+
+
 
 
 
