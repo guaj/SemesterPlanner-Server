@@ -138,7 +138,7 @@ router.route('/delete').post(async(req, res) => {
         owner:email
 
       });
-       res.send("deleted room "+ roomID)
+       res.send("deleted room "+ roomID.toString())
   })
 
 //Send a message to a chate it needs the username of the sender, the content of the message and
@@ -174,13 +174,8 @@ router.route('/message').post(async(req, res) => {
       mil.push(message) 
      console.log(mil)
       StudyRoom.updateOne(
-<<<<<<< HEAD
         { sID: roomID }, 
         { messages: mil },
-=======
-        { sID: roomID },
-        { messages: messages.toString() },
->>>>>>> e6b5f2b12b4d0ca5e1e0c02ac744fc7446fde71d
         (err, docs) => {
           if (err) {
             console.log(err);
