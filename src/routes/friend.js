@@ -4,7 +4,7 @@ const Student = require('../models/student.model');
 
 // fetch the list of friends by email
 router.route('/:email').get(async(req, res)=>{
-const username= req.params.email
+const email= req.params.email
 const Profil = await Student.findOne({
     email:email
   });
