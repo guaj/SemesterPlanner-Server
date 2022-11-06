@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+var bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 
 // Allows us to include environment variables in .env file
@@ -11,10 +12,18 @@ const port = process.env.PORT || 5000
 // Middlewares
 app.use(cors());
 app.use(express.json());    // Allows us to parse json for our Mongo DB
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 // Connect to MongoDB
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, { useNewUrlParser: true });
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+}
 const connection = mongoose.connection;
 connection.once('open', () => {
   console.log("MongoDB database connection established successfully")

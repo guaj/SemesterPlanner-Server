@@ -106,7 +106,6 @@ router.route('/update').post( TokenVerify, async (req, res) => {
  * Add a user
  */
 router.route('/add').post( async (req, res) => {
-
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
     const email = req.body.email;
