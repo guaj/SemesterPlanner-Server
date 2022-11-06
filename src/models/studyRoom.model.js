@@ -15,7 +15,7 @@ const studyRoomSchema = new Schema({
         mID:{ type: String, required: true, unique: true, sparse: true },
         username: String,
         content: String,
-        time:date
+        time:Date
        }],
 
     courseNotes:[{
