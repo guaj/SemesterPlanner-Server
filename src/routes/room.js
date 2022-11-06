@@ -9,7 +9,7 @@ router.route('/').put((req, res) => {
 
 
 
-  StudyRoom.findOne({sID: req.body.sID})
+  StudyRoom.findOne({sID: req.body.sID.toString()})
   .then(room => {
       if (req.body.owner) {
           room.owner = req.body.owner;
@@ -77,7 +77,7 @@ router.route('/').post((req, res) => {
  */
 router.get('/fetch/:sID', async (req, res) => {
   console.log(req.params.sID)
-  const sID= req.params.sID
+  const sID= req.params.sID.toString()
   const rooms = await StudyRoom.findOne({
     sID: sID
   });
@@ -87,8 +87,8 @@ res.json(rooms).status(200);
 
 // add a friend to study room
 router.route('/add').post(async(req, res)=>{
-  email  = req.body.email
-  ID = req.body.sID
+  email  = req.body.email.toString()
+  ID = req.body.sID.toString()
    console.log(email)
    console.log(ID)
 
@@ -99,7 +99,7 @@ router.route('/add').post(async(req, res)=>{
     { sID: ID }, 
     { participants: participants },
   );
-  const student = await Student.findOne( { email:email })
+  const student = await Student.findOne( { email: email })
   const StudyRooms=student.StudyRooms.push(sID)
 
   Student.updateOne(
@@ -119,7 +119,7 @@ router.route('/add').post(async(req, res)=>{
 */
 router.route('/:email').get(async(req, res) => {
   
-  const email= req.params.email
+  const email= req.params.email.toString()
   const rooms = await StudyRoom.find({
     participants: {"$in": [email]}
   });
@@ -131,8 +131,8 @@ router.route('/:email').get(async(req, res) => {
 //delete  the study room you need the username of the owner and the roomID
 router.route('/delete').post(async(req, res) => {
   console.log(req.body)
-  const email= req.body.email
-  const roomID= req.body.sID
+  const email= req.body.email.toString()
+  const roomID= req.body.sID.toString()
   const room = await StudyRoom.deleteOne({
         sID:roomID,
         owner:email
@@ -152,9 +152,9 @@ router.route('/message').post(async(req, res) => {
     let r = (Math.random() + 1).toString(36).substring(7);
 
 
-    const roomID  = req.body.sID;
-    const content = req.body.content;
-    const username = req.body.username;
+    const roomID  = req.body.sID.toString();
+    const content = req.body.content.toString();
+    const username = req.body.username.toString();
 
 
      console.log(roomID)
@@ -174,7 +174,7 @@ router.route('/message').post(async(req, res) => {
 
       StudyRoom.updateOne(
         { sID: roomID },
-        { messages: messages },
+        { messages: messages.toString() },
         (err, docs) => {
           if (err) {
             console.log(err);
@@ -195,10 +195,10 @@ router.route('/file').post(async(req, res) => {
     let r = (Math.random() + 1).toString(36).substring(7);
 
 
-    const roomID  = req.body.sID; 
+    const roomID  = req.body.sID.toString(); 
     const file =  req.body.file;
     const type = req.body.type;
-    const username = req.body.username;
+    const username = req.body.username.toString();
      
 
      console.log(roomID)
@@ -240,8 +240,8 @@ router.route('/file').post(async(req, res) => {
 
 router.route('/file/:sID&:cnID').get(async(req, res) => {
 
-  const sID= req.params.sID
-  const cnID= req.params.cnID
+  const sID= req.params.sID.toString()
+  const cnID= req.params.cnID.toString()
 
 
  const room =  await StudyRoom.find({

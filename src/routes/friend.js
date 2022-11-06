@@ -4,7 +4,7 @@ const Student = require('../models/student.model');
 
 // fetch the list of friends by email
 router.route('/:email').get(async(req, res)=>{
-const email= req.params.email
+const email= req.params.email.toString()
 const Profil = await Student.findOne({
     email:email
   });
@@ -17,8 +17,8 @@ const Profil = await Student.findOne({
 // send  a friend rerquest
 router.route('/add').post(async(req, res) => {
 
-  const username = req.body.username;
-  const friendUsername= req.body.friendUsername
+  const username = req.body.username.toString();
+  const friendUsername= req.body.friendUsername.toString()
 
     
 
@@ -75,7 +75,7 @@ router.route('/add').post(async(req, res) => {
 
 router.route('/answer').post(async(req, res) => {
 
-  const username = req.body.username;
+  const username = req.body.username.toString();
   const friendUsername= req.body.friendUsername
   const answer = req.body.answer;
 
