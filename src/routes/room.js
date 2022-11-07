@@ -86,19 +86,27 @@ router.route('/add').post(async(req, res)=>{
    console.log(ID)
 
   const room = await StudyRoom.findOne( { sID: ID })
-  const participants=room.participants.push(email)
+  var participants=room.participants;
+  if (!participants.includes(email)) {
+    participants.push(email);
+  }
+  else {
+    res.json("Student is already present in studyroom").status(200);
+    return;
+  }
 
-   StudyRoom.updateOne(
+  await StudyRoom.updateOne(
     { sID: ID }, 
     { participants: participants },
   );
   const student = await Student.findOne( { email: email })
-  const StudyRooms=student.StudyRooms.push(ID)
+  var studyRooms=student.StudyRooms;
+  studyRooms.push(ID);
 
-  Student.updateOne(
+  await Student.updateOne(
     { email: email }, 
-    { StudyRooms: StudyRooms },  
-  );
+    { StudyRooms: studyRooms },  
+  ).then(() => res.json(email + " added to studyroom").status(200));
 })
 
 router.route('/remove').post(async(req, res)=>{
@@ -113,8 +121,11 @@ router.route('/remove').post(async(req, res)=>{
   if (participantIndex > -1) {
     participants.splice(participantIndex, 1);
   }
-
-   StudyRoom.updateOne(
+  else {
+    res.json('User not found').status(404);
+    return;
+  }
+  await StudyRoom.updateOne(
     { sID: ID }, 
     { participants: participants },
   );
@@ -123,12 +134,16 @@ router.route('/remove').post(async(req, res)=>{
   const roomIndex = studyRooms.indexOf(ID);
   if (roomIndex > -1) {
     studyRooms.splice(roomIndex, 1);
+    await Student.updateOne(
+      { email: email }, 
+      { StudyRooms: studyRooms },  
+    ).then(() => res.json(email + " removed to studyroom").status(200));
   }
-
-  Student.updateOne(
-    { email: email }, 
-    { StudyRooms: StudyRooms },  
-  );
+  else {
+    res.json('Room not found').status(404);
+    return;
+  }
+  
 })
 
 /**
