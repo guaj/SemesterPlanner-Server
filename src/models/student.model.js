@@ -2,14 +2,18 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const studentSchema = new Schema({
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     program: { type: String },
     faculty: { type: String },
-    privateProfile: { type: Boolean }
-    
+    privateProfile: { type: Boolean },
+    friends:{type: [String]},  //usernames
+    friendRequestsSent:{type: [String]},  //usernames
+    friendRequestsReceived:{type: [String]},  //usernames
+    StudyRooms:{type: [String]}, //sID
+    cID: { type: String }
 
     // TODO
     // calendar -> id of calendar
@@ -19,6 +23,6 @@ const userSchema = new Schema({
     timestamps: true,
 });
 
-const User = mongoose.model('User', userSchema);
+const student = mongoose.model('Student', studentSchema);
 
-module.exports = User;
+module.exports = student;

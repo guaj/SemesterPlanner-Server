@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const User = require("../models/user.model");
+const student = require("../models/student.model");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -8,17 +8,19 @@ const jwt = require('jsonwebtoken');
  */
 
 
+
+
 router.post('/', async (request, response) => {
     const { body } = request;
   
-    // Query MongoDb with email and get matching User (will be null if none)
-    const user = await User.findOne({
+    // Query MongoDb with email and get matching Student (will be null if none)
+    const user = await student.findOne({
       email: body.email,
     });
   
     // Bad Username: 401
     if (user == null) {
-      return response.status(401).json({ auth: false, message: 'Error: Invalid Username or Password' });
+      return response.status(401).json({ auth: false, message: 'Error: Invalid Username or Passwordiii' });
     }
   
     const isCorrectPassword = await bcrypt.compareSync(body.password, user.password);
@@ -53,7 +55,7 @@ router.post('/', async (request, response) => {
 
 
 router.route('/yyy').post((req, res) => {
-    User.findOne({ 
+    student.findOne({ 
         email: req.body.email,
     })
         .then(user => {

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-let User = require('../models/user.model');
+const student = require('../models/student.model');
 const bcrypt = require('bcrypt');
 
 const TokenVerify = require('./tokenVerification').verifyJWTAuth;
@@ -7,7 +7,7 @@ const TokenVerify = require('./tokenVerification').verifyJWTAuth;
  * Get all users
  */
 router.route('/').get((req, res) => {
-    User.find()
+    student.find()
         .then(users => res.json(users))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -16,13 +16,13 @@ router.route('/').get((req, res) => {
  * Get user by ID
  */
 router.route('/id/:id').get((req, res) => {
-    User.findById(req.params.id)
+    student.findById(req.params.id)
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
 router.route('/email/:email').get((req, res) => {
-    User.findOne({email: req.params.email})
+    student.findOne({email: req.params.email})
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -31,7 +31,7 @@ router.route('/email/:email').get((req, res) => {
  * Get user by username
  */
  router.route('/username/:username').get((req, res) => {
-    User.findOne({username: req.params.username})
+    student.findOne({username: req.params.username})
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -40,18 +40,29 @@ router.route('/email/:email').get((req, res) => {
  * Get user by email
  */
  router.route('/email/:email').get((req, res) => {
-    User.findOne({email: req.params.email})
+    student.findOne({email: req.params.email})
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
+       
 });
 
 /**
  * Delete a user by ID
  */
 router.route('/:id').delete((req, res) => {
-    User.findByIdAndDelete(req.params.id)
-        .then(user => res.json(`User deleted`))
+    student.findByIdAndDelete(req.params.id)
+        .then(user => res.json(`Student deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
+       
+})
+
+/**
+ * Delete a user by email
+ */
+router.route('/email/:email').delete((req, res) => {
+    student.deleteOne({email: req.params.email})
+        .catch(err => res.status(400).json('Error: ' + err));
+        res.json("deleted student").status(200)
 });
 
 /**
@@ -62,7 +73,7 @@ router.route('/update').post( TokenVerify, async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
                          }
 
-    User.findOne({email: req.body.email})
+    student.findOne({email: req.body.email})
         .then(user => {
             if (req.body.username) {
                 user.username = req.body.username;
@@ -85,7 +96,7 @@ router.route('/update').post( TokenVerify, async (req, res) => {
             
 
             user.save()
-                .then(() => res.json(`User ${user.email} updated`))
+                .then(() => res.json(`Student ${user.email} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
         })
         .catch(err => res.status(400).json('Error: ' + err));
@@ -95,7 +106,6 @@ router.route('/update').post( TokenVerify, async (req, res) => {
  * Add a user
  */
 router.route('/add').post( async (req, res) => {
-
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const username = req.body.username;
     const email = req.body.email;
@@ -103,18 +113,20 @@ router.route('/add').post( async (req, res) => {
     const program = req.body.program;
     const faculty = req.body.faculty;
     const privateProfile= req.body.privateProfile;
+    const friends=req.body.friends;
 
-    const newUser = new User({
+    const newStudent = new student({
         username,
         email,
         password,
         program,
         faculty,
-        privateProfile
+        privateProfile,
+        friends
     })
 
-    newUser.save()
-        .then(() => res.json(`User ${email} added`))
+    newStudent.save()
+        .then(() => res.json(`Student ${email} added`).status(200))
 });
 
 module.exports = router;
