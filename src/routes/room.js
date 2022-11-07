@@ -101,7 +101,35 @@ router.route('/add').post(async(req, res)=>{
   );
 })
 
+router.route('/remove').post(async(req, res)=>{
+  email  = req.body.email.toString()
+  ID = req.body.sID.toString()
+  console.log(email)
+  console.log(ID)
 
+  const room = await StudyRoom.findOne( { sID: ID })
+  var participants = room.participants
+  const participantIndex = participants.indexOf(email);
+  if (participantIndex > -1) {
+    participants.splice(participantIndex, 1);
+  }
+
+   StudyRoom.updateOne(
+    { sID: ID }, 
+    { participants: participants },
+  );
+  const student = await Student.findOne( { email: email })
+  var studyRooms = student.StudyRooms;
+  const roomIndex = studyRooms.indexOf(ID);
+  if (roomIndex > -1) {
+    studyRooms.splice(roomIndex, 1);
+  }
+
+  Student.updateOne(
+    { email: email }, 
+    { StudyRooms: StudyRooms },  
+  );
+})
 
 /**
  * Email route
