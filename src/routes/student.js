@@ -43,6 +43,7 @@ router.route('/email/:email').get((req, res) => {
     student.findOne({email: req.params.email})
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
+       
 });
 
 /**
@@ -52,15 +53,16 @@ router.route('/:id').delete((req, res) => {
     student.findByIdAndDelete(req.params.id)
         .then(user => res.json(`Student deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
+       
 })
 
 /**
  * Delete a user by email
  */
 router.route('/email/:email').delete((req, res) => {
-    student.findOneAndDelete(req.params.email)
-        .then(user => res.json(`Student deleted`))
+    student.deleteOne({email: req.params.email})
         .catch(err => res.status(400).json('Error: ' + err));
+        res.json("deleted student").status(200)
 });
 
 /**
@@ -111,6 +113,7 @@ router.route('/add').post( async (req, res) => {
     const program = req.body.program;
     const faculty = req.body.faculty;
     const privateProfile= req.body.privateProfile;
+    const friends=req.body.friends;
 
     const newStudent = new student({
         username,
@@ -118,7 +121,8 @@ router.route('/add').post( async (req, res) => {
         password,
         program,
         faculty,
-        privateProfile
+        privateProfile,
+        friends
     })
 
     newStudent.save()
