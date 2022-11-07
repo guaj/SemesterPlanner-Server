@@ -2,9 +2,6 @@ const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 
-
-
-
 router.route('/').put((req, res) => {
 
 
@@ -36,10 +33,6 @@ router.route('/').put((req, res) => {
           .catch(err => res.status(400).json('Error: ' + err));
   })
   .catch(err => res.status(400).json('Error: ' + err));
-
-
-
-
 
 })
 
@@ -100,15 +93,13 @@ router.route('/add').post(async(req, res)=>{
     { participants: participants },
   );
   const student = await Student.findOne( { email: email })
-  const StudyRooms=student.StudyRooms.push(sID)
+  const StudyRooms=student.StudyRooms.push(ID)
 
   Student.updateOne(
     { email: email }, 
     { StudyRooms: StudyRooms },  
   );
 })
-
-
 
 
 
@@ -247,10 +238,6 @@ router.route('/file').post(async(req, res) => {
           }
         },
       );
-       
-
-      
-
     
 });
 

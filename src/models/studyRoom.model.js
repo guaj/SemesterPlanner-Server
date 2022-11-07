@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
+const Message = require('./message.model');
 
 const studyRoomSchema = new Schema({
     sID: { type: String, required: true, unique: true },
@@ -11,12 +12,7 @@ const studyRoomSchema = new Schema({
     color: { type: String, required: true },
     
     participants:{type: [String]},
-    messages:[{
-        mID:{ type: String, required: true, unique: true, sparse: true },
-        username: String,
-        content: String,
-        time:Date
-       }],
+    messages:[Message.schema],
 
     courseNotes:[{
         cnID:{ type: String, required: true, unique: true, sparse: true},
