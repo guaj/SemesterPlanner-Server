@@ -2,9 +2,6 @@ const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 
-
-
-
 router.route('/').put((req, res) => {
 
 
@@ -36,10 +33,6 @@ router.route('/').put((req, res) => {
           .catch(err => res.status(400).json('Error: ' + err));
   })
   .catch(err => res.status(400).json('Error: ' + err));
-
-
-
-
 
 })
 
@@ -81,6 +74,10 @@ router.get('/fetch/:sID', async (req, res) => {
   const rooms = await StudyRoom.findOne({
     sID: sID
   });
+
+  var io = req.app.get('socketio');
+  io.emit('message', 'Hello!');
+
 res.json(rooms).status(200);
 })
 
@@ -93,24 +90,65 @@ router.route('/add').post(async(req, res)=>{
    console.log(ID)
 
   const room = await StudyRoom.findOne( { sID: ID })
-  const participants=room.participants.push(email)
+  var participants=room.participants;
+  if (!participants.includes(email)) {
+    participants.push(email);
+  }
+  else {
+    res.json("Student is already present in studyroom").status(200);
+    return;
+  }
 
-   StudyRoom.updateOne(
+  await StudyRoom.updateOne(
     { sID: ID }, 
     { participants: participants },
   );
   const student = await Student.findOne( { email: email })
-  const StudyRooms=student.StudyRooms.push(sID)
+  var studyRooms=student.StudyRooms;
+  studyRooms.push(ID);
 
   Student.updateOne(
     { email: email }, 
-    { StudyRooms: StudyRooms },  
-  );
+    { StudyRooms: studyRooms },  
+  ).then(() => res.json(email + " added to studyroom").status(200));
 })
 
+router.route('/remove').post(async(req, res)=>{
+  email  = req.body.email.toString()
+  ID = req.body.sID.toString()
+  console.log(email)
+  console.log(ID)
 
-
-
+  const room = await StudyRoom.findOne( { sID: ID })
+  var participants = room.participants
+  const participantIndex = participants.indexOf(email);
+  if (participantIndex > -1) {
+    participants.splice(participantIndex, 1);
+  }
+  else {
+    res.json('User not found').status(404);
+    return;
+  }
+  await StudyRoom.updateOne(
+    { sID: ID }, 
+    { participants: participants },
+  );
+  const student = await Student.findOne( { email: email })
+  var studyRooms = student.StudyRooms;
+  const roomIndex = studyRooms.indexOf(ID);
+  if (roomIndex > -1) {
+    studyRooms.splice(roomIndex, 1);
+    await Student.updateOne(
+      { email: email }, 
+      { StudyRooms: studyRooms },  
+    ).then(() => res.json(email + " removed to studyroom").status(200));
+  }
+  else {
+    res.json('Room not found').status(404);
+    return;
+  }
+  
+})
 
 /**
  * Email route
@@ -247,10 +285,6 @@ router.route('/file').post(async(req, res) => {
           }
         },
       );
-       
-
-      
-
     
 });
 
