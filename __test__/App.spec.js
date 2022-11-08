@@ -37,7 +37,6 @@ it("add a new Student", async () => {
     "email":"user_"+random0+"@gmail.com",
     "program":"coen",
     "privateProfile":"true",
-    "password":"scooby",
     "friends":["user_"+random2+"@gmail.com", "user_"+random3+"@gmail.com","user_"+random4+"@gmail.com"]
    })
     .expect(200)
@@ -57,7 +56,6 @@ it("add a new Student ", async () => {
   "email":"user_"+random2+"@gmail.com",
   "program":"coen",
   "privateProfile":"true",
-  "password":"scooby",
   "friends":["user_"+random0+"@gmail.com", "user_"+random3+"@gmail.com","user_"+random4+"@gmail.com"]
  })
   .expect(200)
@@ -77,7 +75,6 @@ it("add a new Student ", async () => {
     "email":"user_"+random3+"@gmail.com",
     "program":"coen",
     "privateProfile":"true",
-    "password":"scooby",
     "friends":arr})
   .expect(200)
   .expect((res) => {
@@ -97,7 +94,6 @@ it("add a new Student ", async () => {
     "email":"user_"+random4+"@gmail.com",
     "program":"coen",
     "privateProfile":"true",
-    "password":"scooby",
     "friends":arr
    })
   .expect(200)
@@ -119,8 +115,7 @@ it("add a new Student ", async () => {
     "faculty":"encs",
     "email":"ram@b.ca",
     "program":"coen",
-    "privateProfile":"true",
-    "password":"scooby"})
+    "privateProfile":"true"})
     .expect(200)
     .expect((res) => {
       assert.ok(res.text.includes(expected))

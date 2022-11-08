@@ -160,7 +160,7 @@ router.route('/delete').post(async(req, res) => {
         owner:email
 
       });
-       res.send("deleted room "+ roomID)
+       res.send("deleted room "+ roomID.toString())
   })
 
 //Send a message to a chate it needs the username of the sender, the content of the message and
