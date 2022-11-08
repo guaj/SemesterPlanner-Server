@@ -8,7 +8,7 @@ const CreateMessage = require("../factory/MessageFactory");
 // Sending a message, requires sID (study room ID it belongs to), username and content
 // By default, this will limit the room messages to 30 to reduce load and document size. Use the /bulk routes below to retrieve more messages.
 router.route('/send').post(async (req, res) => {
-    const sID = req.body.sID;
+    const sID = req.body.sID.toString();
     const msg = CreateMessage(req.body);
     const room = await StudyRoom.findOne({sID: sID})
     const messages = room.messages;
