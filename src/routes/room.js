@@ -277,6 +277,18 @@ res.json(note).status(200);
 })
 
 
+router.route('/file/:cnID').delete(async(req, res) => {
+
+  const cnID= req.params.cnID.toString()
+ courseNotes.deleteOne({
+   cnID:cnID,
+  
+})
+
+res.json("deleted file :"+cnID).status(200);
+})
+
+
 //route to fetch all the file  by sID
 
 router.route('/files/:sID').get(async(req, res) => {
