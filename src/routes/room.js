@@ -223,15 +223,6 @@ router.route('message/:sID').get(async(req, res) => {
 
 
 
-router.route('/handle').get(async(req, res) => {
-
-  console.log(req)
-
-  res.send(req).status(200)
-
-   
-})
-
 
 
 //upload a file to the database  file needs to be transformed to a buffer be being sent
