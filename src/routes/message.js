@@ -2,24 +2,16 @@ const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 const Message = require('../models/message.model');
+const CreateMesage = require("../factory/MessageFactory");
+const CreateMessage = require("../factory/MessageFactory");
 
 //Sending a message, requires sID (study room ID it belongs to), username and content
 router.route('/send').post(async (req, res) => {
-    const mID = (Math.random() + 2).toString(36).substring(2);
     const sID = req.body.sID;
-    const username = req.body.username;
-    const content = req.body.content;
-
-    const msg = new Message({
-        sID: sID,
-        mID: mID,
-        username: username,
-        content: content
-    })
-
+    const msg = CreateMessage(req.body);
     const room = await StudyRoom.findOne({sID: sID})
+    const messages = room.messages;
 
-    var messages = room.messages;
     messages.unshift(msg)
 
     await StudyRoom.updateOne({sID: sID}, {messages: messages})
