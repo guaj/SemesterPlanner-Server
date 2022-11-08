@@ -107,7 +107,7 @@ router.route('/add').post(async(req, res)=>{
   var studyRooms=student.StudyRooms;
   studyRooms.push(ID);
 
-  await Student.updateOne(
+  Student.updateOne(
     { email: email }, 
     { StudyRooms: studyRooms },  
   ).then(() => res.json(email + " added to studyroom").status(200));
