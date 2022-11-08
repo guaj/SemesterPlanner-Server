@@ -263,23 +263,32 @@ router.post('/file', upload.single("file"), (req, res) => {
 });
 
 
-//get file
+//get file BY cnID
 
-router.route('/file/:sID&:cnID').get(async(req, res) => {
+router.route('/file/:cnID').get(async(req, res) => {
 
-  const sID= req.params.sID.toString()
-  const cnID= req.params.cnID.toString()
-
-
- const note =  await courseNotes.find({
-    sID:sID,
-    cnID: cnID
+   const cnID= req.params.cnID.toString()
+   const note =  await courseNotes.find({
+    cnID:cnID,
+   
 })
 
 res.json(note).status(200);
 })
 
 
+//route to fetch all the file  by sID
+
+router.route('/files/:sID').get(async(req, res) => {
+
+  const sID= req.params.sID.toString()
+  const notes =  await courseNotes.find({
+    sID:sID,
+   
+})
+
+res.json(notes).status(200);
+})
 
 
 
