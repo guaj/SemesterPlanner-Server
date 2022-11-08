@@ -279,13 +279,12 @@ res.json(note).status(200);
 
 router.route('/file/:cnID').delete(async(req, res) => {
 
-  const cnID= req.params.cnID.toString()
- courseNotes.deleteOne({
-   cnID:cnID,
-  
-})
+  const noteID = req.params.cnID
+ await courseNotes.deleteOne({
+   cnID:noteID
+  })
 
-res.json("deleted file :"+cnID).status(200);
+res.json("deleted file :" + noteID).status(200);
 })
 
 
