@@ -18,7 +18,7 @@ router.route('/send').post(async (req, res) => {
   
     msg.save().then(() => res.json(`Message Sent`).status(200))
     var io = req.app.get('socketio');
-    io.to(sID).emit('message', msg)
+    io.to(sID).emit('newMessage', msg)
   });
 
 module.exports = router;
