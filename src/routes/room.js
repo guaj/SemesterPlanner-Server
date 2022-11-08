@@ -1,8 +1,30 @@
 const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
+const courseNotes = require('../models/CourseNotes');
+const multer =  require('multer');
+const fs = require('fs');
+var path = require('path');
+const { db } = require('../models/student.model');
 
 
+const Storage = multer.diskStorage({
+destination:(req,file,cb)=>{
+
+  cb(null,'uploads')
+  
+  },
+filename:(req,file,cb)=>{
+
+cb(null,file.originalname)
+
+}
+})
+
+const upload = multer({
+storage:Storage
+
+})
 
 
 router.route('/').put((req, res) => {
@@ -174,13 +196,8 @@ router.route('/message').post(async(req, res) => {
       mil.push(message) 
      console.log(mil)
       StudyRoom.updateOne(
-<<<<<<< HEAD
-        { sID: roomID }, 
-        { messages: mil },
-=======
         { sID: roomID },
         { messages: messages.toString() },
->>>>>>> e6b5f2b12b4d0ca5e1e0c02ac744fc7446fde71d
         (err, docs) => {
           if (err) {
             console.log(err);
@@ -206,52 +223,43 @@ router.route('message/:sID').get(async(req, res) => {
 
 
 
+router.route('/handle').get(async(req, res) => {
+
+  console.log(req)
+
+  res.send(req).status(200)
+
+   
+})
 
 
 
 //upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send he ID of the study room, 
-router.route('/file').post(async(req, res) => {
+router.post('/file', upload.single("file"), (req, res) => {
 
-    
-    let r = (Math.random() + 1).toString(36).substring(7);
-
-
-    const roomID  = req.body.sID.toString(); 
-    const file =  req.body.file;
-    const type = req.body.type;
-    const username = req.body.username.toString();
-     
-
-     console.log(roomID)
-
-    const room = await StudyRoom.findOne({
-        sID:roomID,
-      }); 
-
-    let note = {
+  let r = (Math.random() + 1).toString(36).substring(7);
+        const newImage= new courseNotes({
          cnID:r,
-         username:username,
-         file:file,
-         type:type
-      }
-      console.log(room);
-     var notes = room.courseNotes
-      notes.push(note)
-      console.log(notes)
+         sID:req.body.sID,
+         email:req.body.email,
+         filetype:req.body.type,
+         file:{
+          data: fs.readFileSync('uploads/' + req.file.filename),
+          contentType:req.body.type 
+         }
+
+        })
+
+        newImage.save().then(()=>res.send("successfuly uploaded"))
+
+        
+        
+        
+       
 
 
-      StudyRoom.updateOne(
-        { sID: roomID },
-        { courseNotes: notes },
-        (err, docs) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('Updated Docs : ', docs);
-          }
-        },
-      );
+
        
 
       
@@ -268,12 +276,12 @@ router.route('/file/:sID&:cnID').get(async(req, res) => {
   const cnID= req.params.cnID.toString()
 
 
- const room =  await StudyRoom.find({
+ const note =  await courseNotes.find({
     sID:sID,
-    "courseNotes.cnID" : cnID
+    cnID: cnID
 })
 
-res.json(room).status(200);
+res.json(note).status(200);
 })
 
 
