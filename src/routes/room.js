@@ -7,10 +7,10 @@ const fs = require('fs');
 var path = require('path');
 const { db } = require('../models/student.model');
 
-
+maxSize= 16000000;
 const Storage = multer.diskStorage({
 destination:(req,file,cb)=>{
-
+  
   cb(null,'uploads')
   
   },
@@ -22,7 +22,8 @@ cb(null,file.originalname)
 })
 
 const upload = multer({
-storage:Storage
+storage:Storage,
+limits: { fileSize: maxSize }
 
 })
 
