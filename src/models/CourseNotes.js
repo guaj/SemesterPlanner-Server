@@ -8,7 +8,7 @@ const courseNotesSchema = new Schema({
     email:{type:String, required:true},
     filetype:{type:String, required:true},
     filename:{type:String, required:true},
-    filesize:{type:Long, required:true },
+    filesize:{type:String, required:true },
     file: { 
            data: Buffer,
            ContentType:String
