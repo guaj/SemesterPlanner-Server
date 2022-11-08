@@ -7,6 +7,8 @@ const courseNotesSchema = new Schema({
     sID :{ type:String, required:true },
     email:{type:String, required:true},
     filetype:{type:String, required:true},
+    filename:{type:String, required:true},
+    filesize:{type:Long, required:true },
     file: { 
            data: Buffer,
            ContentType:String

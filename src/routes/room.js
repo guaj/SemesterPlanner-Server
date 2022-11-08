@@ -19,6 +19,7 @@ filename:(req,file,cb)=>{
 cb(null,file.originalname)
 
 }
+
 })
 
 const upload = multer({
@@ -236,6 +237,8 @@ router.post('/file', upload.single("file"), (req, res) => {
          sID:req.body.sID,
          email:req.body.email,
          filetype:req.body.type,
+         filename:req.body.name,
+         filesize:req.body.size,
          file:{
           data: fs.readFileSync('uploads/' + req.file.filename),
           contentType:req.body.type 

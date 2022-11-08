@@ -18,12 +18,7 @@ const studyRoomSchema = new Schema({
         time:Date
        }],
 
-    courseNotes:[{
-        cnID:{ type: String, required: true, unique: true, sparse: true},
-        username: String,
-        type:String,
-        file: Buffer,
-        },{timestamps: true}]
+
     
 }, {
     timestamps: true,
