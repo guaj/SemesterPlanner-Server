@@ -17,7 +17,8 @@ router.route('/send').post(async (req, res) => {
     await StudyRoom.updateOne({sID: sID}, {messages: messages})
   
     msg.save().then(() => res.json(`Message Sent`).status(200))
-
+    var io = req.app.get('socketio');
+    io.to(sID).emit('message', msg)
   });
 
 module.exports = router;

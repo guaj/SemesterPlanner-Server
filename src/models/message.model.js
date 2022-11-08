@@ -7,7 +7,6 @@ const messageSchema = new Schema({
     mID: { type: String, required: true, unique: true, sparse: true },
     username: { type: String, required: true},
     content: {type: String, required: true},
-    time: {type: Date, required: true}
     
 }, {
     timestamps: true,

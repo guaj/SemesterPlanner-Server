@@ -2,8 +2,6 @@ const express = require('express');
 const cors = require('cors');
 var bodyParser = require('body-parser')
 const mongoose = require('mongoose');
-const socketIo = require("socket.io");
-
 
 // Allows us to include environment variables in .env file
 require('dotenv').config();
@@ -13,7 +11,13 @@ const port = process.env.PORT || 5000
 const server = app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 })
-const io = socketIo(server, { cors: { origin: "*" } });
+var io = require('socket.io')(server,{
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+app.set('socketio', io);
 
 // Middlewares
 app.use(cors());
@@ -21,10 +25,6 @@ app.use(express.json());    // Allows us to parse json for our Mongo DB
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use((req, res, next) => {
-  req.io = io;
-  return next();
-});
 
 // Connect to MongoDB
 const uri = process.env.ATLAS_URI;
@@ -55,6 +55,14 @@ app.use('/login', loginRouter);
 app.use('/room', roomRouter);
 app.use('/friend', friendRouter);
 app.use('/message', messageRouter);
+
+// Sockets
+io.sockets.on('connection', function(socket) {
+  socket.on('create', function(room) {
+    socket.join(room);
+    console.log("User joined " +  room)
+  });
+});
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {

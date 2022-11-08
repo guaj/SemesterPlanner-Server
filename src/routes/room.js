@@ -74,6 +74,10 @@ router.get('/fetch/:sID', async (req, res) => {
   const rooms = await StudyRoom.findOne({
     sID: sID
   });
+
+  var io = req.app.get('socketio');
+  io.emit('message', 'Hello!');
+
 res.json(rooms).status(200);
 })
 
