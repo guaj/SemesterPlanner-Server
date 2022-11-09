@@ -275,7 +275,7 @@ router.route('message/:sID').get(async(req, res) => {
 //upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send he ID of the study room, 
 router.post('/file', upload.single("file"), (req, res) => {
-
+console.log(req.body);
   let r = (Math.random() + 1).toString(36).substring(7);
         const newImage= new courseNotes({
          cnID:r,
@@ -285,7 +285,7 @@ router.post('/file', upload.single("file"), (req, res) => {
          filename:req.body.name,
          filesize:req.body.size,
          file:{
-          data: fs.readFileSync('uploads/' + req.file.filename),
+          data: req.body.file,
           contentType:req.body.type
          }
 
