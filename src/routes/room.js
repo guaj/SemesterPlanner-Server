@@ -1,6 +1,33 @@
 const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
+const courseNotes = require('../models/CourseNotes');
+const multer =  require('multer');
+const fs = require('fs');
+var path = require('path');
+const { db } = require('../models/student.model');
+
+maxSize= 16000000;
+const Storage = multer.diskStorage({
+destination:(req,file,cb)=>{
+
+  cb(null,'uploads')
+
+  },
+filename:(req,file,cb)=>{
+
+cb(null,file.originalname)
+
+}
+
+})
+
+const upload = multer({
+storage:Storage,
+limits: { fileSize: maxSize }
+
+})
+
 
 router.route('/').put((req, res) => {
 
@@ -33,6 +60,10 @@ router.route('/').put((req, res) => {
           .catch(err => res.status(400).json('Error: ' + err));
   })
   .catch(err => res.status(400).json('Error: ' + err));
+
+
+
+
 
 })
 
@@ -109,7 +140,7 @@ router.route('/add').post(async(req, res)=>{
 
   Student.updateOne(
     { email: email }, 
-    { StudyRooms: studyRooms },  
+    { StudyRooms: studyRooms },
   ).then(() => res.json(email + " added to studyroom").status(200));
 })
 
@@ -130,7 +161,7 @@ router.route('/remove').post(async(req, res)=>{
     return;
   }
   await StudyRoom.updateOne(
-    { sID: ID }, 
+    { sID: ID },
     { participants: participants },
   );
   const student = await Student.findOne( { email: email })
@@ -139,15 +170,15 @@ router.route('/remove').post(async(req, res)=>{
   if (roomIndex > -1) {
     studyRooms.splice(roomIndex, 1);
     await Student.updateOne(
-      { email: email }, 
-      { StudyRooms: studyRooms },  
+      { email: email },
+      { StudyRooms: studyRooms },
     ).then(() => res.json(email + " removed to studyroom").status(200));
   }
   else {
     res.json('Room not found').status(404);
     return;
   }
-  
+
 })
 
 /**
@@ -212,8 +243,8 @@ router.route('/message').post(async(req, res) => {
       mil.push(message) 
      console.log(mil)
       StudyRoom.updateOne(
-        { sID: roomID }, 
-        { messages: mil },
+        { sID: roomID },
+        { messages: messages.toString() },
         (err, docs) => {
           if (err) {
             console.log(err);
@@ -241,71 +272,79 @@ router.route('message/:sID').get(async(req, res) => {
 
 
 
-
 //upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send he ID of the study room, 
-router.route('/file').post(async(req, res) => {
+router.post('/file', upload.single("file"), (req, res) => {
 
-    
-    let r = (Math.random() + 1).toString(36).substring(7);
-
-
-    const roomID  = req.body.sID.toString(); 
-    const file =  req.body.file;
-    const type = req.body.type;
-    const username = req.body.username.toString();
-     
-
-     console.log(roomID)
-
-    const room = await StudyRoom.findOne({
-        sID:roomID,
-      }); 
-
-    let note = {
+  let r = (Math.random() + 1).toString(36).substring(7);
+        const newImage= new courseNotes({
          cnID:r,
-         username:username,
-         file:file,
-         type:type
-      }
-      console.log(room);
-     var notes = room.courseNotes
-      notes.push(note)
-      console.log(notes)
+         sID:req.body.sID,
+         email:req.body.email,
+         filetype:req.body.type,
+         filename:req.body.name,
+         filesize:req.body.size,
+         file:{
+          data: fs.readFileSync('uploads/' + req.file.filename),
+          contentType:req.body.type
+         }
+
+        })
+
+        newImage.save().then(()=>res.send("successfuly uploaded"))
 
 
-      StudyRoom.updateOne(
-        { sID: roomID },
-        { courseNotes: notes },
-        (err, docs) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('Updated Docs : ', docs);
-          }
-        },
-      );
+
+
+
+
+
+
+       
+
+      
+
     
 });
 
 
-//get file
+//get file BY cnID
 
-router.route('/file/:sID&:cnID').get(async(req, res) => {
+router.route('/file/:cnID').get(async(req, res) => {
+
+   const cnID= req.params.cnID.toString()
+   const note =  await courseNotes.find({
+    cnID:cnID,
+
+})
+
+res.json(note).status(200);
+})
+
+
+router.route('/file/:cnID').delete(async(req, res) => {
+
+  const noteID = req.params.cnID
+ await courseNotes.deleteOne({
+   cnID:noteID
+  })
+
+res.json("deleted file :" + noteID).status(200);
+})
+
+
+//route to fetch all the file  by sID
+
+router.route('/files/:sID').get(async(req, res) => {
 
   const sID= req.params.sID.toString()
-  const cnID= req.params.cnID.toString()
-
-
- const room =  await StudyRoom.find({
+  const notes =  await courseNotes.find({
     sID:sID,
-    "courseNotes.cnID" : cnID
+
 })
 
-res.json(room).status(200);
+res.json(notes).status(200);
 })
-
-
 
 
 
