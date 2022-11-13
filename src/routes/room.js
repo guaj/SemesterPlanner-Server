@@ -21,7 +21,7 @@ router.route('/').put((req, res) => {
           room.title = req.body.title;
       }
       if (req.body.avatarText) {
-          room.avatarText = req.body.avatarText;
+          room.avatar = req.body.avatarText;
       }
       if (req.body.participants) {
           room.participants= req.body.participants;
