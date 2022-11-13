@@ -22,7 +22,9 @@ const random4 = (Math.random() + 4).toString(36).substring(2);
 /**
  * Remove and close the db and server.
  */
-afterAll(async () => await dbHandler.closeDatabase());
+afterAll(async () => {
+  await dbHandler.closeDatabase();
+});
 
 describe("testing student api routes", ()=>{
 
