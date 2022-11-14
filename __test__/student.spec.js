@@ -1,8 +1,8 @@
 // INCOMPLETE
-const { request, assert } = require("./app");
-const { roomdata } = require("./room_test_data");
+const { request, assert } = require("./helper/app");
+const { roomdata } = require("./helper/room_test_data");
 
-const dbHandler = require('./db-handler')
+const dbHandler = require('./helper/db-handler')
 
 //These tests will work locally, but not in CicleCI because we do not have a public API available.
 //Change the URL when that is setup.
