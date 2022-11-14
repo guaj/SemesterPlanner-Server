@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
-const courseNotes = require('../models/CourseNotes');
-const {createStudyRoom, editStudyRoom} = require("../factory/RoomFactory");
+const courseNotes = require('../models/courseNotes');
+const {createStudyRoom, editStudyRoom} = require("../factory/roomFactory");
 
 
 router.route('/').put((req, res) => {
