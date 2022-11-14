@@ -3,30 +3,12 @@ const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 const courseNotes = require('../models/CourseNotes');
 const multer =  require('multer');
-const fs = require('fs');
-var path = require('path');
-const { db } = require('../models/student.model');
+const { v4: uuidv4 } = require('uuid');
 
 maxSize= 16000000;
-const Storage = multer.diskStorage({
-destination:(req,file,cb)=>{
-  
-  cb(null,'uploads')
-  
-  },
-filename:(req,file,cb)=>{
+var storage = multer.memoryStorage()
+var upload = multer({ storage: storage })
 
-cb(null,file.originalname)
-
-}
-
-})
-
-const upload = multer({
-storage:Storage,
-limits: { fileSize: maxSize }
-
-})
 
 
 router.route('/').put((req, res) => {
@@ -271,17 +253,16 @@ router.route('message/:sID').get(async(req, res) => {
 //upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send he ID of the study room, 
 router.post('/file', upload.single("file"), (req, res) => {
-    console.log(req);
-    let r = (Math.random() + 1).toString(36).substring(7);
+
         const newImage= new courseNotes({
-         cnID:r,
+         cnID:uuidv4(),
          sID:req.body.sID,
          email:req.body.email,
          filetype:req.body.type,
          filename:req.body.name,
          filesize:req.body.size,
          file:{
-          data: req.file,
+          data:req.file.buffer,
           contentType:req.body.type 
          }
 
