@@ -8,9 +8,12 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000
-const server = app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-})
+let server;
+
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(port, () => console.log(`Listening on port ${port}`))
+}
+
 var io = require('socket.io')(server,{
   cors: {
     origin: process.env.CLIENT_BASE_URL,

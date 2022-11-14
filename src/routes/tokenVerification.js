@@ -20,6 +20,4 @@ const verifyJWTAuth = (request, response, next) => {
   }
 };
 
-
-
 module.exports = { verifyJWTAuth };

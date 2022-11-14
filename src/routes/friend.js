@@ -1,44 +1,34 @@
 const router = require('express').Router();
 const Student = require('../models/student.model');
 
-
 // fetch the list of friends by email
 router.route('/:email').get(async(req, res)=>{
 const email= req.params.email.toString()
 const Profil = await Student.findOne({
     email:email
   });
-
   res.json(Profil.friends).status(200)
 })
 
-
-
 // send  a friend rerquest
 router.route('/add').post(async(req, res) => {
-
   const username = req.body.username.toString();
   const friendUsername= req.body.friendUsername.toString()
+  const myProfile = await Student.findOne({
+      username:username,
+    });
 
-    
+  const friendProfile = await Student.findOne({
+      username:friendUsername,
+    });
 
-    const myProfil = await Student.findOne({
-        username:username,
-      });
-
-    const friendProfil = await Student.findOne({
-        username:friendUsername,
-      });
-
-      let friend = friendUsername
-      let me = username
+    let friend = friendUsername
+    let me = username
       
-   let friendRequestsSent= myProfil.friendRequestsSent
+   let friendRequestsSent= myProfile.friendRequestsSent
    friendRequestsSent.push(friendUsername)
 
-
-
-   let friendRequestsReceived=friendProfil.friendRequestsReceived
+   let friendRequestsReceived=friendProfile.friendRequestsReceived
    friendRequestsReceived.push(username)
 
       Student.updateOne(
@@ -64,14 +54,7 @@ router.route('/add').post(async(req, res) => {
           }
         },
       );
-
-      
-
-    
 });
-
-
-
 
 router.route('/answer').post(async(req, res) => {
 
@@ -79,40 +62,26 @@ router.route('/answer').post(async(req, res) => {
   const friendUsername= req.body.friendUsername
   const answer = req.body.answer;
 
-
- console.log(username)
- console.log(friendUsername)
+  console.log(username)
+  console.log(friendUsername)
 
     Student.updateOne({ username: username }, 
       { $pull: { friendRequestsReceived: { $in: [friendUsername] }}})
- 
-
-
-    
-      
-
     
 });
-
 
 // //upload a file to the database not yet complete
 // router.route('/file').post(async(req, res) => {
 
 //     let notes;
 //     let r = (Math.random() + 1).toString(36).substring(7);
-
-
 //     const roomID  = req.body.sID; 
 //     const file =  req.body.file;
 //     const username = req.body.username;
-     
-
 //      console.log(roomID)
-
 //     const room = await StudyRoom.findOne({
 //         sID:roomID,
 //       });
-
 //     let note = {
 //          nID:r,
 //          username:username,
@@ -121,7 +90,6 @@ router.route('/answer').post(async(req, res) => {
 //       console.log(room);
 //       notes = room.courseNotes
 //       notes.push(note)
-
 //       StudyRoom.updateOne(
 //         { sID: roomID },
 //         { courseNotes: notes },
@@ -133,22 +101,6 @@ router.route('/answer').post(async(req, res) => {
 //           }
 //         },
 //       );
-       
-
-      
-
-    
 // });
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = router;

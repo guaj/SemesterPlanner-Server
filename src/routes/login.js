@@ -52,8 +52,6 @@ router.post('/', async (request, response) => {
     return response.status(200).json(responsePayload);
   });
 
-
-
 router.route('/yyy').post((req, res) => {
     student.findOne({ 
         email: req.body.email,

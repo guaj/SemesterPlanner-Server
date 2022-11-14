@@ -1,3 +1,4 @@
+// INCOMPLETE
 const {request, assert} =  require("./app");
 const {roomdata} =  require("./room_test_data");
 
@@ -104,10 +105,7 @@ it("add a new Student ", async () => {
   })
 });
 
-
-
-
-  it("add a new Student ", async () => {
+it("add a new Student ", async () => {
    
   expected = "Student ram@b.ca added"
   
@@ -149,47 +147,5 @@ it("add a new Student ", async () => {
     
    });
 
-
-
 })
-
-
-
-describe("testing room api routes", ()=>{
-
-   //creating a study room
-  it("create a study room", async () => {
-  
-    await request.post('/room/').send(roomdata)
-    .expect(200)
-
-   });
-
-  it("fetching data from study room by sID", async () => {
-  
-    await request.get('/room/fetch/r9q1yfw32ro')
-    .expect(200)
-
-   });
-
-
-   it("fetching data from study room by email", async () => {
-  
-    await request.get('/room/fetch/am68gno@gmail.com')
-    .expect(200)
-
-   });
-
-
-   it("add a friend to the study room", async () => {
-  
-    await request.get('/room/fetch/r9q1yfw32ro')
-    .expect(200)
-
-   });
-
-
-/// delete a study room
-
-  })
 

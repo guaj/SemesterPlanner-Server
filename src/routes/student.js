@@ -70,8 +70,8 @@ router.route('/email/:email').delete((req, res) => {
  */
 router.route('/update').post( TokenVerify, async (req, res) => {
     if(req.body.password){
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-                         }
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    }
 
     student.findOne({email: req.body.email})
         .then(user => {
@@ -94,7 +94,6 @@ router.route('/update').post( TokenVerify, async (req, res) => {
                 user.privateProfile= req.body.privateProfile;
             }
             
-
             user.save()
                 .then(() => res.json(`Student ${user.email} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
