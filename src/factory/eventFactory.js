@@ -1,16 +1,16 @@
 const Event = require('../models/event.model');
 
 function createEvent(data) {
-    const username = req.body.username;
-    const eventHeader = req.body.eventHeader;
-    const description = req.body.description;
-    const link = req.body.link;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
-    const startTime = req.body.startTime;
-    const endTime = req.body.endTime;
-    const reccurence = req.body.reccurence;
-    const color = req.body.color;
+    const username = data.username;
+    const eventHeader = data.eventHeader;
+    const description = data.description;
+    const link = data.link;
+    const startDate = data.startDate;
+    const endDate = data.endDate;
+    const startTime = data.startTime;
+    const endTime = data.endTime;
+    const reccurence = data.reccurence;
+    const color = data.color;
     return new Event({
         username,
         eventHeader,

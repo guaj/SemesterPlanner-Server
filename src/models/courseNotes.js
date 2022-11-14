@@ -18,6 +18,6 @@ const courseNotesSchema = new Schema({
 },{timestamps:true})
 
 
-const courseNotes = mongoose.model('courseNotes', courseNotesSchema);
+const CourseNotes = mongoose.model('CourseNotes', courseNotesSchema);
 
-module.exports = courseNotes;
+module.exports = CourseNotes;

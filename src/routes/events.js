@@ -49,7 +49,6 @@ router.route('/update').post( async (req, res) => {
  */
 router.route('/add').post( async (req, res) => {
     const newEvent = createEvent(req.body)
-    console.log(newEvent)
     newEvent.save()
         .then(() => res.json(`Event ${eventHeader} added`))
 });
