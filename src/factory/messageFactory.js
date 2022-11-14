@@ -6,7 +6,7 @@ function createMessage(data) {
     return new Message({
         studyRoomID: data.studyRoomID,
         messageID: messageId,
-        username: data.username,
+        email: data.email,
         content: data.content,
         time: new Date()
     })

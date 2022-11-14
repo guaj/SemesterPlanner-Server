@@ -26,7 +26,7 @@ router.route('/send').post(async (req, res) => {
 
 // finding message by message ID
 router.route('/:messageID').get(async (req, res) => {
-  Message.findOne({ email: req.params.email })
+  Message.findOne({ messageID: req.params.messageID })
     .then(msg => res.json(msg).status(200))
     .catch(err => res.status(400).json('Error: ' + err));
 });
