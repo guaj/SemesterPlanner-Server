@@ -35,8 +35,8 @@ router.route('/:username').delete((req, res) => {
  */
 router.route('/update').post(async (req, res) => {
     Event.findOne({ _id: new mongoose.Schema.Types.ObjectId(req.body._id) })
-        .then(event => {
-            event = editEvent(req.body)
+        .then(() => {
+            const event = editEvent(req.body)
             event.save()
                 .then(() => res.json(`Event ${event.eventHeader} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));

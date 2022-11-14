@@ -67,7 +67,7 @@ router.route('/email/:email').delete((req, res) => {
  * Update a user
  */
 router.route('/update').post(TokenVerify, async (req, res) => {
-    Student.findOne({ email: req.body.email })
+    Student.findOne({ email: req.body.email.toString() })
         .then(() => {
             editStudent(req.body).then((user) => {
                 user.save()

@@ -8,8 +8,8 @@ const createCourseNotes = require("../factory/courseNotesFactory");
 
 router.route('/').put((req, res) => {
   StudyRoom.findOne({ studyRoomID: req.body.studyRoomID.toString() })
-    .then(room => {
-      room = editStudyRoom(req.body)
+    .then(() => {
+      const room = editStudyRoom(req.body)
       room.save()
         .then(() => res.json(`Room ${room.studyRoomID} updated`))
         .catch(err => res.status(400).json('Error: ' + err));

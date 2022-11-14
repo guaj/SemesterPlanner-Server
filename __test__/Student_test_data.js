@@ -5,8 +5,7 @@ registerPayload = {
   "faculty": "encs",
   "email": "ram@b.ca",
   "program": "coen",
-  "privateProfile": "true",
-  "password": "scooby"
+  "privateProfile": "true"
 }
 
 loginPayload = {
