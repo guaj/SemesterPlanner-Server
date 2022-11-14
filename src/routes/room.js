@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
-const CourseNotes = require('../models/courseNotes');
+const CourseNotes = require('../models/courseNotes.model');
 const {createStudyRoom, editStudyRoom} = require("../factory/roomFactory");
 const createCourseNotes = require("../factory/courseNotesFactory");
 
