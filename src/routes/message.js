@@ -2,7 +2,7 @@ const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 const Message = require('../models/message.model');
-const createMessage = require("../factory/MessageFactory");
+const createMessage = require("../factory/messageFactory");
 
 // Sending a message, requires studyRoomID (study room ID it belongs to), username and content
 // By default, this will limit the room messages to 30 to reduce load and document size. Use the /bulk routes below to retrieve more messages.
