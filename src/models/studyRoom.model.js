@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const Message = require('./message.model');
 
 const studyRoomSchema = new Schema({
-    sID: { type: String, required: true, unique: true },
+    studyRoomID: { type: String, required: true, unique: true },
     owner: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String },
