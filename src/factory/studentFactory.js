@@ -23,10 +23,7 @@ async function createStudent(data) {
 }
 
 async function editStudent(data) {
-    var student = {};
-    if (req.body.password) {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    }
+    let student = {};
     if (data.username) {
         user.username = data.username;
     }
@@ -34,7 +31,7 @@ async function editStudent(data) {
         user.email = data.email;
     }
     if (data.password) {
-        user.password = hashedPassword;
+        user.password = await bcrypt.hash(req.body.password, 10);
     }
     if (data.program) {
         user.program = data.program;

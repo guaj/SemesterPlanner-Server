@@ -32,7 +32,6 @@ router.route('/').post((req, res) => {
  * @return room: the room matching the study room ID
  */
 router.get('/fetch/:studyRoomID', async (req, res) => {
-  console.log(req.params.studyRoomID)
   const studyRoomID = req.params.studyRoomID.toString()
   const rooms = await StudyRoom.findOne({
     studyRoomID: studyRoomID
@@ -45,8 +44,8 @@ router.get('/fetch/:studyRoomID', async (req, res) => {
 
 // add a friend to study room
 router.route('/add').post(async (req, res) => {
-  email = req.body.email.toString()
-  ID = req.body.studyRoomID.toString()
+  const email = req.body.email.toString()
+  const ID = req.body.studyRoomID.toString()
   const room = await StudyRoom.findOne({ studyRoomID: ID })
   var participants = room.participants;
   if (!participants.includes(email)) {
@@ -72,8 +71,8 @@ router.route('/add').post(async (req, res) => {
 })
 
 router.route('/remove').post(async (req, res) => {
-  email = req.body.email.toString()
-  ID = req.body.studyRoomID.toString()
+  const email = req.body.email.toString()
+  const ID = req.body.studyRoomID.toString()
 
   const room = await StudyRoom.findOne({ studyRoomID: ID })
   var participants = room.participants
@@ -134,7 +133,6 @@ router.route('/delete').post(async (req, res) => {
 // upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send the ID of the study room, 
 router.post('/file', (req, res) => {
-  let r = (Math.random() + 1).toString(36).substring(7);
   const newImage = createCourseNotes(req.body);
   newImage.save().then(() => res.send("successfuly uploaded"))
 

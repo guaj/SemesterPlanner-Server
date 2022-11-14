@@ -26,7 +26,7 @@ function createEvent(data) {
 }
 
 function editEvent(data) {
-    var event = {};
+    let event = {};
     if (data.eventHeader) {
         event.eventHeader = data.eventHeader;
     }

@@ -21,7 +21,7 @@ function createStudyRoom(data) {
 }
 
 function editStudyRoom(data) {
-    var room = {};
+    let room = {};
     if (data.owner) {
         room.owner = data.owner;
     }

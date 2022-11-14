@@ -1,4 +1,4 @@
-roomdata = {
+const roomdata = {
   "owner": "ram68gno@gmail.com",
   "color": "red",
   "description": "2nd best room",

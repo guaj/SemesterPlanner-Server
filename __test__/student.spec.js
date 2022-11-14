@@ -28,7 +28,7 @@ describe("testing student api routes", () => {
 
   it("add a new Student", async () => {
 
-    expected = "user_" + random0
+    let expected = "user_" + random0
 
     await request.post('/student/add').send(
       {
@@ -48,7 +48,7 @@ describe("testing student api routes", () => {
 
   it("add a new Student ", async () => {
 
-    expected = "user_" + random2
+    let expected = "user_" + random2
 
     await request.post('/student/add').send(
       {
@@ -68,7 +68,7 @@ describe("testing student api routes", () => {
 
   it("add a new Student ", async () => {
 
-    expected = "user_" + random3
+    let expected = "user_" + random3
     let arr = ["user_" + random2 + "@gmail.com", "user_" + random0 + "@gmail.com", "user_" + random4 + "@gmail.com"]
     await request.post('/student/add').send(
       {
@@ -88,7 +88,7 @@ describe("testing student api routes", () => {
 
   it("add a new Student ", async () => {
 
-    expected = "user_" + random4
+    let expected = "user_" + random4
     let arr = ["user_" + random2 + "@gmail.com", "user_" + random3 + "@gmail.com", "user_" + random0 + "@gmail.com"]
 
     await request.post('/student/add').send(
@@ -109,7 +109,7 @@ describe("testing student api routes", () => {
 
   it("add a new Student ", async () => {
 
-    expected = "Student ram@b.ca added"
+    let expected = "Student ram@b.ca added"
 
     await request.post('/student/add').send(
       {
@@ -126,10 +126,9 @@ describe("testing student api routes", () => {
       })
   });
 
-
   it("student login test ", async () => {
 
-    expected = "test45"
+    let expected = "test45"
 
     await request.post('/login').send(
       {
@@ -140,9 +139,6 @@ describe("testing student api routes", () => {
       .expect((res) => {
         assert.ok(res.text.includes(expected))
       })
-    //expect(httpResponse).toBe("test45");
-
-
   });
 
   //works as cleanup of previous test too.

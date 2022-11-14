@@ -1,5 +1,5 @@
 
-registerPayload = {
+const registerPayload = {
   "username": "test45",
   "password": "scooby",
   "faculty": "encs",
@@ -8,7 +8,7 @@ registerPayload = {
   "privateProfile": "true"
 }
 
-loginPayload = {
+const loginPayload = {
   "email": "ram@b.ca",
   "password": "scooby"
 }
