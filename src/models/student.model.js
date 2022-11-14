@@ -23,6 +23,6 @@ const studentSchema = new Schema({
     timestamps: true,
 });
 
-const student = mongoose.model('Student', studentSchema);
+const Student = mongoose.model('Student', studentSchema);
 
-module.exports = student;
+module.exports = Student;
