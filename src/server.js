@@ -42,7 +42,6 @@ else {
   console.log("Testing environment. Creating virtual mongo database.")
 }
 
-
 // Routes
 const studentsRouter = require('./routes/student.js');
 const loginRouter = require('./routes/login.js');

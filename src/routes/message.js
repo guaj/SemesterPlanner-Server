@@ -2,14 +2,13 @@ const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 const Message = require('../models/message.model');
-const CreateMesage = require("../factory/MessageFactory");
-const CreateMessage = require("../factory/MessageFactory");
+const createMessage = require("../factory/MessageFactory");
 
 // Sending a message, requires studyRoomID (study room ID it belongs to), username and content
 // By default, this will limit the room messages to 30 to reduce load and document size. Use the /bulk routes below to retrieve more messages.
 router.route('/send').post(async (req, res) => {
     const studyRoomID = req.body.studyRoomID.toString();
-    const msg = CreateMessage(req.body);
+    const msg = createMessage(req.body);
     const room = await StudyRoom.findOne({studyRoomID: studyRoomID})
     const messages = room.messages;
 
