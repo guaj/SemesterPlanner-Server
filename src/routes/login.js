@@ -11,64 +11,62 @@ const jwt = require('jsonwebtoken');
 
 
 router.post('/', async (request, response) => {
-    const { body } = request;
-  
-    // Query MongoDb with email and get matching Student (will be null if none)
-    const user = await student.findOne({
-      email: body.email,
-    });
-  
-    // Bad Username: 401
-    if (user == null) {
-      return response.status(401).json({ auth: false, message: 'Error: Invalid Username or Passwordiii' });
-    }
-  
-    const isCorrectPassword = await bcrypt.compareSync(body.password, user.password);
-    // Bad Password: 401
-    if (!isCorrectPassword) {
-      return response.status(401).json({ auth: false, message: 'Error: Incorrect Username or Password' });
-    }
-  
-    const tokenPayload = {
-      id: user.id,
-    };
-    console.log(tokenPayload)
-    // generating the JWT token
-    const tokenJWT = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' }, {});
-  
-    const responsePayload = {
-      auth: true,
-      token: tokenJWT,
-      profile: {
-        username: user.username,
-        email: user.email,
-       
-      },
-    };
-  
-    // OK 200
-    console.log(responsePayload);
-    console.log(tokenPayload)
-    return response.status(200).json(responsePayload);
+  const { body } = request;
+
+  // Query MongoDb with email and get matching Student (will be null if none)
+  const user = await student.findOne({
+    email: body.email,
   });
 
+  // Bad Username: 401
+  if (user == null) {
+    return response.status(401).json({ auth: false, message: 'Error: Invalid Username or Passwordiii' });
+  }
+
+  const isCorrectPassword = await bcrypt.compareSync(body.password, user.password);
+  // Bad Password: 401
+  if (!isCorrectPassword) {
+    return response.status(401).json({ auth: false, message: 'Error: Incorrect Username or Password' });
+  }
+
+  const tokenPayload = {
+    id: user.id,
+  };
+  console.log(tokenPayload)
+  // generating the JWT token
+  const tokenJWT = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' }, {});
+
+  const responsePayload = {
+    auth: true,
+    token: tokenJWT,
+    profile: {
+      username: user.username,
+      email: user.email,
+
+    },
+  };
+
+  // OK 200
+  return response.status(200).json(responsePayload);
+});
+
 router.route('/yyy').post((req, res) => {
-    student.findOne({ 
-        email: req.body.email,
+  student.findOne({
+    email: req.body.email,
+  })
+    .then(user => {
+      if (user == null) {
+        console.log('Email does not match')
+      } else {
+        if (user.password !== req.body.password) {
+          console.log('Password does not match')
+        } else {
+          res.json(user)
+          console.log('Found user:' + user)
+        }
+      }
     })
-        .then(user => {
-            if (user == null) {
-                console.log('Email does not match')
-            } else {
-                if (user.password !== req.body.password) {
-                    console.log('Password does not match')
-                } else {
-                    res.json(user)
-                    console.log('Found user:' + user)
-                }
-            }
-        })
-        .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;

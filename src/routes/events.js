@@ -1,7 +1,7 @@
 const router = require('express').Router();
 let Event = require('../models/event.model');
 const mongoose = require("mongoose");
-const {createEvent, editEvent} = require("../factory/eventFactory");
+const { createEvent, editEvent } = require("../factory/eventFactory");
 
 /**
  * Get all events of a certain student
@@ -33,7 +33,7 @@ router.route('/:username').delete((req, res) => {
 /**
  * Update an event
  */
-router.route('/update').post( async (req, res) => {
+router.route('/update').post(async (req, res) => {
     Event.findOne({ _id: new mongoose.Schema.Types.ObjectId(req.body._id) })
         .then(event => {
             event = editEvent(req.body)
@@ -47,7 +47,7 @@ router.route('/update').post( async (req, res) => {
 /**
  * Add an event
  */
-router.route('/add').post( async (req, res) => {
+router.route('/add').post(async (req, res) => {
     const newEvent = createEvent(req.body)
     newEvent.save()
         .then(() => res.json(`Event ${eventHeader} added`))

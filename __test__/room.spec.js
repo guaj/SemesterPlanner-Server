@@ -1,6 +1,6 @@
 // INCOMPLETE
-const {request, assert} =  require("./app");
-const {roomdata} =  require("./room_test_data");
+const { request, assert } = require("./app");
+const { roomdata } = require("./room_test_data");
 
 const dbHandler = require('./db-handler')
 
@@ -15,35 +15,35 @@ const random4 = (Math.random() + 4).toString(36).substring(2);
 /**
  * Connect to a new in-memory database before running any tests.
  */
- beforeAll(async () => {
-  await dbHandler.connect()
-  await dbHandler.clearDatabase()
+beforeAll(async () => {
+    await dbHandler.connect()
+    await dbHandler.clearDatabase()
 });
 
 /**
  * Remove and close the db and server.
  */
 afterAll(async () => {
-  await dbHandler.closeDatabase();
+    await dbHandler.closeDatabase();
 });
 
-describe("testing room api routes", ()=>{
+describe("testing room api routes", () => {
 
-   //creating a study room
-  it("create a study room", async () => {
-  
-    await request.post('/room/').send(roomdata)
-    .expect(200)
+    //creating a study room
+    it("create a study room", async () => {
 
-   });
+        await request.post('/room/').send(roomdata)
+            .expect(200)
 
-  it("fetching data from study room by sID", async () => {
-  
-    await request.get('/room/fetch/r9q1yfw32ro')
-    .expect(200)
+    });
 
-   });
-/// delete a study room
+    it("fetching data from study room by sID", async () => {
 
-  })
+        await request.get('/room/fetch/r9q1yfw32ro')
+            .expect(200)
+
+    });
+    /// delete a study room
+
+})
 

@@ -2,7 +2,7 @@ const StudyRoom = require('../models/studyRoom.model');
 
 function createStudyRoom(data) {
     const randomID = (Math.random() + 2).toString(36).substring(2);
-    const studyRoomID = randomID; 
+    const studyRoomID = randomID;
     const owner = data.owner;
     const color = data.color
     const description = data.description
@@ -38,9 +38,9 @@ function editStudyRoom(data) {
         room.avatar = data.avatarText;
     }
     if (data.participants) {
-        room.participants= data.participants;
+        room.participants = data.participants;
     }
     return room;
 }
 
-module.exports = {createStudyRoom, editStudyRoom};
+module.exports = { createStudyRoom, editStudyRoom };

@@ -10,12 +10,12 @@ const studyRoomSchema = new Schema({
     description: { type: String },
     avatar: { type: String },
     color: { type: String, required: true },
-    
-    participants:{type: [String]},
-    messages:[Message.schema],
+
+    participants: { type: [String] },
+    messages: [Message.schema],
 
 
-    
+
 }, {
     timestamps: true,
 });

@@ -2,72 +2,69 @@ const router = require('express').Router();
 const Student = require('../models/student.model');
 
 // fetch the list of friends by email
-router.route('/:email').get(async(req, res)=>{
-const email= req.params.email.toString()
-const Profil = await Student.findOne({
-    email:email
+router.route('/:email').get(async (req, res) => {
+  const email = req.params.email.toString()
+  const Profil = await Student.findOne({
+    email: email
   });
   res.json(Profil.friends).status(200)
 })
 
 // send  a friend rerquest
-router.route('/add').post(async(req, res) => {
+router.route('/add').post(async (req, res) => {
   const username = req.body.username.toString();
-  const friendUsername= req.body.friendUsername.toString()
+  const friendUsername = req.body.friendUsername.toString()
   const myProfile = await Student.findOne({
-      username:username,
-    });
+    username: username,
+  });
 
   const friendProfile = await Student.findOne({
-      username:friendUsername,
-    });
+    username: friendUsername,
+  });
 
-    let friend = friendUsername
-    let me = username
-      
-   let friendRequestsSent= myProfile.friendRequestsSent
-   friendRequestsSent.push(friendUsername)
+  let friend = friendUsername
+  let me = username
 
-   let friendRequestsReceived=friendProfile.friendRequestsReceived
-   friendRequestsReceived.push(username)
+  let friendRequestsSent = myProfile.friendRequestsSent
+  friendRequestsSent.push(friendUsername)
 
-      Student.updateOne(
-        { username: me },
-        { friendRequestsSent:friendRequestsSent },
-        (err, docs) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('Updated Docs : ', docs);
-          }
-        },
-      );
-       
-      Student.updateOne(
-        { username: friend },
-        { friendRequestsReceived:friendRequestsReceived },
-        (err, docs) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log('Updated Docs : ', docs);
-          }
-        },
-      );
+  let friendRequestsReceived = friendProfile.friendRequestsReceived
+  friendRequestsReceived.push(username)
+
+  Student.updateOne(
+    { username: me },
+    { friendRequestsSent: friendRequestsSent },
+    (err, docs) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('Updated Docs : ', docs);
+      }
+    },
+  );
+
+  Student.updateOne(
+    { username: friend },
+    { friendRequestsReceived: friendRequestsReceived },
+    (err, docs) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log('Updated Docs : ', docs);
+      }
+    },
+  );
 });
 
-router.route('/answer').post(async(req, res) => {
+router.route('/answer').post(async (req, res) => {
 
   const username = req.body.username.toString();
-  const friendUsername= req.body.friendUsername
+  const friendUsername = req.body.friendUsername
   const answer = req.body.answer;
 
-  console.log(username)
-  console.log(friendUsername)
+  Student.updateOne({ username: username },
+    { $pull: { friendRequestsReceived: { $in: [friendUsername] } } })
 
-    Student.updateOne({ username: username }, 
-      { $pull: { friendRequestsReceived: { $in: [friendUsername] }}})
-    
 });
 
 // //upload a file to the database not yet complete

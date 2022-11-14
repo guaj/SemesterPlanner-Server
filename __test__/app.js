@@ -7,4 +7,4 @@ const assert = require('assert');
 
 
 
-module.exports= {request, assert}
+module.exports = { request, assert }

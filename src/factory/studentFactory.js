@@ -24,7 +24,7 @@ async function createStudent(data) {
 
 async function editStudent(data) {
     var student = {};
-    if(req.body.password){
+    if (req.body.password) {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
     }
     if (data.username) {
@@ -43,9 +43,9 @@ async function editStudent(data) {
         user.faculty = data.faculty;
     }
     if (data.privateProfile) {
-        user.privateProfile= data.privateProfile;
+        user.privateProfile = data.privateProfile;
     }
     return student;
 }
 
-module.exports = {createStudent, editStudent};
+module.exports = { createStudent, editStudent };

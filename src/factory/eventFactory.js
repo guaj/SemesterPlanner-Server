@@ -57,4 +57,4 @@ function editEvent(data) {
     return event;
 }
 
-module.exports = {createEvent, editEvent};
+module.exports = { createEvent, editEvent };

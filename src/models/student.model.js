@@ -9,10 +9,10 @@ const studentSchema = new Schema({
     program: { type: String },
     faculty: { type: String },
     privateProfile: { type: Boolean },
-    friends:{type: [String]},  //usernames
-    friendRequestsSent:{type: [String]},  //usernames
-    friendRequestsReceived:{type: [String]},  //usernames
-    StudyRooms:{type: [String]}, //sID
+    friends: { type: [String] },  //usernames
+    friendRequestsSent: { type: [String] },  //usernames
+    friendRequestsReceived: { type: [String] },  //usernames
+    StudyRooms: { type: [String] }, //sID
     calendarID: { type: String }
 
     // TODO

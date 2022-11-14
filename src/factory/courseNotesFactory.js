@@ -10,9 +10,9 @@ function createCourseNotes(data) {
         filetype: data.type,
         filename: data.name,
         filesize: data.size,
-        file:{
-          data: data.file,
-          contentType: data.type
+        file: {
+            data: data.file,
+            contentType: data.type
         }
     })
 }
