@@ -99,37 +99,15 @@ module.exports = class StudentRepository {
 
     /**
      * Update a student by email
-     * @param {*} data The body/params of the request.
+     * @param {*} student A student.
      * @returns Returns a promise. Resolves with the updated student.
      */
-    static updateOne(data) {
+    static updateOne(student) {
         return new Promise((resolve, reject) => {
-            StudentRepository.findOne(data)
-                .then(async (student) => {
-                    if (data.username) {
-                        student.username = data.username;
-                    }
-                    if (data.email) {
-                        student.email = data.email;
-                    }
-                    if (data.password) {
-                        student.password = await bcrypt.hash(data.password, 10);
-                    }
-                    if (data.program) {
-                        student.program = data.program;
-                    }
-                    if (data.faculty) {
-                        student.faculty = data.faculty;
-                    }
-                    if (data.privateProfile) {
-                        student.privateProfile = data.privateProfile;
-                    }
-                    student.save((err, student) => {
-                        if (err) { reject(err); }
-                        resolve(student);
-                    })
-                })
-                .catch(err => reject(err));
+            student.save((err, student) => {
+                if (err) { reject(err); }
+                resolve(student);
+            })
         })
     }
 }

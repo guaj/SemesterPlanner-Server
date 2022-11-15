@@ -2,14 +2,31 @@ const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
 const CourseNotes = require('../models/courseNotes.model');
-const { createStudyRoom, editStudyRoom } = require("../factory/roomFactory");
+const { createStudyRoom } = require("../factory/roomFactory");
 const createCourseNotes = require("../factory/courseNotesFactory");
 
 
 router.route('/').put((req, res) => {
   StudyRoom.findOne({ studyRoomID: req.body.studyRoomID.toString() })
-    .then(() => {
-      const room = editStudyRoom(req.body)
+    .then((room) => {
+      if (data.owner) {
+        room.owner = data.owner;
+      }
+      if (data.color) {
+        room.color = data.color;
+      }
+      if (data.description) {
+        room.description = data.description;
+      }
+      if (data.title) {
+        room.title = data.title;
+      }
+      if (data.avatarText) {
+        room.avatar = data.avatarText;
+      }
+      if (data.participants) {
+        room.participants = data.participants;
+      }
       room.save()
         .then(() => res.json(`Room ${room.studyRoomID} updated`))
         .catch(err => res.status(400).json('Error: ' + err));

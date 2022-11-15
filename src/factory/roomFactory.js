@@ -19,28 +19,4 @@ function createStudyRoom(data) {
         participants
     })
 }
-
-function editStudyRoom(data) {
-    let room = {};
-    if (data.owner) {
-        room.owner = data.owner;
-    }
-    if (data.color) {
-        room.color = data.color;
-    }
-    if (data.description) {
-        room.description = data.description;
-    }
-    if (data.title) {
-        room.title = data.title;
-    }
-    if (data.avatarText) {
-        room.avatar = data.avatarText;
-    }
-    if (data.participants) {
-        room.participants = data.participants;
-    }
-    return room;
-}
-
-module.exports = { createStudyRoom, editStudyRoom };
+module.exports = { createStudyRoom };

@@ -59,9 +59,31 @@ router.route('/email/:email').delete((req, res) => {
 /**
  * Update a user
  */
-router.route('/update').post(TokenVerify, async (req, res) => {
-    StudentRepository.updateOne(req.body)
-        .then((student) => res.json(`Student ${student.email} updated`))
+router.route('/update').post(async (req, res) => {
+    StudentRepository.findOne(req.body)
+        .then(async (student) => {
+            if (req.body.username) {
+                student.username = req.body.username;
+            }
+            if (req.body.email) {
+                student.email = req.body.email;
+            }
+            if (req.body.password) {
+                student.password = await bcrypt.hash(req.body.password, 10);
+            }
+            if (req.body.program) {
+                student.program = req.body.program;
+            }
+            if (req.body.faculty) {
+                student.faculty = req.body.faculty;
+            }
+            if (req.body.privateProfile) {
+                student.privateProfile = req.body.privateProfile;
+            }
+            StudentRepository.updateOne(student)
+                .then((student) => res.json(`Student ${student.email} updated`))
+                .catch(err => res.status(400).json('Error: ' + err));
+        })
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
