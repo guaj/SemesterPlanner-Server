@@ -9,13 +9,6 @@ const createMessage = require("../factory/messageFactory");
 router.route('/send').post(async (req, res) => {
   const studyRoomID = req.body.studyRoomID.toString();
   const msg = createMessage(req.body);
-  const room = await StudyRoom.findOne({ studyRoomID: studyRoomID })
-  const messages = room.messages;
-
-  while (messages.length >= 30) {
-    messages.pop();
-  }
-  messages.unshift(msg)
   msg.save().then(() => res.json(`Message Sent`).status(200))
   var io = req.app.get('socketio');
   io.to(studyRoomID).emit('newMessage', msg)
