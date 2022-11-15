@@ -59,7 +59,7 @@ router.route('/email/:email').delete((req, res) => {
 /**
  * Update a user
  */
-router.route('/update').post(async (req, res) => {
+router.route('/update').post(TokenVerify, async (req, res) => {
     StudentRepository.findOne(req.body)
         .then(async (student) => {
             if (req.body.username) {

@@ -1,7 +1,8 @@
 const Student = require('../models/student.model');
-const { createStudent, editStudent } = require("../factory/studentFactory");
+const { createStudent } = require("../factory/studentFactory");
 
 module.exports = class StudentRepository {
+
     /**
      * Create student.
      * @param {*} data The body/params of the request.
@@ -98,7 +99,7 @@ module.exports = class StudentRepository {
     }
 
     /**
-     * Update a student by email
+     * Update a student by saving it to the database.
      * @param {*} student A student.
      * @returns Returns a promise. Resolves with the updated student.
      */
