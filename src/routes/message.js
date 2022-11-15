@@ -16,9 +16,6 @@ router.route('/send').post(async (req, res) => {
     messages.pop();
   }
   messages.unshift(msg)
-
-  await StudyRoom.updateOne({ studyRoomID: studyRoomID }, { messages: messages })
-
   msg.save().then(() => res.json(`Message Sent`).status(200))
   var io = req.app.get('socketio');
   io.to(studyRoomID).emit('newMessage', msg)
