@@ -9,11 +9,11 @@ const studentSchema = new Schema({
     program: { type: String },
     faculty: { type: String },
     privateProfile: { type: Boolean },
-    friends:{type: [String]},  //usernames
-    friendRequestsSent:{type: [String]},  //usernames
-    friendRequestsReceived:{type: [String]},  //usernames
-    StudyRooms:{type: [String]}, //sID
-    cID: { type: String }
+    friends: { type: [String] },  //usernames
+    friendRequestsSent: { type: [String] },  //usernames
+    friendRequestsReceived: { type: [String] },  //usernames
+    StudyRooms: { type: [String] }, //sID
+    calendarID: { type: String }
 
     // TODO
     // calendar -> id of calendar
@@ -23,6 +23,6 @@ const studentSchema = new Schema({
     timestamps: true,
 });
 
-const student = mongoose.model('Student', studentSchema);
+const Student = mongoose.model('Student', studentSchema);
 
-module.exports = student;
+module.exports = Student;

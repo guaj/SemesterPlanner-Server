@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {expect, test} = require('@jest/globals');
+const { expect, test } = require('@jest/globals');
 
 // Allows us to include environment variables in .env file
 require('dotenv').config();

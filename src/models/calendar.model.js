@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const calendarSchema = new Schema({
-    cID: { type: String, required: true, unique: true },
+    calendarID: { type: String, required: true, unique: true },
     customizations: [{
-                     category: String,
-                     color : String
-                     }]
-    
-    
+        category: String,
+        color: String
+    }]
+
+
 }, {
     timestamps: true,
 });

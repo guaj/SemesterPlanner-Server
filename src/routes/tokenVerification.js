@@ -13,13 +13,11 @@ const verifyJWTAuth = (request, response, next) => {
         response.status(403).json({ auth: false, message: 'User authentication failed' });
       } else {
         request.userId = decoded.id;
-        
+
         next();
       }
     });
   }
 };
-
-
 
 module.exports = { verifyJWTAuth };

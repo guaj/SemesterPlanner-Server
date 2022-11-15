@@ -8,10 +8,13 @@ require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 5000
-const server = app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-})
-var io = require('socket.io')(server,{
+let server;
+
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(port, () => console.log(`Listening on port ${port}`))
+}
+
+var io = require('socket.io')(server, {
   cors: {
     origin: process.env.CLIENT_BASE_URL,
     methods: ["GET", "POST"]
@@ -42,12 +45,11 @@ else {
   console.log("Testing environment. Creating virtual mongo database.")
 }
 
-
 // Routes
 const studentsRouter = require('./routes/student.js');
 const loginRouter = require('./routes/login.js');
-const roomRouter=require('./routes/room.js');
-const friendRouter=require('./routes/friend.js');
+const roomRouter = require('./routes/room.js');
+const friendRouter = require('./routes/friend.js');
 const messageRouter = require('./routes/message.js')
 const eventsRouter = require('./routes/events.js')
 
@@ -59,10 +61,10 @@ app.use('/message', messageRouter);
 app.use('/events', eventsRouter);
 
 // Sockets
-io.sockets.on('connection', function(socket) {
-  socket.on('create', function(room) {
+io.sockets.on('connection', function (socket) {
+  socket.on('create', function (room) {
     socket.join(room);
-    console.log("User joined " +  room)
+    console.log("User joined " + room)
   });
 });
 
