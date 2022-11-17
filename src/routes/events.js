@@ -6,7 +6,7 @@ const EventRepository = require('../repository/eventRepository')
  * Get all events of a certain student
  */
 router.route('/:username').get((req, res) => {
-    EventRepository.findAllbyStudentUsername(req.params)
+    EventRepository.findAllbyStudentUsername(req.params.username)
         .then(events => res.json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -15,7 +15,7 @@ router.route('/:username').get((req, res) => {
  * Get event by eventId
  */
 router.route('/:eventID').get((req, res) => {
-    EventRepository.findOne(req.params)
+    EventRepository.findOne(req.params.eventID)
         .then(event => res.json(event))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -24,7 +24,7 @@ router.route('/:eventID').get((req, res) => {
  * Delete an event by eventId
  */
 router.route('/:eventID').delete((req, res) => {
-    EventRepository.deleteOne(req.params)
+    EventRepository.deleteOne(req.params.eventID)
         .then(event => res.json(`Event deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -33,7 +33,7 @@ router.route('/:eventID').delete((req, res) => {
  * Update an event
  */
 router.route('/update').post(async (req, res) => {
-    EventRepository.findOneByMongoID(req.body)
+    EventRepository.findOne(req.body.eventID)
         .then((event) => {
             if (req.body.eventHeader) {
                 event.eventHeader = req.body.eventHeader;
@@ -62,7 +62,7 @@ router.route('/update').post(async (req, res) => {
             if (req.body.color) {
                 event.color = req.body.color;
             }
-            EventRepository.updateOne(event)
+            EventRepository.save(event)
                 .then(() => res.json(`Event ${event.eventHeader} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
         })

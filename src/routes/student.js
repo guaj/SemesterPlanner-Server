@@ -15,7 +15,7 @@ router.route('/').get((req, res) => {
  * Get user by ID
  */
 router.route('/id/:id').get((req, res) => {
-    StudentRepository.findOne(req.params)
+    StudentRepository.findOneByID(req.params.id)
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -24,7 +24,7 @@ router.route('/id/:id').get((req, res) => {
  * Get user by username
  */
 router.route('/username/:username').get((req, res) => {
-    StudentRepository.findOne(req.params)
+    StudentRepository.findOneByUsername(req.params.username)
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -33,7 +33,7 @@ router.route('/username/:username').get((req, res) => {
  * Get user by email
  */
 router.route('/email/:email').get((req, res) => {
-    StudentRepository.findOne(req.params)
+    StudentRepository.findOneByEmail(req.params.email)
         .then(user => res.json(user))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -60,7 +60,7 @@ router.route('/email/:email').delete((req, res) => {
  * Update a user
  */
 router.route('/update').post(TokenVerify, async (req, res) => {
-    StudentRepository.findOne(req.body)
+    StudentRepository.findOneByEmail(req.body.email)
         .then(async (student) => {
             if (req.body.username) {
                 student.username = req.body.username;
@@ -80,7 +80,7 @@ router.route('/update').post(TokenVerify, async (req, res) => {
             if (req.body.privateProfile) {
                 student.privateProfile = req.body.privateProfile;
             }
-            StudentRepository.updateOne(student)
+            StudentRepository.save(student)
                 .then((student) => res.json(`Student ${student.email} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
         })

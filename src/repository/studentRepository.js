@@ -33,34 +33,48 @@ module.exports = class StudentRepository {
     }
 
     /**
-     * Find a student by ID, email or username.
-     * @param {*} data The body/params of the request. It should contain: username, email or mongo interal ID.
+     * Find a student by email.
+     * @param {string} email The email of the student.
      * @returns {Student} Returns a promise. Resolves with one student, or null.
      */
-    static findOne(data) {
+    static findOneByEmail(email) {
         return new Promise((resolve, reject) => {
-            if (data.email) {
-                Student.findOne({ email: data.email.toString() })
-                    .then((student, err) => {
-                        if (err) { reject(err); }
-                        resolve(student);
-                    })
-            }
-            else if (data.username) {
-                Student.findOne({ username: data.username.toString() })
-                    .then((student, err) => {
-                        if (err) { reject(err); }
-                        resolve(student);
-                    })
-            }
-            else if (data.id) {
-                Student.findById(data.id)
-                    .then((student, err) => {
-                        if (err) { reject(err); }
-                        resolve(student);
-                    })
-            }
-            else { reject(new Error('No valid parameters given.')); }
+            Student.findOne({ email: email.toString() })
+                .then((student, err) => {
+                    if (err) { reject(err); }
+                    resolve(student);
+                })
+        })
+    }
+
+    /**
+     * Find a student by username.
+     * @param {String} username The username of the student
+     * @returns {Student} Returns a promise. Resolves with one student, or null.
+     */
+    static findOneByUsername(username) {
+        return new Promise((resolve, reject) => {
+            Student.findOne({ username: username.toString() })
+                .then((student, err) => {
+                    if (err) { reject(err); }
+                    resolve(student);
+                })
+
+        })
+    }
+
+    /**
+     * Find a student by MongoDB _id.
+     * @param {*} _id The _id of the student.
+     * @returns {Student} Returns a promise. Resolves with one student, or null.
+     */
+    static findOneByID(_id) {
+        return new Promise((resolve, reject) => {
+            Student.findById(id)
+                .then((student, err) => {
+                    if (err) { reject(err); }
+                    resolve(student);
+                })
 
         })
     }
@@ -103,7 +117,7 @@ module.exports = class StudentRepository {
      * @param {*} student An updated student object.
      * @returns Returns a promise. Resolves with the updated student.
      */
-    static updateOne(student) {
+    static save(student) {
         return new Promise((resolve, reject) => {
             student.save((err, student) => {
                 if (err) { reject(err); }
@@ -111,4 +125,39 @@ module.exports = class StudentRepository {
             })
         })
     }
+
+    /**
+     * Update a student's sent friend requests.
+     * @param {string} username The username of the student.
+     * @param {[string]} friendRequestsSent The array of usernames who have been sent a friend request.
+     * @returns Returns a promise. Resolves with the updated student.
+     */
+    static updateFriendRequestSent(username, friendRequestsSent) {
+        Student.updateOne(
+            { username: username },
+            { friendRequestsSent: friendRequestsSent },
+            (err, docs) => {
+                if (err) { reject(err); }
+                resolve(docs)
+            },
+        );
+    }
+
+    /**
+     * Update a student's received friend requests'.
+     * @param {string} username The username of the student.
+     * @param {[string]} friendRequestsReceived The array of usernames who have sent a friend request.
+     * @returns Returns a promise. Resolves with the updated student.
+     */
+    static updateFriendRequestReceived(username, friendRequestsReceived) {
+        Student.updateOne(
+            { username: username },
+            { friendRequestsReceived: friendRequestsReceived },
+            (err, docs) => {
+                if (err) { reject(err); }
+                resolve(docs)
+            },
+        );
+    }
+
 }

@@ -21,12 +21,12 @@ module.exports = class EventRepository {
 
     /**
      * Find all events of student.
-     * @param {*} data The body/params of the request. It should contain the username of the student.
+     * @param {string} username The body/params of the request. It should contain the username of the student.
      * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
      */
-    static findAllbyStudentUsername(data) {
+    static findAllbyStudentUsername(username) {
         return new Promise((resolve, reject) => {
-            Event.find({ username: data.username.toString() }).then((events, err) => {
+            Event.find({ username: username.toString() }).then((events, err) => {
                 if (err) { reject(err); }
                 resolve(events);
             })
@@ -35,12 +35,12 @@ module.exports = class EventRepository {
 
     /**
      * Find one event by its eventID.
-     * @param {*} data The body/params of the request. It should contain the eventID of the event.
+     * @param {*} eventID The body/params of the request. It should contain the eventID of the event.
      * @returns {Event} Returns a promise. Resolves with an event.
      */
-    static findOne(data) {
+    static findOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.find({ eventID: data.eventID.toString() }).then((event, err) => {
+            Event.find({ eventID: eventID.toString() }).then((event, err) => {
                 if (err) { reject(err); }
                 resolve(event);
             })
@@ -49,27 +49,26 @@ module.exports = class EventRepository {
 
     /**
      * Find one event by its MongoDB _id.
-     * @param {*} data The body/params of the request. It should contain the _id of the event.
+     * @param {*} _id The _id of the event.
      * @returns {Event} Returns a promise. Resolves with an event.
      */
-    static findOneByMongoID(data) {
+    static findOneByID(_id) {
         return new Promise((resolve, reject) => {
-            Event.findById(data._id).then((event, err) => {
+            Event.findById(_id).then((event, err) => {
                 if (err) { reject(err); }
                 resolve(event);
             })
         })
     }
 
-
     /**
      * Delete one event by its eventID.
-     * @param {*} data The body/params of the request. It should contain the eventID of the event.
+     * @param {string} eventID The eventID of the event.
      * @returns {number} Returns a promise. Resolves with the number of events deleted (1 or 0).
      */
-    static deleteOne(data) {
+    static deleteOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.deleteOne({ eventID: data.eventID.toString() })
+            Event.deleteOne({ eventID: eventID.toString() })
                 .then((status, err) => {
                     if (err) { reject(err); }
                     resolve(status.deletedCount);
@@ -82,7 +81,7 @@ module.exports = class EventRepository {
      * @param {*} event An updated event object.
      * @returns {Event}  Returns a promise. Resolves with the updated event.
      */
-    static updateOne(event) {
+    static save(event) {
         return new Promise((resolve, reject) => {
             event.save((err, event) => {
                 if (err) { reject(err); }
