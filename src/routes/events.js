@@ -1,13 +1,12 @@
 const router = require('express').Router();
-const Event = require('../models/event.model');
-const mongoose = require("mongoose");
 const { createEvent } = require("../factory/eventFactory");
+const EventRepository = require('../repository/eventRepository')
 
 /**
  * Get all events of a certain student
  */
-router.route('/').get((req, res) => {
-    Event.find({ username: req.body.username })
+router.route('/:username').get((req, res) => {
+    EventRepository.findAllbyStudentUsername(req.params)
         .then(events => res.json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -15,8 +14,8 @@ router.route('/').get((req, res) => {
 /**
  * Get event by eventId
  */
-router.route('/:username').get((req, res) => {
-    Event.find({ username: req.params.username })
+router.route('/:eventID').get((req, res) => {
+    EventRepository.findOne(req.params)
         .then(event => res.json(event))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -24,8 +23,8 @@ router.route('/:username').get((req, res) => {
 /**
  * Delete an event by eventId
  */
-router.route('/:username').delete((req, res) => {
-    Event.findOneAndDelete({ username: req.params.username })
+router.route('/:eventID').delete((req, res) => {
+    EventRepository.deleteOne(req.params)
         .then(event => res.json(`Event deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -34,7 +33,7 @@ router.route('/:username').delete((req, res) => {
  * Update an event
  */
 router.route('/update').post(async (req, res) => {
-    Event.findOne({ _id: new mongoose.Schema.Types.ObjectId(req.body._id) })
+    EventRepository.findOneByMongoID(req.body)
         .then((event) => {
             if (req.body.eventHeader) {
                 event.eventHeader = req.body.eventHeader;
@@ -63,7 +62,7 @@ router.route('/update').post(async (req, res) => {
             if (req.body.color) {
                 event.color = req.body.color;
             }
-            event.save()
+            EventRepository.updateOne(event)
                 .then(() => res.json(`Event ${event.eventHeader} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
         })
@@ -74,9 +73,9 @@ router.route('/update').post(async (req, res) => {
  * Add an event
  */
 router.route('/add').post(async (req, res) => {
-    const newEvent = createEvent(req.body)
-    newEvent.save()
-        .then(() => res.json(`Event ${eventHeader} added`))
+    EventRepository.create(req.body)
+        .then((event) => res.json(`Event ${event.eventHeader} added`))
+        .catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;

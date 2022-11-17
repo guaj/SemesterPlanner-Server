@@ -1,8 +1,8 @@
 const StudyRoom = require('../models/studyRoom.model');
+const { v4: uuidv4 } = require('uuid');
 
 function createStudyRoom(data) {
-    const randomID = (Math.random() + 2).toString(36).substring(2);
-    const studyRoomID = randomID;
+    const studyRoomID = uuidv4();
     const owner = data.owner;
     const color = data.color
     const description = data.description

@@ -5,8 +5,8 @@ module.exports = class StudentRepository {
 
     /**
      * Create student.
-     * @param {*} data The body/params of the request.
-     * @returns {Promise} Returns a promise. Resolves with the student.
+     * @param {*} data The body/params of the request. It should contain: username, email, password, program (optional), faculty (optional) and privateProfile (optional).
+     * @returns {Student} Returns a promise. Resolves with the student.
      */
     static create(data) {
         return new Promise((resolve, reject) => {
@@ -34,7 +34,7 @@ module.exports = class StudentRepository {
 
     /**
      * Find a student by ID, email or username.
-     * @param {*} data The body/params of the request.
+     * @param {*} data The body/params of the request. It should contain: username, email or mongo interal ID.
      * @returns {Student} Returns a promise. Resolves with one student, or null.
      */
     static findOne(data) {
@@ -67,7 +67,7 @@ module.exports = class StudentRepository {
 
     /**
      * Delete a student by ID, email or username.
-     * @param {*} data The body/params of the request.
+     * @param {*} data The body/params of the request. It should contain: username, email or mongo interal ID.
      * @returns Returns a promise. Resolves with the deletion count. (Either 1 or 0)
      */
     static deleteOne(data) {
@@ -100,7 +100,7 @@ module.exports = class StudentRepository {
 
     /**
      * Update a student by saving it to the database.
-     * @param {*} student A student.
+     * @param {*} student An updated student object.
      * @returns Returns a promise. Resolves with the updated student.
      */
     static updateOne(student) {
