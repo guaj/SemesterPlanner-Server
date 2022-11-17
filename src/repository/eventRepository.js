@@ -10,11 +10,10 @@ module.exports = class EventRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            createEvent(data).then((newEvent) => {
-                newEvent.save((err, event) => {
-                    if (err) { reject(err); }
-                    resolve(event);
-                })
+            const newEvent = createEvent(data)
+            newEvent.save((err, event) => {
+                if (err) { reject(err); }
+                resolve(event);
             })
         })
     }
@@ -26,24 +25,24 @@ module.exports = class EventRepository {
      */
     static findAllbyStudentUsername(username) {
         return new Promise((resolve, reject) => {
-            Event.find({ username: username.toString() }).then((events, err) => {
-                if (err) { reject(err); }
+            Event.find({ username: username.toString() }).then((events) => {
                 resolve(events);
             })
+                .catch(err => reject(err))
         })
     }
 
     /**
      * Find one event by its eventID.
-     * @param {*} eventID The body/params of the request. It should contain the eventID of the event.
+     * @param {*} eventID The eventID of the event.
      * @returns {Event} Returns a promise. Resolves with an event.
      */
     static findOne(eventID) {
         return new Promise((resolve, reject) => {
             Event.find({ eventID: eventID.toString() }).then((event, err) => {
-                if (err) { reject(err); }
                 resolve(event);
             })
+                .catch(err => reject(err))
         })
     }
 
@@ -55,9 +54,9 @@ module.exports = class EventRepository {
     static findOneByID(_id) {
         return new Promise((resolve, reject) => {
             Event.findById(_id).then((event, err) => {
-                if (err) { reject(err); }
                 resolve(event);
             })
+                .catch(err => reject(err))
         })
     }
 
@@ -69,10 +68,10 @@ module.exports = class EventRepository {
     static deleteOne(eventID) {
         return new Promise((resolve, reject) => {
             Event.deleteOne({ eventID: eventID.toString() })
-                .then((status, err) => {
-                    if (err) { reject(err); }
+                .then((status) => {
                     resolve(status.deletedCount);
                 })
+                .catch(err => reject(err))
         })
     }
 

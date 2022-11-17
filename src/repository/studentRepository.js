@@ -25,10 +25,10 @@ module.exports = class StudentRepository {
      */
     static findAll() {
         return new Promise((resolve, reject) => {
-            Student.find().then((students, err) => {
-                if (err) { reject(err); }
+            Student.find().then((students) => {
                 resolve(students);
             })
+                .catch(err => reject(err))
         })
     }
 
@@ -40,10 +40,10 @@ module.exports = class StudentRepository {
     static findOneByEmail(email) {
         return new Promise((resolve, reject) => {
             Student.findOne({ email: email.toString() })
-                .then((student, err) => {
-                    if (err) { reject(err); }
+                .then((student) => {
                     resolve(student);
                 })
+                .catch(err => reject(err))
         })
     }
 
@@ -55,11 +55,10 @@ module.exports = class StudentRepository {
     static findOneByUsername(username) {
         return new Promise((resolve, reject) => {
             Student.findOne({ username: username.toString() })
-                .then((student, err) => {
-                    if (err) { reject(err); }
+                .then((student) => {
                     resolve(student);
                 })
-
+                .catch(err => reject(err))
         })
     }
 
@@ -71,11 +70,10 @@ module.exports = class StudentRepository {
     static findOneByID(_id) {
         return new Promise((resolve, reject) => {
             Student.findById(id)
-                .then((student, err) => {
-                    if (err) { reject(err); }
+                .then((student) => {
                     resolve(student);
                 })
-
+                .catch(err => reject(err))
         })
     }
 

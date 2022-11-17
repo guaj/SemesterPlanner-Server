@@ -39,9 +39,6 @@ router.route('/add').post(async (req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
     })
     .catch(err => res.status(400).json('Error: ' + err));
-
-
-
 });
 
 router.route('/answer').post(async (req, res) => {
