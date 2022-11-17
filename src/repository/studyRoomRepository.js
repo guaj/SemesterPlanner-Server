@@ -2,7 +2,6 @@ const Event = require('../models/event.model');
 const { createEvent } = require("../factory/eventFactory");
 
 module.exports = class EventRepository {
-
     /**
      * Create an event.
      * @param {*} data The body/params of the request. It should contain: username, eventHeader, startDate, endDate, startTime, endTime, reccurence, color (optional), description (optional), link (optional)
@@ -19,41 +18,13 @@ module.exports = class EventRepository {
     }
 
     /**
-     * Find all events of student.
-     * @param {string} username The username of the student.
-     * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
-     */
-    static findAllbyStudentUsername(username) {
-        return new Promise((resolve, reject) => {
-            Event.find({ username: username.toString() }).then((events) => {
-                resolve(events);
-            })
-                .catch(err => reject(err))
-        })
-    }
-
-    /**
      * Find one event by its eventID.
      * @param {*} eventID The eventID of the event.
      * @returns {Event} Returns a promise. Resolves with an event.
      */
     static findOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.find({ eventID: eventID.toString() }).then((event) => {
-                resolve(event);
-            })
-                .catch(err => reject(err))
-        })
-    }
-
-    /**
-     * Find one event by its MongoDB _id.
-     * @param {*} _id The _id of the event.
-     * @returns {Event} Returns a promise. Resolves with an event.
-     */
-    static findOneByID(_id) {
-        return new Promise((resolve, reject) => {
-            Event.findById(_id).then((event) => {
+            Event.find({ eventID: eventID.toString() }).then((event, err) => {
                 resolve(event);
             })
                 .catch(err => reject(err))

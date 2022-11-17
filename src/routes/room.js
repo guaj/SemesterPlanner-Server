@@ -1,9 +1,8 @@
 const router = require('express').Router();
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model');
-const CourseNotes = require('../models/courseNotes.model');
 const { createStudyRoom } = require("../factory/roomFactory");
-const createCourseNotes = require("../factory/courseNotesFactory");
+const CourseNotesRepository = require("../repository/courseNotesRepository")
 
 
 router.route('/').put((req, res) => {
@@ -132,7 +131,6 @@ router.route('/:email').get(async (req, res) => {
   res.json(rooms).status(200)
 })
 
-
 // delete  the study room you need the username of the owner and the roomID
 router.route('/delete').post(async (req, res) => {
   console.log(req.body)
@@ -145,38 +143,33 @@ router.route('/delete').post(async (req, res) => {
   res.send("deleted room " + roomID.toString())
 })
 
+
 // upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send the ID of the study room, 
 router.post('/file', (req, res) => {
-  const newImage = createCourseNotes(req.body);
-  newImage.save().then(() => res.send("successfuly uploaded"))
-
+  CourseNotesRepository.create(req.body)
+    .then(() => res.send("successfuly uploaded"))
+    .catch(err => res.status(400).json('Error: ' + err));
 });
 
 // get file BY courseNoteID
-router.route('/file/:courseNoteID').get(async (req, res) => {
-  const courseNoteID = req.params.courseNoteID.toString()
-  const note = await CourseNotes.find({
-    courseNoteID: courseNoteID,
-  })
-  res.json(note).status(200);
+router.route('/file/:courseNotesID').get(async (req, res) => {
+  CourseNotesRepository.findOne(req.body.courseNotesID)
+    .then(note => res.json(note).status(200))
+    .catch(err => res.status(400).json('Error: ' + err));
 })
 
-router.route('/file/:courseNoteID').delete(async (req, res) => {
-  const noteID = req.params.courseNoteID
-  await CourseNotes.deleteOne({
-    courseNoteID: noteID
-  })
-  res.json("deleted file :" + noteID).status(200);
+router.route('/file/:courseNotesID').delete(async (req, res) => {
+  CourseNotesRepository.deleteOne(req.params.courseNotesID)
+    .then(status => res.json("deleted " + status + " file").status(200))
+    .catch(err => res.status(400).json('Error: ' + err));
 })
 
 // route to fetch all the file  by studyRoomID
 router.route('/files/:studyRoomID').get(async (req, res) => {
-  const studyRoomID = req.params.studyRoomID.toString()
-  const notes = await CourseNotes.find({
-    studyRoomID: studyRoomID,
-  })
-  res.json(notes).status(200);
+  CourseNotesRepository.findAllbyStudyRoomID(req.params.studyRoomID)
+    .then(notes => res.json(notes).status(200))
+    .catch(err => res.status(400).json('Error: ' + err));
 })
 
 
