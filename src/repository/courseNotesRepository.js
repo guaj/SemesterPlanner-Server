@@ -39,7 +39,7 @@ module.exports = class CourseNotesRepository {
      */
     static findOne(courseNotesID) {
         return new Promise((resolve, reject) => {
-            CourseNotes.find({ courseNotesID: courseNotesID.toString() }).then((courseNotes) => {
+            CourseNotes.findOne({ courseNotesID: courseNotesID.toString() }).then((courseNotes) => {
                 resolve(courseNotes);
             })
                 .catch(err => reject(err))

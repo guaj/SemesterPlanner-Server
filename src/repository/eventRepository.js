@@ -34,12 +34,12 @@ module.exports = class EventRepository {
 
     /**
      * Find one event by its eventID.
-     * @param {*} eventID The eventID of the event.
+     * @param {string} eventID The eventID of the event.
      * @returns {Event} Returns a promise. Resolves with an event.
      */
     static findOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.find({ eventID: eventID.toString() }).then((event) => {
+            Event.findOne({ eventID: eventID.toString() }).then((event) => {
                 resolve(event);
             })
                 .catch(err => reject(err))

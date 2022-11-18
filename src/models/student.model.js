@@ -12,7 +12,7 @@ const studentSchema = new Schema({
     friends: { type: [String] },  //usernames
     friendRequestsSent: { type: [String] },  //usernames
     friendRequestsReceived: { type: [String] },  //usernames
-    StudyRooms: { type: [String] }, //sID
+    studyRooms: { type: [String] }, //studyRoomID
     calendarID: { type: String }
 
     // TODO

@@ -158,4 +158,20 @@ module.exports = class StudentRepository {
         );
     }
 
+    /**
+     * Update a student's studyRooms
+     * @param {string} email The studyRoomID of the studyRoom.
+     * @param {[string]} studyRooms An array of participant emails.
+     * @returns {Student}  Returns a promise. Resolves with the updated event.
+     */
+    static updateStudyRooms(email, studyRooms) {
+        return new Promise((resolve, reject) => {
+            Student.updateOne(
+                { email: email },
+                { studyRooms: studyRooms })
+                .then((student) => { resolve(student); })
+                .catch(err => reject(err))
+        })
+    }
+
 }

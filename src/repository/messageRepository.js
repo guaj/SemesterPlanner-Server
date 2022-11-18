@@ -25,7 +25,7 @@ module.exports = class MessageRepository {
      */
     static findOne(messageID) {
         return new Promise((resolve, reject) => {
-            Event.find({ messageID: messageID.toString() })
+            Message.findOne({ messageID: messageID.toString() })
                 .then((message) => {
                     resolve(message);
                 })

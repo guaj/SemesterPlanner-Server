@@ -1,44 +1,45 @@
-const Event = require('../models/event.model');
-const { createEvent } = require("../factory/eventFactory");
+const studyRoomRepository = require('../models/studyRoom.model');
+const { createStudyRoom } = require("../factory/roomFactory");
+const StudyRoom = require('../models/studyRoom.model');
 
-module.exports = class EventRepository {
+module.exports = class studyRoomRepository {
     /**
-     * Create an event.
-     * @param {*} data The body/params of the request. It should contain: username, eventHeader, startDate, endDate, startTime, endTime, reccurence, color (optional), description (optional), link (optional)
-     * @returns {Event} Returns a promise. Resolves with the event.
+     * Create a studyRoom.
+     * @param {*} data The body/params of the request. It should contain: owner (email), color, participant, title, description (optional), avatarText (optional).
+     * @returns {StudyRoom} Returns a promise. Resolves with the studyRoom.
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            const newEvent = createEvent(data)
-            newEvent.save((err, event) => {
+            const newRoom = createStudyRoom(data)
+            newRoom.save((err, room) => {
                 if (err) { reject(err); }
-                resolve(event);
+                resolve(room);
             })
         })
     }
 
     /**
-     * Find one event by its eventID.
-     * @param {*} eventID The eventID of the event.
-     * @returns {Event} Returns a promise. Resolves with an event.
+     * Find one event by its studyRoomID.
+     * @param {string} studyRoomID The eventID of the event.
+     * @returns {StudyRoom} Returns a promise. Resolves with an event.
      */
-    static findOne(eventID) {
+    static findOne(studyRoomID) {
         return new Promise((resolve, reject) => {
-            Event.find({ eventID: eventID.toString() }).then((event, err) => {
-                resolve(event);
+            StudyRoom.findOne({ studyRoomID: studyRoomID.toString() }).then((room) => {
+                resolve(room);
             })
                 .catch(err => reject(err))
         })
     }
 
     /**
-     * Delete one event by its eventID.
-     * @param {string} eventID The eventID of the event.
-     * @returns {number} Returns a promise. Resolves with the number of events deleted (1 or 0).
+     * Delete one studyRoom by its studyRoomID.
+     * @param {string} studyRoomID The studyRoomID of the event.
+     * @returns {number} Returns a promise. Resolves with the number of studyRooms deleted (1 or 0).
      */
-    static deleteOne(eventID) {
+    static deleteOne(studyRoomID) {
         return new Promise((resolve, reject) => {
-            Event.deleteOne({ eventID: eventID.toString() })
+            StudyRoom.deleteOne({ studyRoomID: studyRoomID.toString() })
                 .then((status) => {
                     resolve(status.deletedCount);
                 })
@@ -47,16 +48,49 @@ module.exports = class EventRepository {
     }
 
     /**
-     * Update an event by saving it to the database.
-     * @param {*} event An updated event object.
+     * Update a studyRoom by saving it to the database.
+     * @param {*} studyRoom An updated studyRoom object.
      * @returns {Event}  Returns a promise. Resolves with the updated event.
      */
-    static save(event) {
+    static save(studyRoom) {
         return new Promise((resolve, reject) => {
-            event.save((err, event) => {
+            studyRoom.save((err, room) => {
                 if (err) { reject(err); }
-                resolve(event);
+                resolve(room);
             })
+        })
+    }
+
+    /**
+     * Update a studyRoom's participants
+     * @param {string} email The studyRoomID of the studyRoom.
+     * @param {[string]} participants An array of participant emails.
+     * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
+     */
+    static updateParticipants(studyRoomID, participants) {
+        return new Promise((resolve, reject) => {
+            StudyRoom.updateOne(
+                { studyRoomID: studyRoomID },
+                { participants: participants })
+                .then((room) => { resolve(room); })
+                .catch(err => reject(err))
+        })
+    }
+
+    /**
+     * Find all studyRooms of student.
+     * @param {string} email The username of the student.
+     * @returns {[StudyRoom]} Returns a promise. Resolves with an array of stutyRooms the student is a part of.
+     */
+    static findAllbyStudentEmail(email) {
+        return new Promise((resolve, reject) => {
+            StudyRoom.find({
+                participants: { "$in": [email] }
+            })
+                .then((rooms) => {
+                    resolve(rooms);
+                })
+                .catch(err => reject(err))
         })
     }
 }
