@@ -21,7 +21,7 @@ module.exports = class studyRoomRepository {
     /**
      * Find one event by its studyRoomID.
      * @param {string} studyRoomID The eventID of the event.
-     * @returns {StudyRoom} Returns a promise. Resolves with an event.
+     * @returns {StudyRoom} Returns a promise. Resolves with a studyRoom.
      */
     static findOne(studyRoomID) {
         return new Promise((resolve, reject) => {
@@ -50,7 +50,7 @@ module.exports = class studyRoomRepository {
     /**
      * Update a studyRoom by saving it to the database.
      * @param {*} studyRoom An updated studyRoom object.
-     * @returns {Event}  Returns a promise. Resolves with the updated event.
+     * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
      */
     static save(studyRoom) {
         return new Promise((resolve, reject) => {
