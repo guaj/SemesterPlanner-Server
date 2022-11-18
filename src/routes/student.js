@@ -21,6 +21,9 @@ router.route('/id/:id').get((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+/**
+ * Get user by email
+ */
 router.route('/email/:email').get((req, res) => {
     Student.findOne({ email: req.params.email })
         .then(user => res.json(user))

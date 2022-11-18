@@ -1,16 +1,33 @@
 const router = require('express').Router();
 const Student = require('../models/student.model');
 
-// fetch the list of friends by email
+/**
+ * Fetch the list of friends by email
+ */
 router.route('/:email').get(async (req, res) => {
   const email = req.params.email.toString()
-  const Profil = await Student.findOne({
+  const Profile = await Student.findOne({
     email: email
   });
-  res.json(Profil.friends).status(200)
+  res.json(Profile.friends).status(200)
 })
 
-// send  a friend rerquest
+/**
+ * Fetch the list of friends by username
+ */
+router.route('/username/:username').get(async (req, res) => {
+  const userTemp = req.params.username.toString()
+  const Profile = await Student.findOne({
+    username: userTemp
+  });
+  res.json(Profile.friends).status(200)
+})
+
+
+/**
+ * Send a friend request
+ * Return: confirmation text
+ */
 router.route('/add').post(async (req, res) => {
   const username = req.body.username.toString();
   const friendUsername = req.body.friendUsername.toString()
@@ -22,15 +39,18 @@ router.route('/add').post(async (req, res) => {
     username: friendUsername,
   });
 
+  //Rename for ease of use
   let friend = friendUsername
   let me = username
 
+  // Create copies add new requests
   let friendRequestsSent = myProfile.friendRequestsSent
   friendRequestsSent.push(friendUsername)
 
   let friendRequestsReceived = friendProfile.friendRequestsReceived
   friendRequestsReceived.push(username)
 
+  //Update original lists
   Student.updateOne(
     { username: me },
     { friendRequestsSent: friendRequestsSent },
@@ -54,9 +74,14 @@ router.route('/add').post(async (req, res) => {
       }
     },
   );
+
+  res.json("Friend request sent to " + friend ).status(200)
 });
 
-router.route('/answer').post(async (req, res) => {
+/**
+ * answer friend request
+ */
+router.route('/answerFriendRequest').post(async (req, res) => {
 
   const username = req.body.username.toString();
   const friendUsername = req.body.friendUsername
@@ -99,5 +124,39 @@ router.route('/answer').post(async (req, res) => {
 //         },
 //       );
 // });
+
+/**TODO:
+ * get Friend List
+ */
+
+/**TODO:
+ * delete friend with email
+ */
+
+/**TODO:
+ * display friend request received
+ */
+
+/**TODO:
+ * display friend request sent
+ */
+
+/**TODO:
+ * Confirm approved friend request (update other friend)
+ */
+
+/**TODO:
+ * Reject friend request (update other friend)
+ */
+
+/**TODO:
+ * display friend request sent
+ */
+
+/**TODO:
+ * Cancel personal request sent (update friend)
+ * (like deleting a message in a chat)
+ */
+
 
 module.exports = router;
