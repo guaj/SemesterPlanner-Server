@@ -78,7 +78,7 @@ router.route('/add').post(async (req, res) => {
         .then((room) => {
           StudentRepository.findOneByEmail(email)
             .then((student) => {
-              var studyRooms = student.studyRooms;
+              let studyRooms = student.studyRooms;
               studyRooms.push(ID);
               StudentRepository.updateStudyRooms(email, studyRooms)
                 .then(() => res.json(email + " added to studyroom").status(200))
@@ -110,7 +110,7 @@ router.route('/remove').post(async (req, res) => {
         .then((room) => {
           StudentRepository.findOneByEmail(email)
             .then((student) => {
-              var studyRooms = student.studyRooms;
+              let studyRooms = student.studyRooms;
               const roomIndex = studyRooms.indexOf(ID);
               if (roomIndex > -1) {
                 studyRooms.splice(roomIndex, 1);
@@ -146,7 +146,7 @@ router.route('/:email').get(async (req, res) => {
 router.route('/delete').post(async (req, res) => {
   const roomID = req.body.studyRoomID.toString()
   StudyRoomRepository.deleteOne(roomID)
-    .then(() => res.send("deleted room " + roomID.toString()))
+    .then((status) => res.send("deleted" + status + 'rooms'))
     .catch(err => res.status(400).json('Error: ' + err));
 })
 
