@@ -125,13 +125,18 @@ router.route('/answerFriendRequest').post(async (req, res) => {
 //       );
 // });
 
-/**TODO:
- * get Friend List
- */
 
 /**TODO:
  * delete friend with email
  */
+router.route('/:email/:friendEmail').delete(async (req, res) => {
+  const email = req.params.email.toString() //params is : in url
+  const friendEmail = req.params.friendEmail.toString()
+  // const Profile = await Student.findOne({
+  //   email: email
+  // });
+  res.json(email+ " friend " + friendEmail + " has been deleted.").status(200)
+})
 
 /**TODO:
  * display friend request received
