@@ -128,14 +128,36 @@ router.route('/answerFriendRequest').post(async (req, res) => {
 
 /**TODO:
  * delete friend with email
+ * (front end:
+ * delete request
+ * http://localhost:5000/friend/admin2@admin.ca/admin3@admin.ca)
  */
 router.route('/:email/:friendEmail').delete(async (req, res) => {
-  const email = req.params.email.toString() //params is : in url
-  const friendEmail = req.params.friendEmail.toString()
-  // const Profile = await Student.findOne({
-  //   email: email
-  // });
-  res.json(email+ " friend " + friendEmail + " has been deleted.").status(200)
+  const emailTemp = req.params.email.toString() //params is : in url
+  const friendEmailTemp = req.params.friendEmail.toString()
+  const Profile = await Student.findOne({
+    email: emailTemp
+  });
+  //local change
+  friendList = Profile.friends
+  friendIndex = friendList.indexOf(friendEmailTemp)
+  //console.log(friendIndex)
+ // console.log(friendList)
+  friendList.splice(friendIndex,1); // 0 means will not put a new element inside, 2nd param deletes old one
+  //console.log(friendList)
+  //update on mongoDB
+  Student.updateOne(
+      { email: emailTemp },
+      { friends: friendList },
+      (err, docs) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('Updated Docs : ', docs);
+        }
+      },
+  );
+  res.json(emailTemp+ " friend " + friendEmailTemp+ " has been deleted.").status(200)
 })
 
 /**TODO:
