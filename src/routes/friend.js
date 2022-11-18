@@ -126,7 +126,7 @@ router.route('/answerFriendRequest').post(async (req, res) => {
 // });
 
 
-/**TODO:
+/**
  * delete friend with email
  * (front end:
  * delete request
@@ -158,6 +158,31 @@ router.route('/:email/:friendEmail').delete(async (req, res) => {
       },
   );
   res.json(emailTemp+ " friend " + friendEmailTemp+ " has been deleted.").status(200)
+})
+
+/**TODO:
+ * update friend list given new friend list
+ * front end:
+ * post request
+ * http://localhost:5000/friend/updateFriendList
+ */
+router.route('/updateFriendList').post(async (req, res) => {
+  const emailTemp = req.body.email.toString()
+  const friendList = req.body.friends
+  console.log(friendList)
+  console.log(emailTemp)
+  Student.updateOne(
+      { email: emailTemp },
+      { friends: friendList },
+      (err, docs) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log('Updated Docs : ', docs);
+        }
+      },
+  );
+  res.json(emailTemp+ " friend list has been updated.").status(200)
 })
 
 /**TODO:
