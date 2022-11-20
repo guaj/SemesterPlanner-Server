@@ -156,7 +156,7 @@ router.post('/file', (req, res) => {
 
 // get file BY courseNoteID
 router.route('/file/:courseNotesID').get(async (req, res) => {
-  CourseNotesRepository.findOne(req.body.courseNotesID)
+  CourseNotesRepository.findOne(req.params.courseNotesID)
     .then(note => res.json(note).status(200))
     .catch(err => res.status(400).json('Error: ' + err));
 })
