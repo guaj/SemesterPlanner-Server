@@ -52,7 +52,7 @@ module.exports = class studyRoomRepository {
      * @param {*} studyRoom An updated studyRoom object.
      * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
      */
-    static save(studyRoom) {
+    static updateOne(studyRoom) {
         return new Promise((resolve, reject) => {
             studyRoom.save((err, room) => {
                 if (err) { reject(err); }

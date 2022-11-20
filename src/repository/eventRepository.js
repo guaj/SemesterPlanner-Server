@@ -80,7 +80,7 @@ module.exports = class EventRepository {
      * @param {*} event An updated event object.
      * @returns {Event}  Returns a promise. Resolves with the updated event.
      */
-    static save(event) {
+    static updateOne(event) {
         return new Promise((resolve, reject) => {
             event.save((err, event) => {
                 if (err) { reject(err); }

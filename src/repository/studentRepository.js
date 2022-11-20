@@ -115,7 +115,7 @@ module.exports = class StudentRepository {
      * @param {*} student An updated student object.
      * @returns Returns a promise. Resolves with the updated student.
      */
-    static save(student) {
+    static updateOne(student) {
         return new Promise((resolve, reject) => {
             student.save((err, student) => {
                 if (err) { reject(err); }
