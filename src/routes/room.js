@@ -1,33 +1,29 @@
 const router = require('express').Router();
-const StudyRoom = require('../models/studyRoom.model');
-const Student = require('../models/student.model');
-const { createStudyRoom } = require("../factory/roomFactory");
 const CourseNotesRepository = require("../repository/courseNotesRepository")
 const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentRepository = require('../repository/studentRepository');
-const studyRoomRepository = require('../repository/studyRoomRepository');
 
 
 router.route('/').put((req, res) => {
   StudyRoomRepository.findOne(req.body.studyRoomID)
     .then((room) => {
-      if (data.owner) {
-        room.owner = data.owner;
+      if (req.body.owner) {
+        room.owner = req.body.owner;
       }
-      if (data.color) {
-        room.color = data.color;
+      if (req.body.color) {
+        room.color = req.body.color;
       }
-      if (data.description) {
-        room.description = data.description;
+      if (req.body.description) {
+        room.description = req.body.description;
       }
-      if (data.title) {
-        room.title = data.title;
+      if (req.body.title) {
+        room.title = req.body.title;
       }
-      if (data.avatarText) {
-        room.avatar = data.avatarText;
+      if (req.body.avatarText) {
+        room.avatar = req.body.avatarText;
       }
-      if (data.participants) {
-        room.participants = data.participants;
+      if (req.body.participants) {
+        room.participants = req.body.participants;
       }
       StudyRoomRepository.updateOne(room)
         .then((room) => res.json(`Room ${room.studyRoomID} updated`))
@@ -44,7 +40,6 @@ router.route('/').post((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
-// fetch email by studyRoomID
 /**
  * Study room info route
  * @param studyRoomID: ID  of the study room
