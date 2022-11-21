@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Student = require('../models/student.model');
+const StudentRepository = require('../repository/studentRepository')
 const FriendRequest = require('../models/friendRequest.model');
 const createFriendRequest = require('../factory/friendRequestFactory');
 
@@ -52,14 +53,29 @@ function isInFriendList(student1, student2) {
 router.route('/:email').get(async (req, res) => {
   const email = req.params.email.toString();
 
-  Student.findOne({
-    email: email
-  }).then((student) => {
-    res.json(student.friends).status(200);
-  }).catch((err) => {
-    res.json(`Error fetching data for [${email}] - ${err}`).status(404);
-  })
+  StudentRepository.findOneByEmail(email)
+      .then((student) => {
+        res.json(student.friends).status(200)
+      })
+      .catch(err => res.status(400).json('Error: ' + err));
 })
+
+/**
+ * @author: Jasmin Guay
+ * Endpoint to update a student friend list.
+ * @params email (string) email of the student to be updated
+ * @params friends (string[]) list of updated friend list.
+ * @return the update friend list.
+ */
+router.route('/updateFriendList').post( async (req,res) => {
+    const email = req.body.email;
+    const updatedFriendList = req.body.friends;
+
+    StudentRepository.updateFriendList(email,updatedFriendList)
+        .then((student) => { res.json(student.friends).status(200) })
+        .catch((err) => { res.json(`Error happened in updateFriendList - ${err}`).status(404) })
+})
+
 
 /**
  * @author: Jasmin Guay
