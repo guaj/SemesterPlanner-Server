@@ -22,27 +22,4 @@ async function createStudent(data) {
     })
 }
 
-async function editStudent(data) {
-    let student = {};
-    if (data.username) {
-        user.username = data.username;
-    }
-    if (data.email) {
-        user.email = data.email;
-    }
-    if (data.password) {
-        user.password = await bcrypt.hash(req.body.password, 10);
-    }
-    if (data.program) {
-        user.program = data.program;
-    }
-    if (data.faculty) {
-        user.faculty = data.faculty;
-    }
-    if (data.privateProfile) {
-        user.privateProfile = data.privateProfile;
-    }
-    return student;
-}
-
-module.exports = { createStudent, editStudent };
+module.exports = { createStudent };

@@ -1,6 +1,8 @@
 const Event = require('../models/event.model');
+const { v4: uuidv4 } = require('uuid');
 
 function createEvent(data) {
+    const eventID = uuidv4();
     const username = data.username;
     const eventHeader = data.eventHeader;
     const description = data.description;
@@ -12,6 +14,7 @@ function createEvent(data) {
     const reccurence = data.reccurence;
     const color = data.color;
     return new Event({
+        eventID,
         username,
         eventHeader,
         description,
@@ -25,36 +28,4 @@ function createEvent(data) {
     })
 }
 
-function editEvent(data) {
-    let event = {};
-    if (data.eventHeader) {
-        event.eventHeader = data.eventHeader;
-    }
-    if (data.description) {
-        event.description = data.description;
-    }
-    if (data.link) {
-        event.link = data.link;
-    }
-    if (data.startDate) {
-        event.startDate = data.startDate;
-    }
-    if (data.endDate) {
-        event.endDate = data.endDate;
-    }
-    if (data.startTime) {
-        event.startTime = data.startTime;
-    }
-    if (data.endTime) {
-        event.endTime = data.endTime;
-    }
-    if (data.reccurence) {
-        event.reccurence = data.reccurence;
-    }
-    if (data.color) {
-        event.color = data.color;
-    }
-    return event;
-}
-
-module.exports = { createEvent, editEvent };
+module.exports = { createEvent };
