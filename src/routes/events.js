@@ -6,8 +6,8 @@ const { createEvent, editEvent } = require("../factory/eventFactory");
 /**
  * Get all events of a certain student
  */
-router.route('/').get((req, res) => {
-    Event.find({ username: req.body.username })
+router.route('/:username').get((req, res) => {
+    Event.find({ username: req.params.username })
         .then(events => res.json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -15,8 +15,8 @@ router.route('/').get((req, res) => {
 /**
  * Get event by eventId
  */
-router.route('/:username').get((req, res) => {
-    Event.find({ username: req.params.username })
+router.route('/:eventId').get((req, res) => {
+    Event.findById(req.params.eventId )
         .then(event => res.json(event))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -24,8 +24,8 @@ router.route('/:username').get((req, res) => {
 /**
  * Delete an event by eventId
  */
-router.route('/:username').delete((req, res) => {
-    Event.findOneAndDelete({ username: req.params.username })
+router.route('/:eventId').delete((req, res) => {
+    Event.findOneAndDelete({ _id: req.params.eventId })
         .then(event => res.json(`Event deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
 });
