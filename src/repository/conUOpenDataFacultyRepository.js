@@ -86,7 +86,7 @@ module.exports = class openDataFacultyRepository {
     static findAllByFacultyCode(facultyCode) {
         return new Promise((resolve, reject) => {
             OpenDataFaculty.find({
-                facultyCode: {"$in": [facultyCode]}
+                facultyCode: {"$in": [facultyCode.toUpperCase()]}
             })
                 .then((rooms) => {
                     resolve(rooms);
