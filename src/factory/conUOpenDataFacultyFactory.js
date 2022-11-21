@@ -7,7 +7,6 @@ function createOpenDataFaculty(data) {
     const departmentDescription = data.departmentDescription
 
     return new OpenDataFaculty({
-        // recordId,
         facultyCode,
         facultyDescription,
         departmentCode,

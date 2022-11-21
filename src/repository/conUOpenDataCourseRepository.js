@@ -1,7 +1,7 @@
-const {createOpenDataFaculty} = require("../factory/conUOpenDataFacultyFactory");
-const OpenDataFaculty = require('../models/conUOpenDataFaculty.model');
+const {createOpenDataCourse} = require("../factory/conUOpenDataCourseFactory");
+const OpenDataCourse = require('../models/conUOpenDataCourse.model');
 
-module.exports = class openDataFacultyRepository {
+module.exports = class openDataCourseRepository {
     /**
      * Create a studyRoom.
      * @param {*} data The body/params of the request. It should contain: owner (email), color, participant, title, description (optional), avatarText (optional).
@@ -9,8 +9,8 @@ module.exports = class openDataFacultyRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            const newOpenDataFaculty = createOpenDataFaculty(data)
-            newOpenDataFaculty.save((err, faculty) => {
+            const newOpenDataCourse = createOpenDataCourse(data)
+            newOpenDataCourse.save((err, faculty) => {
                 if (err) {
                     reject(err);
                 }
@@ -83,10 +83,23 @@ module.exports = class openDataFacultyRepository {
      * @param {string} email The username of the student.
      * @returns {[StudyRoom]} Returns a promise. Resolves with an array of stutyRooms the student is a part of.
      */
-    static findAllByFacultyCode(facultyCode) {
+    static findAllByCourseCode(courseCode) {
         return new Promise((resolve, reject) => {
-            OpenDataFaculty.find({
-                facultyCode: {"$in": [facultyCode.toUpperCase()]}
+            OpenDataCourse.find({
+                subject: {"$in": [courseCode.toUpperCase()]}
+            })
+                .then((result) => {
+                    resolve(result);
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    static findByCourseCodeAndNumber(courseCode, courseNumber) {
+        return new Promise((resolve, reject) => {
+            OpenDataCourse.find({
+                subject: {"$in": [courseCode.toUpperCase()]},
+                catalog: {"$in": [courseNumber.toString()]}
             })
                 .then((result) => {
                     resolve(result);
@@ -97,7 +110,7 @@ module.exports = class openDataFacultyRepository {
 
     static dropTable() {
         return new Promise((resolve, reject) => {
-            OpenDataFaculty.collection.drop().then((result) => {
+            OpenDataCourse.collection.drop().then((result) => {
                 resolve(result);
             }).catch((err) => {
                 reject(err);
@@ -105,9 +118,9 @@ module.exports = class openDataFacultyRepository {
         })
     }
 
-    static batchCreateFaculty(facultiesData) {
+    static batchCreateCourse(coursesData) {
         return new Promise((resolve, reject) => {
-            OpenDataFaculty.collection.insertMany(facultiesData, (err, docs) => {
+            OpenDataCourse.collection.insertMany(coursesData, (err, docs) => {
                 if (err) {
                     reject(err);
                 } else {
