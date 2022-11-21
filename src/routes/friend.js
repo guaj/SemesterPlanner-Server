@@ -1,59 +1,44 @@
 const router = require('express').Router();
 const Student = require('../models/student.model');
+const StudentRepository = require('../repository/studentRepository')
 
 // fetch the list of friends by email
 router.route('/:email').get(async (req, res) => {
   const email = req.params.email.toString()
-  const Profil = await Student.findOne({
-    email: email
-  });
-  res.json(Profil.friends).status(200)
+  StudentRepository.findOneByEmail(email)
+    .then((student) => {
+      res.json(student.friends).status(200)
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
 })
 
 // send  a friend rerquest
 router.route('/add').post(async (req, res) => {
   const username = req.body.username.toString();
   const friendUsername = req.body.friendUsername.toString()
-  const myProfile = await Student.findOne({
-    username: username,
-  });
+  StudentRepository.findOneByUsername(username)
+    .then((myProfile) => {
+      StudentRepository.findOneByUsername(friendUsername).then((friendProfile) => {
+        let friend = friendUsername;
+        let me = username;
 
-  const friendProfile = await Student.findOne({
-    username: friendUsername,
-  });
+        let friendRequestsSent = myProfile.friendRequestsSent
+        friendRequestsSent.push(friendUsername)
 
-  let friend = friendUsername
-  let me = username
+        let friendRequestsReceived = friendProfile.friendRequestsReceived
+        friendRequestsReceived.push(username)
 
-  let friendRequestsSent = myProfile.friendRequestsSent
-  friendRequestsSent.push(friendUsername)
+        StudentRepository.updateFriendRequestSent(me, friendRequestsSent)
+          .then()
+          .catch(err => res.status(400).json('Error: ' + err));
 
-  let friendRequestsReceived = friendProfile.friendRequestsReceived
-  friendRequestsReceived.push(username)
-
-  Student.updateOne(
-    { username: me },
-    { friendRequestsSent: friendRequestsSent },
-    (err, docs) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log('Updated Docs : ', docs);
-      }
-    },
-  );
-
-  Student.updateOne(
-    { username: friend },
-    { friendRequestsReceived: friendRequestsReceived },
-    (err, docs) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log('Updated Docs : ', docs);
-      }
-    },
-  );
+        StudentRepository.updateFriendRequestReceived(friend, friendRequestsReceived)
+          .then()
+          .catch(err => res.status(400).json('Error: ' + err));
+      })
+        .catch(err => res.status(400).json('Error: ' + err));
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
 });
 
 router.route('/answer').post(async (req, res) => {

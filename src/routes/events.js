@@ -1,13 +1,12 @@
 const router = require('express').Router();
-let Event = require('../models/event.model');
-const mongoose = require("mongoose");
-const { createEvent, editEvent } = require("../factory/eventFactory");
+const { createEvent } = require("../factory/eventFactory");
+const EventRepository = require('../repository/eventRepository')
 
 /**
  * Get all events of a certain student
  */
 router.route('/:username').get((req, res) => {
-    Event.find({ username: req.params.username })
+    EventRepository.findAllbyStudentUsername(req.params.username)
         .then(events => res.json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -15,8 +14,8 @@ router.route('/:username').get((req, res) => {
 /**
  * Get event by eventId
  */
-router.route('/:eventId').get((req, res) => {
-    Event.findById(req.params.eventId )
+router.route('/:eventID').get((req, res) => {
+    EventRepository.findOne(req.params.eventID)
         .then(event => res.json(event))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -24,8 +23,8 @@ router.route('/:eventId').get((req, res) => {
 /**
  * Delete an event by eventId
  */
-router.route('/:eventId').delete((req, res) => {
-    Event.findOneAndDelete({ _id: req.params.eventId })
+router.route('/:eventID').delete((req, res) => {
+    EventRepository.deleteOne(req.params.eventID)
         .then(event => res.json(`Event deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -34,10 +33,36 @@ router.route('/:eventId').delete((req, res) => {
  * Update an event
  */
 router.route('/update').post(async (req, res) => {
-    Event.findOne({ _id: new mongoose.Schema.Types.ObjectId(req.body._id) })
-        .then(() => {
-            const event = editEvent(req.body)
-            event.save()
+    EventRepository.findOne(req.body.eventID)
+        .then((event) => {
+            if (req.body.eventHeader) {
+                event.eventHeader = req.body.eventHeader;
+            }
+            if (req.body.description) {
+                event.description = req.body.description;
+            }
+            if (req.body.link) {
+                event.link = req.body.link;
+            }
+            if (req.body.startDate) {
+                event.startDate = req.body.startDate;
+            }
+            if (req.body.endDate) {
+                event.endDate = req.body.endDate;
+            }
+            if (req.body.startTime) {
+                event.startTime = req.body.startTime;
+            }
+            if (req.body.endTime) {
+                event.endTime = req.body.endTime;
+            }
+            if (req.body.reccurence) {
+                event.reccurence = req.body.reccurence;
+            }
+            if (req.body.color) {
+                event.color = req.body.color;
+            }
+            EventRepository.save(event)
                 .then(() => res.json(`Event ${event.eventHeader} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
         })
@@ -48,9 +73,9 @@ router.route('/update').post(async (req, res) => {
  * Add an event
  */
 router.route('/add').post(async (req, res) => {
-    const newEvent = createEvent(req.body)
-    newEvent.save()
-        .then(() => res.json(`Event ${eventHeader} added`))
+    EventRepository.create(req.body)
+        .then((event) => res.json(`Event ${event.eventHeader} added`))
+        .catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;
