@@ -161,8 +161,8 @@ router.route("/outgoing-requests/:email").get( async (req, res) => {
  * @param requestId (string) : id of the request to be deleted
  * @return friendRequests (friendRequest[]) : list of friend requests received by the specified student.
  */
-router.route("/cancel-request").delete( async (req, res) => {
-  const requestId = req.body.requestId;
+router.route("/cancel-request").post( async (req, res) => {
+    const requestId = req.body.requestId;
 
   FriendRequest.findOneAndDelete({
     _id: requestId
@@ -171,40 +171,6 @@ router.route("/cancel-request").delete( async (req, res) => {
   }).catch((err) => {
     res.json(`Cannot delete request with id [${requestId}] - ${err}`);
   })
-})
-
-/**
- * delete friend with email
- * (front end:
- * delete request
- * http://localhost:5000/friend/admin2@admin.ca/admin3@admin.ca)
- */
-router.route('/:email/:friendEmail').delete(async (req, res) => {
-  const emailTemp = req.params.email.toString() //params is : in url
-  const friendEmailTemp = req.params.friendEmail.toString()
-  const Profile = await Student.findOne({
-    email: emailTemp
-  });
-  //local change
-  friendList = Profile.friends
-  friendIndex = friendList.indexOf(friendEmailTemp)
-  //console.log(friendIndex)
- // console.log(friendList)
-  friendList.splice(friendIndex,1); // 0 means will not put a new element inside, 2nd param deletes old one
-  //console.log(friendList)
-  //update on mongoDB
-  Student.updateOne(
-      { email: emailTemp },
-      { friends: friendList },
-      (err, docs) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log('Updated Docs : ', docs);
-        }
-      },
-  );
-  res.json(emailTemp+ " friend " + friendEmailTemp+ " has been deleted.").status(200)
 })
 
 module.exports = router;
