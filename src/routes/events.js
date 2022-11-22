@@ -14,7 +14,7 @@ router.route('/:username').get((req, res) => {
 /**
  * Get event by eventId
  */
-router.route('/:eventID').get((req, res) => {
+router.route('event/:eventID').get((req, res) => {
     EventRepository.findOne(req.params.eventID)
         .then(event => res.json(event))
         .catch(err => res.status(400).json('Error: ' + err));
