@@ -173,4 +173,25 @@ router.route("/cancel-request").post( async (req, res) => {
   })
 })
 
+/**
+ * @author: Jasmin Guay
+ * Endpoint to search a user
+ * @param {string} searchInput : text input to search a user (email or username)
+ * @return {username: string, password: string} : minimal object of the user found (if profile is not private)
+ */
+router.route("/search").post( async (req,res) => {
+  const searchInput = req.body.searchInput;
+
+  let user = await StudentRepository.findOneByEmail(searchInput);
+
+  if (user == null) {
+    user = await StudentRepository.findOneByUsername(searchInput);
+  }
+  if (user == null || user.privateProfile) {
+    res.json(`No user found for searchInput [${searchInput}]`).status(404);
+  } else {
+    res.json({username: user.email,email: user.username}).status(200);
+  }
+})
+
 module.exports = router;

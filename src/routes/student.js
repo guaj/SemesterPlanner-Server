@@ -77,9 +77,8 @@ router.route('/update').post(TokenVerify, async (req, res) => {
             if (req.body.faculty) {
                 student.faculty = req.body.faculty;
             }
-            if (req.body.privateProfile) {
-                student.privateProfile = req.body.privateProfile;
-            }
+            student.privateProfile = req.body.privateProfile;
+
             StudentRepository.updateOne(student)
                 .then((student) => res.json(`Student ${student.email} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
