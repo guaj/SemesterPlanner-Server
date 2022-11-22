@@ -132,7 +132,7 @@ module.exports = class StudentRepository {
      */
     static updateFriendList(email, updatedFriendList) {
         return new Promise((resolve, reject) => {
-            Student.updateOne({email}, {
+            Student.updateOne({email: email.toString()}, {
                 friends : updatedFriendList
             }).then(() => { resolve(student) })
                 .catch((err) => reject(err))

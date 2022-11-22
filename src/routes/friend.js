@@ -12,8 +12,8 @@ const createFriendRequest = require('../factory/friendRequestFactory');
  * @return _id (string) : id of the friend request created.
  */
 router.route('/add').post(async (req, res) => {
-  const senderEmail = req.body.senderEmail;
-  const receiverEmail = req.body.receiverEmail;
+  const senderEmail = req.body.senderEmail.toString();
+  const receiverEmail = req.body.receiverEmail.toString();
 
   if (!isInFriendList(senderEmail, receiverEmail)) {
     const newFriendRequest = createFriendRequest({senderEmail, receiverEmail});
@@ -68,8 +68,8 @@ router.route('/:email').get(async (req, res) => {
  * @return the update friend list.
  */
 router.route('/updateFriendList').post( async (req,res) => {
-    const email = req.body.email;
-    const updatedFriendList = req.body.friends;
+    const email = req.body.email.toString();
+    const updatedFriendList = req.body.friends.toString();
 
     StudentRepository.updateFriendList(email,updatedFriendList)
         .then((student) => { res.json(student.friends).status(200) })
@@ -85,7 +85,7 @@ router.route('/updateFriendList').post( async (req,res) => {
  * @return studentUsername (string) username of the student added to the friend list if the request was accepted, null otherwise.
  */
 router.route('/answerFriendRequest').post(async (req, res) => {
-  const requestId = req.body.requestId;
+  const requestId = req.body.requestId.toString();
   const request = await FriendRequest.findOne({_id: requestId});
 
   if (request == null) {
@@ -162,7 +162,7 @@ router.route("/outgoing-requests/:email").get( async (req, res) => {
  * @return friendRequests (friendRequest[]) : list of friend requests received by the specified student.
  */
 router.route("/cancel-request").post( async (req, res) => {
-    const requestId = req.body.requestId;
+    const requestId = req.body.requestId.toString();
 
   FriendRequest.findOneAndDelete({
     _id: requestId
@@ -180,7 +180,7 @@ router.route("/cancel-request").post( async (req, res) => {
  * @return {username: string, password: string} : minimal object of the user found (if profile is not private)
  */
 router.route("/search").post( async (req,res) => {
-  const searchInput = req.body.searchInput;
+  const searchInput = req.body.searchInput.toString();
 
   let user = await StudentRepository.findOneByEmail(searchInput);
 
