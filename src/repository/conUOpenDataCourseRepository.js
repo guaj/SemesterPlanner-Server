@@ -1,5 +1,6 @@
 const {createOpenDataCourse} = require("../factory/conUOpenDataCourseFactory");
 const OpenDataCourse = require('../models/conUOpenDataCourse.model');
+const axios = require("axios");
 
 module.exports = class openDataCourseRepository {
     /**
@@ -83,5 +84,32 @@ module.exports = class openDataCourseRepository {
                 }
             })
         })
+    }
+
+    /**
+     * Refreshes Course data in the openadatacourses table using the course data in Concordia's Open Data
+     */
+    static refreshCourseData(){
+        axios.get("https://opendata.concordia.ca/API/v1/course/catalog/filter/*/*/*", {
+            auth: {
+                username: process.env.OPEN_DATA_USERNAME,
+                password: process.env.OPEN_DATA_PASSWORD
+            }
+        }).then((result) => {
+            console.info("Origin OpenData Courses size: " + result.data.length);
+            this.dropTable().then((res) => {
+                console.info("opendatacourses collection dropped: " + res);
+
+                this.batchCreateCourse(result.data).then((res) => {
+                    console.info('%d courses were successfully added to opendatacourses collection.', res.insertedCount);
+                }).catch((err) => {
+                    console.error(err);
+                });
+            }).catch((err) => {
+                console.error(err);
+            });
+        }).catch((err) => {
+            console.error(err);
+        });
     }
 }

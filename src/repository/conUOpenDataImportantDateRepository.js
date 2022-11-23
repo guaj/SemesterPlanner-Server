@@ -25,7 +25,7 @@ module.exports = class openDataImportantDateRepository {
      * Get a list of all important dates.
      * @returns [{ImportantDate}] Returns a promise. Resolves with the ImportantDate records.
      */
-    static getAllImportantDates(){
+    static getAllImportantDates() {
         return new Promise((resolve, reject) => {
             OpenDataImportantDate.find()
                 .then((result) => {
@@ -115,6 +115,26 @@ module.exports = class openDataImportantDateRepository {
                     resolve(docs);
                 }
             })
+        })
+    }
+
+    /**
+     * Refreshes ImportantDate data in the openadataimportantdates table using the important dates on Concordia's Academic Dates webpage
+     */
+    static refreshImportantDateData() {
+        this.getImportantDates().then((result) => {
+            console.info("Origin OpenData Important Dates Courses size: " + result.length);
+
+            this.dropTable().then((res) => {
+                console.info("opendataimportantcourses collection dropped: " + res);
+                this.batchCreateImportantDate(result).then((res) => {
+                    console.info('%d courses were successfully added to opendataimportantdates collection.', res.insertedCount);
+                }).catch((err) => {
+                    console.error(err);
+                });
+            }).catch((err) => {
+                console.error(err);
+            });
         })
     }
 }

@@ -1,4 +1,3 @@
-const axios = require("axios");
 const OpenDataFacultyRepository = require("../repository/conUOpenDataFacultyRepository");
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 const OpenDataImportantDateRepository = require("../repository/conUOpenDataImportantDateRepository");
@@ -8,66 +7,9 @@ const router = require('express').Router();
 // runs once on server start then refreshes open data once every 24 hours
 setInterval(
     function openDataRefresh() {
-        axios.get("https://opendata.concordia.ca/API/v1/course/faculty/filter/*/*", {
-            auth: {
-                username: process.env.OPEN_DATA_USERNAME,
-                password: process.env.OPEN_DATA_PASSWORD
-            }
-        }).then((result) => {
-            console.info("Origin OpenData Faculties size: " + result.data.length);
-            let data = JSON.parse(JSON.stringify(result.data).split('"deparmentCode":').join('"departmentCode":')); // replaces key name 'deparmentCode' from source data to 'departmentCode'
-            data = JSON.parse(JSON.stringify(data).split('"deparmentDescription":').join('"departmentDescription":')); // replaces key name 'deparmentDescription' from source data to 'departmentDescription'
-            OpenDataFacultyRepository.dropTable().then((res) => {
-                console.info("opendatafaculties collection dropped: " + res);
-
-                OpenDataFacultyRepository.batchCreateFaculty(data).then((res) => {
-                    console.info('%d faculties were successfully added to opendatafaculties collection.', res.insertedCount);
-                }).catch((err) => {
-                    console.error(err);
-                });
-            }).catch((err) => {
-                console.error(err);
-            });
-        }).catch((err) => {
-            console.error(err);
-        });
-
-        axios.get("https://opendata.concordia.ca/API/v1/course/catalog/filter/*/*/*", {
-            auth: {
-                username: process.env.OPEN_DATA_USERNAME,
-                password: process.env.OPEN_DATA_PASSWORD
-            }
-        }).then((result) => {
-            console.info("Origin OpenData Courses size: " + result.data.length);
-            OpenDataCourseRepository.dropTable().then((res) => {
-                console.info("opendatacourses collection dropped: " + res);
-
-                OpenDataCourseRepository.batchCreateCourse(result.data).then((res) => {
-                    console.info('%d courses were successfully added to opendatacourses collection.', res.insertedCount);
-                }).catch((err) => {
-                    console.error(err);
-                });
-            }).catch((err) => {
-                console.error(err);
-            });
-        }).catch((err) => {
-            console.error(err);
-        });
-
-        OpenDataImportantDateRepository.getImportantDates().then((result) => {
-            console.info("Origin OpenData Important Dates Courses size: " + result.length);
-
-            OpenDataImportantDateRepository.dropTable().then((res) => {
-                console.info("opendataimportantcourses collection dropped: " + res);
-                OpenDataImportantDateRepository.batchCreateImportantDate(result).then((res) => {
-                    console.info('%d courses were successfully added to opendataimportantdates collection.', res.insertedCount);
-                }).catch((err) => {
-                    console.error(err);
-                });
-            }).catch((err) => {
-                console.error(err);
-            });
-        })
+        OpenDataFacultyRepository.refreshFacultyData();
+        OpenDataCourseRepository.refreshCourseData();
+        OpenDataImportantDateRepository.refreshImportantDateData();
 
         return openDataRefresh;
     }(), 86400000);
