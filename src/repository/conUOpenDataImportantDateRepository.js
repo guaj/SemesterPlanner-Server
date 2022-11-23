@@ -24,7 +24,7 @@ module.exports = class openDataImportantDateRepository {
 
     static getAllImportantDates(){
         return new Promise((resolve, reject) => {
-            OpenDataImportantDate.find({})
+            OpenDataImportantDate.find()
                 .then((result) => {
                     resolve(result);
                 })
