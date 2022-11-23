@@ -1,7 +1,6 @@
 const {createOpenDataImportantDate} = require("../factory/conUOpenDataImportantDateFactory");
 const OpenDataImportantDate = require('../models/conUOpenDataImportantDate.model');
-const got = (...args) =>
-    import('got').then(({default: got}) => got(...args));
+const got = require('got');
 const cheerio = require("cheerio");
 
 module.exports = class openDataImportantDateRepository {
@@ -62,9 +61,10 @@ module.exports = class openDataImportantDateRepository {
                     }
                     const string = element.children[0].data.trim() + ", " + (isCurrentYear ? currentYear : currentYear + 1) + " : " + this.getText($('div.text')[i]);
                     const date = new Date(string.split(":")[0]);
+                    const description = string.split(":")[1].trim().split(' ,').join(',');
                     const importantDate = {
                         'date': date.toLocaleDateString(),
-                        'description': string.split(":")[1].trim()
+                        'description': description
                     };
                     importantDates.push(importantDate);
                 })
