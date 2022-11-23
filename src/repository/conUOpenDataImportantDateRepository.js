@@ -5,9 +5,9 @@ const cheerio = require("cheerio");
 
 module.exports = class openDataImportantDateRepository {
     /**
-     * Create a studyRoom.
-     * @param {*} data The body/params of the request. It should contain: owner (email), color, participant, title, description (optional), avatarText (optional).
-     * @returns {StudyRoom} Returns a promise. Resolves with the studyRoom.
+     * Create an important date record.
+     * @param {*} data The body/params of the request. It should contain: date, description.
+     * @returns [{ImportantDate}] Returns a promise. Resolves with the ImportantDate record added.
      */
     static create(data) {
         return new Promise((resolve, reject) => {
@@ -21,6 +21,10 @@ module.exports = class openDataImportantDateRepository {
         })
     }
 
+    /**
+     * Get a list of all important dates.
+     * @returns [{ImportantDate}] Returns a promise. Resolves with the ImportantDate records.
+     */
     static getAllImportantDates(){
         return new Promise((resolve, reject) => {
             OpenDataImportantDate.find()
@@ -31,6 +35,11 @@ module.exports = class openDataImportantDateRepository {
         })
     }
 
+    /**
+     * Get text description of a text node on Concordia's Academic Dates webpage.
+     * @param {div} textNode The text node for which the description text needs to be extracted.
+     * @returns {string} Returns a string containing the text inside the textNode of interest (passed in params).
+     */
     static getText(textNode) {
         let string = "";
 
@@ -44,6 +53,10 @@ module.exports = class openDataImportantDateRepository {
         return string.trim();
     }
 
+    /**
+     * Get a list of important dates from Concordia's Academic Dates webpage.
+     * @returns [{ImportantDate}] Returns a list containing ImportantDate records.
+     */
     static getImportantDates() {
         let isCurrentYear = true;
         const currentYear = new Date().getFullYear();
@@ -75,95 +88,10 @@ module.exports = class openDataImportantDateRepository {
         });
     };
 
-    // /**
-    //  * Find one event by its studyRoomID.
-    //  * @param {string} studyRoomID The eventID of the event.
-    //  * @returns {StudyRoom} Returns a promise. Resolves with a studyRoom.
-    //  */
-    // static findOne(studyRoomID) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.findOne({ studyRoomID: studyRoomID.toString() }).then((room) => {
-    //             resolve(room);
-    //         })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
-    // /**
-    //  * Delete one studyRoom by its studyRoomID.
-    //  * @param {string} studyRoomID The studyRoomID of the event.
-    //  * @returns {number} Returns a promise. Resolves with the number of studyRooms deleted (1 or 0).
-    //  */
-    // static deleteOne(studyRoomID) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.deleteOne({ studyRoomID: studyRoomID.toString() })
-    //             .then((status) => {
-    //                 resolve(status.deletedCount);
-    //             })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
-    // /**
-    //  * Update a studyRoom by saving it to the database.
-    //  * @param {*} studyRoom An updated studyRoom object.
-    //  * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
-    //  */
-    // static updateOne(studyRoom) {
-    //     return new Promise((resolve, reject) => {
-    //         studyRoom.save((err, room) => {
-    //             if (err) { reject(err); }
-    //             resolve(room);
-    //         })
-    //     })
-    // }
-    //
-    // /**
-    //  * Update a studyRoom's participants
-    //  * @param {string} email The studyRoomID of the studyRoom.
-    //  * @param {[string]} participants An array of participant emails.
-    //  * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
-    //  */
-    // static updateParticipants(studyRoomID, participants) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.updateOne(
-    //             { studyRoomID: studyRoomID },
-    //             { participants: participants })
-    //             .then((room) => { resolve(room); })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
-    // /**
-    //  * Find all studyRooms of student.
-    //  * @param {string} email The username of the student.
-    //  * @returns {[StudyRoom]} Returns a promise. Resolves with an array of stutyRooms the student is a part of.
-    //  */
-    // static findAllByCourseCode(courseCode) {
-    //     return new Promise((resolve, reject) => {
-    //         OpenDataCourse.find({
-    //             subject: {"$in": [courseCode.toUpperCase()]}
-    //         })
-    //             .then((result) => {
-    //                 resolve(result);
-    //             })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-
-    // static findByCourseCodeAndNumber(courseCode, courseNumber) {
-    //     return new Promise((resolve, reject) => {
-    //         OpenDataCourse.find({
-    //             subject: {"$in": [courseCode.toUpperCase()]},
-    //             catalog: {"$in": [courseNumber.toString()]}
-    //         })
-    //             .then((result) => {
-    //                 resolve(result);
-    //             })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-
+    /**
+     * Drops the opendataimportantdates table
+     * @returns boolean, returns true if the table is dropped, returns false if the table is not dropped
+     */
     static dropTable() {
         return new Promise((resolve, reject) => {
             OpenDataImportantDate.collection.drop().then((result) => {
@@ -174,6 +102,10 @@ module.exports = class openDataImportantDateRepository {
         })
     }
 
+    /**
+     * Creates table of ImportantDate records using an array of ImportantDate records.
+     * @returns [{ImportantDate}] Returns a promise. Resolves with an array of ImportantDate added to the table.
+     */
     static batchCreateImportantDate(importantDateData) {
         return new Promise((resolve, reject) => {
             OpenDataImportantDate.collection.insertMany(importantDateData, (err, docs) => {

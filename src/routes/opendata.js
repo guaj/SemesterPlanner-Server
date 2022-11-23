@@ -75,6 +75,7 @@ setInterval(
 /**
  * add a faculty to a department
  * @param {facultyCode, facultyDescription, departmentCode, departmentDescription}: passed as request body and added to the opendatafaculties collection
+ * @returns {string} Returns a string with the operation's result.
  */
 router.route('/faculty/').post((req, res) => {
     OpenDataFacultyRepository.create(req.body)
@@ -85,8 +86,22 @@ router.route('/faculty/').post((req, res) => {
 });
 
 /**
+ * get list of all faculties in the university
+ * @returns [faculties] Returns an array of faculties in the university.
+ */
+router.route('/faculty/').get(async (req, res) => {
+    OpenDataFacultyRepository.getFacultyList()
+        .then((faculty) => {
+            res.json(faculty).status(200);
+            console.info(`List of faculties fetched:\n` + faculty + "\n")
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+})
+
+/**
  * find all departments in a faculty
  * @param facultyCode: passed in URL corresponds to the faculty of interest
+ * @returns {[Faculty]} Returns an array of Faculty with the provided facultyCode param.
  */
 router.route('/faculty/:facultyCode').get(async (req, res) => {
     const facultyCode = req.params.facultyCode.toString()
@@ -108,6 +123,7 @@ router.route('/faculty/:facultyCode').get(async (req, res) => {
  *     classUnit,
  *     prerequisites,
  *     crosslisted}: passed as request body and added to the opendatafaculties collection
+ * @returns {string} Returns a string with the operation's result.
  */
 router.route('/course/').post((req, res) => {
     OpenDataCourseRepository.create(req.body)
@@ -120,6 +136,7 @@ router.route('/course/').post((req, res) => {
 /**
  * find all courses by course code
  * @param courseCode: passed in URL corresponds to the course code (eg. ENCS, SOEN, ENGR) of interest
+ * @returns [{Course}] Returns an array of Courses associated with the courseCode param.
  */
 router.route('/course/:courseCode').get(async (req, res) => {
     const courseCode = req.params.courseCode.toString();
@@ -134,6 +151,7 @@ router.route('/course/:courseCode').get(async (req, res) => {
 /**
  * find a specific course by course code and course number
  * @param {courseCode, courseNumber}: passed in URL correspond to the course code (eg. ENCS, SOEN, ENGR) and number of interest
+ * @returns [{Course}] Returns an array containing a Course record associated with the courseCode and courseNumber param.
  */
 router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
     const courseCode = req.params.courseCode.toString();
@@ -148,6 +166,7 @@ router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
 
 /**
  * get all important dates
+ * @returns [{ImportantDate}] Returns an array with the ImportantDate records.
  */
 router.route('/importantdates/').get( async (req, res) => {
     console.info(`Important dates requested.`)

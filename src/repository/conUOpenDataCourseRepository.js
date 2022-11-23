@@ -3,9 +3,9 @@ const OpenDataCourse = require('../models/conUOpenDataCourse.model');
 
 module.exports = class openDataCourseRepository {
     /**
-     * Create a studyRoom.
-     * @param {*} data The body/params of the request. It should contain: owner (email), color, participant, title, description (optional), avatarText (optional).
-     * @returns {StudyRoom} Returns a promise. Resolves with the studyRoom.
+     * Create a course record.
+     * @param {*} data The body/params of the request. It should contain: ID, title, subject, catalog, career, classUnit, prerequisite, crosslisted.
+     * @returns {Course}, Returns a promise. Resolves with the Course.
      */
     static create(data) {
         return new Promise((resolve, reject) => {
@@ -19,69 +19,10 @@ module.exports = class openDataCourseRepository {
         })
     }
 
-    // /**
-    //  * Find one event by its studyRoomID.
-    //  * @param {string} studyRoomID The eventID of the event.
-    //  * @returns {StudyRoom} Returns a promise. Resolves with a studyRoom.
-    //  */
-    // static findOne(studyRoomID) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.findOne({ studyRoomID: studyRoomID.toString() }).then((room) => {
-    //             resolve(room);
-    //         })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
-    // /**
-    //  * Delete one studyRoom by its studyRoomID.
-    //  * @param {string} studyRoomID The studyRoomID of the event.
-    //  * @returns {number} Returns a promise. Resolves with the number of studyRooms deleted (1 or 0).
-    //  */
-    // static deleteOne(studyRoomID) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.deleteOne({ studyRoomID: studyRoomID.toString() })
-    //             .then((status) => {
-    //                 resolve(status.deletedCount);
-    //             })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
-    // /**
-    //  * Update a studyRoom by saving it to the database.
-    //  * @param {*} studyRoom An updated studyRoom object.
-    //  * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
-    //  */
-    // static updateOne(studyRoom) {
-    //     return new Promise((resolve, reject) => {
-    //         studyRoom.save((err, room) => {
-    //             if (err) { reject(err); }
-    //             resolve(room);
-    //         })
-    //     })
-    // }
-    //
-    // /**
-    //  * Update a studyRoom's participants
-    //  * @param {string} email The studyRoomID of the studyRoom.
-    //  * @param {[string]} participants An array of participant emails.
-    //  * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
-    //  */
-    // static updateParticipants(studyRoomID, participants) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.updateOne(
-    //             { studyRoomID: studyRoomID },
-    //             { participants: participants })
-    //             .then((room) => { resolve(room); })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
     /**
-     * Find all studyRooms of student.
-     * @param {string} email The username of the student.
-     * @returns {[StudyRoom]} Returns a promise. Resolves with an array of stutyRooms the student is a part of.
+     * Find all courses with a specific course code.
+     * @param {string} courseCode, the course code of interest.
+     * @returns [{Course}] Returns a promise. Resolves with an array of Courses associated with the courseCode param.
      */
     static findAllByCourseCode(courseCode) {
         return new Promise((resolve, reject) => {
@@ -95,6 +36,12 @@ module.exports = class openDataCourseRepository {
         })
     }
 
+    /**
+     * Find a specific course with a specific course code and course number.
+     * @param {string} courseCode the course code of interest.
+     * @param {string, int} courseNumber the course number of interest.
+     * @returns [{Course}] Returns a promise. Resolves with an array of Course associated with the courseCode and courseNumber param.
+     */
     static findByCourseCodeAndNumber(courseCode, courseNumber) {
         return new Promise((resolve, reject) => {
             OpenDataCourse.find({
@@ -108,6 +55,10 @@ module.exports = class openDataCourseRepository {
         })
     }
 
+    /**
+     * Drops the opendatacourses table
+     * @returns boolean, returns true if the table is dropped, returns false if the table is not dropped
+     */
     static dropTable() {
         return new Promise((resolve, reject) => {
             OpenDataCourse.collection.drop().then((result) => {
@@ -118,6 +69,10 @@ module.exports = class openDataCourseRepository {
         })
     }
 
+    /**
+     * Creates table of Course records using an array of Course records.
+     * @returns [{Course}] Returns a promise. Resolves with an array of Courses added to the table.
+     */
     static batchCreateCourse(coursesData) {
         return new Promise((resolve, reject) => {
             OpenDataCourse.collection.insertMany(coursesData, (err, docs) => {

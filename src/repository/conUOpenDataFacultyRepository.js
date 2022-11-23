@@ -3,9 +3,9 @@ const OpenDataFaculty = require('../models/conUOpenDataFaculty.model');
 
 module.exports = class openDataFacultyRepository {
     /**
-     * Create a studyRoom.
-     * @param {*} data The body/params of the request. It should contain: owner (email), color, participant, title, description (optional), avatarText (optional).
-     * @returns {StudyRoom} Returns a promise. Resolves with the studyRoom.
+     * Create a department record with its associated faculty.
+     * @param {*} data The body/params of the request. It should contain: facultyCode, facultyDescription, departmentCode, departmentDescription.
+     * @returns {Faculty} Returns a promise. Resolves with the studyRoom.
      */
     static create(data) {
         return new Promise((resolve, reject) => {
@@ -19,69 +19,10 @@ module.exports = class openDataFacultyRepository {
         })
     }
 
-    // /**
-    //  * Find one event by its studyRoomID.
-    //  * @param {string} studyRoomID The eventID of the event.
-    //  * @returns {StudyRoom} Returns a promise. Resolves with a studyRoom.
-    //  */
-    // static findOne(studyRoomID) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.findOne({ studyRoomID: studyRoomID.toString() }).then((room) => {
-    //             resolve(room);
-    //         })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
-    // /**
-    //  * Delete one studyRoom by its studyRoomID.
-    //  * @param {string} studyRoomID The studyRoomID of the event.
-    //  * @returns {number} Returns a promise. Resolves with the number of studyRooms deleted (1 or 0).
-    //  */
-    // static deleteOne(studyRoomID) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.deleteOne({ studyRoomID: studyRoomID.toString() })
-    //             .then((status) => {
-    //                 resolve(status.deletedCount);
-    //             })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
-    // /**
-    //  * Update a studyRoom by saving it to the database.
-    //  * @param {*} studyRoom An updated studyRoom object.
-    //  * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
-    //  */
-    // static updateOne(studyRoom) {
-    //     return new Promise((resolve, reject) => {
-    //         studyRoom.save((err, room) => {
-    //             if (err) { reject(err); }
-    //             resolve(room);
-    //         })
-    //     })
-    // }
-    //
-    // /**
-    //  * Update a studyRoom's participants
-    //  * @param {string} email The studyRoomID of the studyRoom.
-    //  * @param {[string]} participants An array of participant emails.
-    //  * @returns {StudyRoom}  Returns a promise. Resolves with the updated studyRoom.
-    //  */
-    // static updateParticipants(studyRoomID, participants) {
-    //     return new Promise((resolve, reject) => {
-    //         StudyRoom.updateOne(
-    //             { studyRoomID: studyRoomID },
-    //             { participants: participants })
-    //             .then((room) => { resolve(room); })
-    //             .catch(err => reject(err))
-    //     })
-    // }
-    //
     /**
-     * Find all studyRooms of student.
-     * @param {string} email The username of the student.
-     * @returns {[StudyRoom]} Returns a promise. Resolves with an array of stutyRooms the student is a part of.
+     * Find all departments in a specific faculty.
+     * @param {string} facultyCode, the faculty code of interest.
+     * @returns {[Faculty]} Returns a promise. Resolves with an array of Faculty with the provided facultyCode param.
      */
     static findAllByFacultyCode(facultyCode) {
         return new Promise((resolve, reject) => {
@@ -95,6 +36,24 @@ module.exports = class openDataFacultyRepository {
         })
     }
 
+    /**
+     * Find all faculties in the university.
+     * @returns [faculties] Returns a promise. Resolves with an array of faculties in the university.
+     */
+    static getFacultyList() {
+        return new Promise((resolve, reject) => {
+            OpenDataFaculty.distinct('facultyDescription')
+                .then((result) => {
+                    resolve(result);
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    /**
+     * Drops the opendatafaculties table
+     * @returns boolean, returns true if the table is dropped, returns false if the table is not dropped
+     */
     static dropTable() {
         return new Promise((resolve, reject) => {
             OpenDataFaculty.collection.drop().then((result) => {
@@ -105,6 +64,10 @@ module.exports = class openDataFacultyRepository {
         })
     }
 
+    /**
+     * Creates table of Faculty records using an array of Faculty records.
+     * @returns [{Faculty}] Returns a promise. Resolves with an array of Faculties added to the table.
+     */
     static batchCreateFaculty(facultiesData) {
         return new Promise((resolve, reject) => {
             OpenDataFaculty.collection.insertMany(facultiesData, (err, docs) => {
