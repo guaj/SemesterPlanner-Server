@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "start": "node src/server.js",
-    "dev": "nodemon src/server $odrefresh $odrefreshinterval"
+    "dev": "nodemon src/server"
   },
   "repository": {
     "type": "git",
