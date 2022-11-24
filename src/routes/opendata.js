@@ -4,15 +4,18 @@ const OpenDataImportantDateRepository = require("../repository/conUOpenDataImpor
 const router = require('express').Router();
 
 
-// runs once on server start then refreshes open data once every 24 hours
-// setInterval(
-//     function openDataRefresh() {
-//         OpenDataFacultyRepository.refreshFacultyData();
-//         OpenDataCourseRepository.refreshCourseData();
-//         OpenDataImportantDateRepository.refreshImportantDateData();
-//
-//         return openDataRefresh;
-//     }(), 86400000);
+/** runs once on server start then refreshes open data once every 24 hours (if --odrefreshinterval param is not specified;
+ * else refreshes every 'odrefreshinterval' ms); open data refresh is not run if --odrefresh param is not set to true
+ */
+if (process.env.npm_config_odrefresh === "true")
+    setInterval(
+        function openDataRefresh() {
+            OpenDataFacultyRepository.refreshFacultyData();
+            OpenDataCourseRepository.refreshCourseData();
+            OpenDataImportantDateRepository.refreshImportantDateData();
+
+            return openDataRefresh;
+        }(), (process.env.npm_config_odrefreshinterval && Number.isInteger(Number(process.env.npm_config_odrefreshinterval)) ? process.env.npm_config_odrefreshinterval : 86400000));
 
 /**
  * add a faculty to a department
@@ -111,15 +114,15 @@ router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
  * get all important dates
  * @returns [{ImportantDate}] Returns an array with the ImportantDate records.
  */
-router.route('/importantdates/').get( async (req, res) => {
+router.route('/importantdates/').get(async (req, res) => {
     console.info(`Important dates requested.`)
 
     OpenDataImportantDateRepository.getAllImportantDates().then((importantDates) => {
         res.json(importantDates).status(200);
         console.info(`Important dates returned.`);
     }).catch((err) => {
-       console.error(err);
-       res.status(400).json('Error: ' + err);
+        console.error(err);
+        res.status(400).json('Error: ' + err);
     })
 })
 
