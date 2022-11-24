@@ -38,14 +38,25 @@ module.exports = class openDataFacultyRepository {
     }
 
     /**
-     * Find all faculties in the university.
-     * @returns [faculties] Returns a promise. Resolves with an array of faculties in the university.
+     * Find all faculty codes and faculty descriptions in the university.
+     * @returns [faculties] Returns a promise. Resolves with an array of faculty codes and descriptions in the university.
      */
     static getFacultyList() {
         return new Promise((resolve, reject) => {
-            OpenDataFaculty.distinct('facultyDescription')
+            OpenDataFaculty.aggregate([{
+                $group: {
+                    _id: {
+                        facultyCode: '$facultyCode',
+                        facultyDescription: '$facultyDescription'
+                    }
+                }
+            }])
                 .then((result) => {
-                    resolve(result);
+                    const cleanedResult = [];
+                    result.forEach((item) => {
+                        cleanedResult.push(item._id);
+                    })
+                    resolve(cleanedResult);
                 })
                 .catch(err => reject(err))
         })
@@ -84,7 +95,7 @@ module.exports = class openDataFacultyRepository {
     /**
      * Refreshes Faculty data in the openadatafaculties table using the faculty data in Concordia's Open Data
      */
-    static refreshFacultyData(){
+    static refreshFacultyData() {
         console.log("> [INFO][REFRESH START]: of opendatafaculties table");
 
         axios.get("https://opendata.concordia.ca/API/v1/course/faculty/filter/*/*", {

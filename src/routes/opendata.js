@@ -5,14 +5,14 @@ const router = require('express').Router();
 
 
 // runs once on server start then refreshes open data once every 24 hours
-setInterval(
-    function openDataRefresh() {
-        OpenDataFacultyRepository.refreshFacultyData();
-        OpenDataCourseRepository.refreshCourseData();
-        OpenDataImportantDateRepository.refreshImportantDateData();
-
-        return openDataRefresh;
-    }(), 86400000);
+// setInterval(
+//     function openDataRefresh() {
+//         OpenDataFacultyRepository.refreshFacultyData();
+//         OpenDataCourseRepository.refreshCourseData();
+//         OpenDataImportantDateRepository.refreshImportantDateData();
+//
+//         return openDataRefresh;
+//     }(), 86400000);
 
 /**
  * add a faculty to a department
@@ -28,14 +28,15 @@ router.route('/faculty/').post((req, res) => {
 });
 
 /**
- * get list of all faculties in the university
- * @returns [faculties] Returns an array of faculties in the university.
+ * get list of all faculty codes and faculty descriptions in the university
+ * @returns [faculties] Returns an array of faculty codes and faculty descriptions in the university.
  */
 router.route('/faculty/').get(async (req, res) => {
     OpenDataFacultyRepository.getFacultyList()
         .then((faculty) => {
             res.json(faculty).status(200);
-            console.info(`List of faculties fetched:\n` + faculty + "\n")
+            console.info("List of faculties fetched:");
+            console.info(faculty);
         })
         .catch(err => res.status(400).json('Error: ' + err));
 })
