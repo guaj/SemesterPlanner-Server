@@ -70,9 +70,15 @@ io.sockets.on('connection', function (socket) {
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {
-  console.log(`Error: ${err.message}`);
+  console.log(`Unhandled Promise: ${err.message}`);
   // Close server & exit process
-  server.close(() => process.exit(1));
+  process.exit(1);
+});
+
+process.on("uncaughtException", (err) => {
+  console.log(`Unexpected Error: ${err.message}`);
+  // Close server & exit process
+  process.exit(1);
 });
 
 module.exports = app;

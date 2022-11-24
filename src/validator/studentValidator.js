@@ -32,6 +32,7 @@ module.exports = class StudentValidator {
                             res.errors.push('Email already exists')
                         }
                         resolve(res)
+
                     })
                 })
             }
