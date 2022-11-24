@@ -25,7 +25,8 @@ if (process.env.npm_config_odrefresh === "true")
 router.route('/faculty/').post((req, res) => {
     OpenDataFacultyRepository.create(req.body)
         .then((faculty) => {
-            res.json(`Faculty record ${faculty._id} created.`).status(200), console.log(`Faculty record ${faculty._id} created:\n` + faculty + "\n");
+            res.json(`Faculty record ${faculty._id} created.`).status(200);
+            console.log(`Faculty record ${faculty._id} created:\n` + faculty + "\n");
         })
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -74,7 +75,8 @@ router.route('/faculty/:facultyCode').get(async (req, res) => {
 router.route('/course/').post((req, res) => {
     OpenDataCourseRepository.create(req.body)
         .then((course) => {
-            res.json(`Course record ${course._id} created.`).status(200), console.log(`Faculty record ${faculty._id} created:\n` + faculty + "\n");
+            res.json(`Course record ${course._id} created.`).status(200);
+            console.log(`Faculty record ${faculty._id} created:\n` + faculty + "\n");
         })
         .catch(err => res.status(400).json('Error: ' + err));
 });
