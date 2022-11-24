@@ -1,5 +1,6 @@
 const Student = require('../models/student.model');
 const { createStudent } = require("../factory/studentFactory");
+const StudentValidator = require('../validator/studentValidator')
 
 module.exports = class StudentRepository {
 
@@ -10,13 +11,19 @@ module.exports = class StudentRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            createStudent(data).then((newStudent) => {
-                newStudent.save((err, student) => {
-                    if (err) { reject(err); }
-                    resolve(student);
+            StudentValidator.validateCreateData(data).then((errs) => {
+                if (errs.errors[0]) {
+                    reject(errs)
+                }
+                createStudent(data).then((newStudent) => {
+                    newStudent.save((err, student) => {
+                        if (err) { reject(err); }
+                        resolve(student);
+                    })
                 })
             })
         })
+
     }
 
     /**
