@@ -3,8 +3,9 @@ const Student = require('../models/student.model');
 module.exports = class StudentValidator {
 
     /**
-     * 
+     * Validator for student creation.
      * @param {*} data Student creation data. Should contain: It should contain: username, email, password, program (optional), faculty (optional) and privateProfile.
+     * @returns {[string]} Returns a promise. Resolves with an array of errors (if there are any).
      */
     static validateCreateData(data) {
         return new Promise((resolve, reject) => {
@@ -19,7 +20,7 @@ module.exports = class StudentValidator {
                 res.errors.push('Missing password');
             }
             if (data.privateProfile != 'true' && data.privateProfile != 'false' && data.privateProfile != undefined) {
-                res.errors.push('Invalid parameter for privateProfile (should be a boolean)')
+                res.errors.push('Invalid parameter for privateProfile (should be true or false)')
             }
 
             if (data.username && data.email) {

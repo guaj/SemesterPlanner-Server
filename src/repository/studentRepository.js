@@ -15,12 +15,14 @@ module.exports = class StudentRepository {
                 if (errs.errors[0]) {
                     reject(errs)
                 }
-                createStudent(data).then((newStudent) => {
-                    newStudent.save((err, student) => {
-                        if (err) { reject(err); }
-                        resolve(student);
+                else {
+                    createStudent(data).then((newStudent) => {
+                        newStudent.save((err, student) => {
+                            if (err) { reject(err); }
+                            resolve(student);
+                        })
                     })
-                })
+                }
             })
         })
 
@@ -138,14 +140,16 @@ module.exports = class StudentRepository {
      * @returns Returns a promise. Resolves with the updated student.
      */
     static updateFriendRequestSent(username, friendRequestsSent) {
-        Student.updateOne(
-            { username: username },
-            { friendRequestsSent: friendRequestsSent },
-            (err, docs) => {
-                if (err) { reject(err); }
-                resolve(docs)
-            },
-        );
+        return new Promise((resolve, reject) => {
+            Student.updateOne(
+                { username: username },
+                { friendRequestsSent: friendRequestsSent },
+                (err, docs) => {
+                    if (err) { reject(err); }
+                    resolve(docs)
+                },
+            );
+        });
     }
 
     /**
@@ -155,14 +159,16 @@ module.exports = class StudentRepository {
      * @returns Returns a promise. Resolves with the updated student.
      */
     static updateFriendRequestReceived(username, friendRequestsReceived) {
-        Student.updateOne(
-            { username: username },
-            { friendRequestsReceived: friendRequestsReceived },
-            (err, docs) => {
-                if (err) { reject(err); }
-                resolve(docs)
-            },
-        );
+        return new Promise((resolve, reject) => {
+            Student.updateOne(
+                { username: username },
+                { friendRequestsReceived: friendRequestsReceived },
+                (err, docs) => {
+                    if (err) { reject(err); }
+                    resolve(docs)
+                },
+            );
+        });
     }
 
     /**

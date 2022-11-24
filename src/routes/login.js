@@ -14,12 +14,14 @@ router.post('/', async (request, response) => {
     // Bad Username: 401
     if (user == null) {
       response.status(401).json({ auth: false, message: 'Error: Invalid Username or Password' });
+      return;
     }
 
     const isCorrectPassword = bcrypt.compareSync(body.password, user.password);
     // Bad Password: 401
     if (!isCorrectPassword) {
       response.status(401).json({ auth: false, message: 'Error: Incorrect Username or Password' });
+      return;
     }
 
     const tokenPayload = {

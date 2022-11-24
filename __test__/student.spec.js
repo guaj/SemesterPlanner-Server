@@ -1,6 +1,6 @@
 // INCOMPLETE
 const { request, assert } = require("./helper/app");
-const { roomdata } = require("./helper/room_test_data");
+const { createUser } = require('./helper/Student_test_data')
 const dbHandler = require('./helper/db-handler')
 
 /**
@@ -19,133 +19,224 @@ afterAll(async () => {
 });
 
 jest.useRealTimers();
-const random0 = (Math.random() + 8).toString(36).substring(2);
-const random2 = (Math.random() + 7).toString(36).substring(2);
-const random3 = (Math.random() + 6).toString(36).substring(2);
-const random4 = (Math.random() + 4).toString(36).substring(2);
 
 describe("testing student api routes", () => {
 
-  it("add a new Student", async () => {
+  let user1 = createUser();
+  let user2 = createUser();
+  let user3 = createUser();
+  let user4 = createUser();
 
-    let expected = "user_" + random0
+  it("add a Student", async () => {
+
+    let expected = user1.username
 
     await request.post('/student/add').send(
-      {
-        "username": "user_" + random0,
-        "password": "scooby",
-        "faculty": "encs",
-        "email": "user_" + random0 + "@gmail.com",
-        "program": "coen",
-        "privateProfile": "true",
-        "friends": ["user_" + random2 + "@gmail.com", "user_" + random3 + "@gmail.com", "user_" + random4 + "@gmail.com"]
-      })
+      user1
+    )
       .expect(200)
       .expect((res) => {
         assert.ok(res.text.includes(expected))
       })
   });
 
-  it("add a new Student ", async () => {
+  it("adding a duplicate student", async () => {
 
-    let expected = "user_" + random2
+    let expected = "Username already exists"
+
+    await request.post('/student/add').send(
+      user1
+    )
+      .expect(400)
+      .expect((res) => {
+        assert.ok(res.text.includes(expected))
+      })
+  });
+
+  it("adding an invalid student", async () => {
+
+    let expected = "Missing password"
 
     await request.post('/student/add').send(
       {
-        "username": "user_" + random2,
-        "password": "scooby",
-        "faculty": "encs",
-        "email": "user_" + random2 + "@gmail.com",
-        "program": "coen",
-        "privateProfile": "true",
-        "friends": ["user_" + random0 + "@gmail.com", "user_" + random3 + "@gmail.com", "user_" + random4 + "@gmail.com"]
+        username: user1.username + '_2',
+        email: 'test_' + user1.email,
+
+      }
+    )
+      .expect(400)
+      .expect((res) => {
+        assert.ok(res.text.includes(expected))
       })
+  });
+
+  it("add a second Student", async () => {
+
+    let expected = user2.username
+
+    await request.post('/student/add').send(
+      user2)
       .expect(200)
       .expect((res) => {
         assert.ok(res.text.includes(expected))
       })
   });
 
-  it("add a new Student ", async () => {
+  it("add a third Student", async () => {
 
-    let expected = "user_" + random3
-    let arr = ["user_" + random2 + "@gmail.com", "user_" + random0 + "@gmail.com", "user_" + random4 + "@gmail.com"]
+    let expected = user3.username
     await request.post('/student/add').send(
-      {
-        "username": "user_" + random3,
-        "password": "scooby",
-        "faculty": "encs",
-        "email": "user_" + random3 + "@gmail.com",
-        "program": "coen",
-        "privateProfile": "true",
-        "friends": arr
-      })
+      user3)
       .expect(200)
       .expect((res) => {
         assert.ok(res.text.includes(expected))
       })
   });
 
-  it("add a new Student ", async () => {
+  it("add a fourth Student", async () => {
 
-    let expected = "user_" + random4
-    let arr = ["user_" + random2 + "@gmail.com", "user_" + random3 + "@gmail.com", "user_" + random0 + "@gmail.com"]
+    let expected = user4.username
 
     await request.post('/student/add').send(
-      {
-        "username": "user_" + random4,
-        "password": "scooby",
-        "faculty": "encs",
-        "email": "user_" + random4 + "@gmail.com",
-        "program": "coen",
-        "privateProfile": "true",
-        "friends": arr
-      })
+      user4)
       .expect(200)
       .expect((res) => {
         assert.ok(res.text.includes(expected))
       })
   });
 
-  it("add a new Student ", async () => {
+  it("Get student by email", async () => {
 
-    let expected = "Student ram@b.ca added"
+    let expected = user1.email
 
-    await request.post('/student/add').send(
-      {
-        "username": "test45",
-        "password": "scooby",
-        "faculty": "encs",
-        "email": "ram@b.ca",
-        "program": "coen",
-        "privateProfile": "true"
-      })
+    await request.get('/student/email/' + expected)
       .expect(200)
       .expect((res) => {
         assert.ok(res.text.includes(expected))
       })
   });
 
-  it("student login test ", async () => {
+  it("Get student by username", async () => {
 
-    let expected = "test45"
+    let expected = user2.username
+
+    await request.get('/student/username/' + expected)
+      .expect(200)
+      .expect((res) => {
+        assert.ok(res.text.includes(expected))
+      })
+  });
+
+  it("student login", async () => {
+
+    let expected = user1.username
 
     await request.post('/login').send(
       {
-        "email": "ram@b.ca",
-        "password": "scooby"
+        "email": user1.email,
+        "password": user1.password
       })
-
+      .expect(200)
       .expect((res) => {
         assert.ok(res.text.includes(expected))
       })
   });
 
-  //works as cleanup of previous test too.
+  it("student failed login", async () => {
+
+    let expected = 'Error: Invalid Username or Password'
+
+    await request.post('/login').send(
+      {
+        "email": user1.email,
+        "password": "test"
+      })
+      .expect(401)
+      .expect((res) => {
+        assert.ok(res.text.includes(expected))
+      })
+  });
+
+  it("student login then update", async () => {
+    await request.post('/login').send(
+      {
+        "email": user2.email,
+        "password": user2.password
+      })
+      .expect(200)
+      .expect(async (res) => {
+        assert.ok(res.text.includes(user2.username))
+        await request.post('/student/update').send(
+          {
+            email: user2.email,
+            program: 'soen'
+          }
+        )
+          .set('authorization', JSON.parse(res.text).token)
+          .expect(200)
+          .expect((res) => {
+            assert.ok(res.text.includes(user2.email))
+          })
+      })
+  });
+
+  it("Update request with missing auth token (not logged in)", async () => {
+    await request.post('/student/update').send(
+      {
+        email: user2.email,
+        program: 'coen'
+      }
+    )
+      .expect(401)
+      .expect((res) => {
+        assert.ok(res.text.includes('No token found in request'))
+      })
+  });
+
+  it("Send a friend request", async () => {
+    await request.post('/friend/add').send(
+      {
+        username: user1.username,
+        friendUsername: user2.username
+      }
+    )
+      .expect(200)
+      .expect((res) => {
+        assert.ok(res.text.includes('Friendlists updated.'))
+      })
+  });
+
+  it("Send a friend request to no one", async () => {
+    await request.post('/friend/add').send(
+      {
+        username: user1.username,
+        friendUsername: 'does not exist'
+      }
+    )
+      .expect(400)
+  });
+
   it("delete a Student ", async () => {
 
-    await request.delete('/student/email/ram@b.ca')
+    let expected = 'deleted 1 student'
+
+    await request.delete('/student/email/' + user1.email)
       .expect(200)
+      .expect((res) => {
+        assert.ok(res.text.includes(expected))
+      })
+
+  });
+
+  it("delete a non existent student ", async () => {
+
+    let expected = 'deleted 0 student'
+
+    await request.delete('/student/email/' + user1.email)
+      .expect(200)
+      .expect((res) => {
+        assert.ok(res.text.includes(expected))
+      })
 
   });
 

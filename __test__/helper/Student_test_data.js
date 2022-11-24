@@ -1,19 +1,19 @@
 
-const registerPayload = {
-  "username": "test45",
-  "password": "scooby",
-  "faculty": "encs",
-  "email": "ram@b.ca",
-  "program": "coen",
-  "privateProfile": "true"
+
+
+function createUser() {
+  return {
+    "username": "test_" + (Math.random() + 8).toString(36).substring(2),
+    "password": (Math.random() + 8).toString(36).substring(2),
+    "faculty": "encs",
+    "email": (Math.random() + 8).toString(36).substring(2) + "@test.ca",
+    "program": "coen",
+    "privateProfile": "true"
+  }
+
 }
 
-const loginPayload = {
-  "email": "ram@b.ca",
-  "password": "scooby"
-}
 
 
 
-
-module.exports = { registerPayload, loginPayload };
+module.exports = { createUser };

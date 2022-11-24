@@ -29,12 +29,14 @@ router.route('/add').post(async (req, res) => {
         friendRequestsReceived.push(username)
 
         StudentRepository.updateFriendRequestSent(me, friendRequestsSent)
-          .then()
+          .then((student) => {
+            StudentRepository.updateFriendRequestReceived(friend, friendRequestsReceived)
+              .then((friend) => res.status(200).json(`Friend request sent.`))
+              .catch(err => res.status(400).json('Error: ' + err));
+          })
           .catch(err => res.status(400).json('Error: ' + err));
 
-        StudentRepository.updateFriendRequestReceived(friend, friendRequestsReceived)
-          .then()
-          .catch(err => res.status(400).json('Error: ' + err));
+
       })
         .catch(err => res.status(400).json('Error: ' + err));
     })
