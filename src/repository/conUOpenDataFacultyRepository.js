@@ -85,28 +85,33 @@ module.exports = class openDataFacultyRepository {
      * Refreshes Faculty data in the openadatafaculties table using the faculty data in Concordia's Open Data
      */
     static refreshFacultyData(){
+        console.log("> [INFO][REFRESH START]: of opendatafaculties table");
+
         axios.get("https://opendata.concordia.ca/API/v1/course/faculty/filter/*/*", {
             auth: {
                 username: process.env.OPEN_DATA_USERNAME,
                 password: process.env.OPEN_DATA_PASSWORD
             }
         }).then((result) => {
-            console.info("Origin OpenData Faculties size: " + result.data.length);
+            console.info("> [INFO] Origin OpenData Faculties size: " + result.data.length);
             let data = JSON.parse(JSON.stringify(result.data).split('"deparmentCode":').join('"departmentCode":')); // replaces key name 'deparmentCode' from source data to 'departmentCode'
             data = JSON.parse(JSON.stringify(data).split('"deparmentDescription":').join('"departmentDescription":')); // replaces key name 'deparmentDescription' from source data to 'departmentDescription'
             this.dropTable().then((res) => {
-                console.info("opendatafaculties collection dropped: " + res);
+                console.info("— [INFO][COLLECTION DROP] opendatafaculties collection dropped: " + res);
 
                 this.batchCreateFaculty(data).then((res) => {
-                    console.info('%d faculties were successfully added to opendatafaculties collection.', res.insertedCount);
+                    console.info('+ [INFO][REFRESH COMPLETE] %d faculties were successfully added to opendatafaculties collection.', res.insertedCount);
                 }).catch((err) => {
                     console.error(err);
+                    console.error('[ERR][REFRESH FAILED]: Could not insert data into the opendatafaculties collection.');
                 });
             }).catch((err) => {
                 console.error(err);
+                console.error('[ERR][REFRESH FAILED]: Could not drop the opendatafaculties collection.');
             });
         }).catch((err) => {
             console.error(err);
+            console.error('[ERR][REFRESH FAILED]: Could not fetch Faculty data from Concordia University Open Data.');
         });
     }
 }

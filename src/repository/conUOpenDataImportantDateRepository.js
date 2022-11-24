@@ -123,18 +123,23 @@ module.exports = class openDataImportantDateRepository {
      */
     static refreshImportantDateData() {
         this.getImportantDates().then((result) => {
-            console.info("Origin OpenData Important Dates Courses size: " + result.length);
+            console.info("> [INFO] Origin OpenData Important Dates Courses size: " + result.length);
 
             this.dropTable().then((res) => {
-                console.info("opendataimportantcourses collection dropped: " + res);
+                console.info("— [INFO][COLLECTION DROP] opendataimportantdates collection dropped: " + res);
                 this.batchCreateImportantDate(result).then((res) => {
-                    console.info('%d courses were successfully added to opendataimportantdates collection.', res.insertedCount);
+                    console.info('+ [INFO][REFRESH COMPLETE] %d courses were successfully added to opendataimportantdates collection.', res.insertedCount);
                 }).catch((err) => {
                     console.error(err);
+                    console.error('[ERR][REFRESH FAILED]: Could not insert data into the opendataimportantdates collection.');
                 });
             }).catch((err) => {
                 console.error(err);
+                console.error('[ERR][REFRESH FAILED]: Could not drop the opendataimportantdates collection.');
             });
+        }).catch((err) => {
+            console.error(err);
+            console.error('[ERR][REFRESH FAILED]: Could not fetch ImportantDate data from Concordia University Open Data.');
         })
     }
 }
