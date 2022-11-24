@@ -2,7 +2,7 @@ const {createOpenDataCourse} = require("../factory/conUOpenDataCourseFactory");
 const OpenDataCourse = require('../models/conUOpenDataCourse.model');
 const axios = require("axios");
 
-module.exports = class openDataCourseRepository {
+module.exports = class OpenDataCourseRepository {
     /**
      * Create a course record.
      * @param {*} data The body/params of the request. It should contain: ID, title, subject, catalog, career, classUnit, prerequisite, crosslisted.

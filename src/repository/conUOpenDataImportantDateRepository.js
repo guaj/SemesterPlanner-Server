@@ -3,7 +3,7 @@ const OpenDataImportantDate = require('../models/conUOpenDataImportantDate.model
 const got = require('got');
 const cheerio = require("cheerio");
 
-module.exports = class openDataImportantDateRepository {
+module.exports = class OpenDataImportantDateRepository {
     /**
      * Create an important date record.
      * @param {*} data The body/params of the request. It should contain: date, description.

@@ -15,7 +15,7 @@ if (process.env.npm_config_odrefresh === "true")
             OpenDataImportantDateRepository.refreshImportantDateData();
 
             return openDataRefresh;
-        }(), (process.env.npm_config_odrefreshinterval && Number.isInteger(Number(process.env.npm_config_odrefreshinterval)) ? process.env.npm_config_odrefreshinterval : 86400000));
+        }(), (process.env.npm_config_odrefreshinterval && Number.isInteger(Number(process.env.npm_config_odrefreshinterval)) ? Number(process.env.npm_config_odrefreshinterval) : 86400000));
 
 /**
  * add a faculty to a department

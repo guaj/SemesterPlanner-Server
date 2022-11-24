@@ -2,7 +2,7 @@ const {createOpenDataFaculty} = require("../factory/conUOpenDataFacultyFactory")
 const OpenDataFaculty = require('../models/conUOpenDataFaculty.model');
 const axios = require("axios");
 
-module.exports = class openDataFacultyRepository {
+module.exports = class OpenDataFacultyRepository {
     /**
      * Create a department record with its associated faculty.
      * @param {*} data The body/params of the request. It should contain: facultyCode, facultyDescription, departmentCode, departmentDescription.
