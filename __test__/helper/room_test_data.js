@@ -1,11 +1,12 @@
-const roomdata = {
-  "owner": "ram68gno@gmail.com",
-  "color": "red",
-  "description": "2nd best room",
-  "avatarText": "cr",
-  "title": "cool room",
-  "participants": ["t@mail.com", "j@mail.com"]
+function createRoom(email) {
+  return {
+    "owner": email,
+    "color": "#25cc51",
+    "description": "Testing",
+    "avatar": "https://cdn.discordapp.com/attachments/1006718552386043934/1039236890978701442/image.png",
+    "title": "Testing Room",
+  }
 }
 
 
-module.exports = { roomdata };
+module.exports = { createRoom };

@@ -1,6 +1,4 @@
 
-
-
 function createUser() {
   return {
     "username": "test_" + (Math.random() + 8).toString(36).substring(2),
