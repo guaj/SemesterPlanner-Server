@@ -26,36 +26,37 @@ describe("testing student api routes", () => {
   let user2 = createUser();
   let user3 = createUser();
   let user4 = createUser();
+  let token;
 
   it("add a Student", async () => {
 
-    let expected = user1.username
+    let expected = user1.email
 
     await request.post('/student/add').send(
       user1
     )
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.ok(res.body.includes(expected))
       })
   });
 
   it("adding a duplicate student", async () => {
 
-    let expected = "Username already exists"
+    let expected = { 'errors': ['Username already exists', 'Email already exists'] }
 
     await request.post('/student/add').send(
       user1
     )
       .expect(400)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.deepEqual(res.body, expected)
       })
   });
 
   it("adding an invalid student", async () => {
 
-    let expected = "Missing password"
+    let expected = { 'errors': ['Missing password'] }
 
     await request.post('/student/add').send(
       {
@@ -65,43 +66,43 @@ describe("testing student api routes", () => {
       }
     )
       .expect(400)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.deepEqual(res.body, expected)
       })
   });
 
   it("add a second Student", async () => {
 
-    let expected = user2.username
+    let expected = user2.email
 
     await request.post('/student/add').send(
       user2)
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.ok(res.body.includes(expected))
       })
   });
 
   it("add a third Student", async () => {
 
-    let expected = user3.username
+    let expected = user3.email
     await request.post('/student/add').send(
       user3)
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.ok(res.body.includes(expected))
       })
   });
 
   it("add a fourth Student", async () => {
 
-    let expected = user4.username
+    let expected = user4.email
 
     await request.post('/student/add').send(
       user4)
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.ok(res.body.includes(expected))
       })
   });
 
@@ -111,8 +112,8 @@ describe("testing student api routes", () => {
 
     await request.get('/student/email/' + expected)
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.ok(res.body.email.includes(expected))
       })
   });
 
@@ -122,8 +123,8 @@ describe("testing student api routes", () => {
 
     await request.get('/student/username/' + expected)
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.ok(res.body.username.includes(expected))
       })
   });
 
@@ -137,14 +138,15 @@ describe("testing student api routes", () => {
         "password": user1.password
       })
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.ok(res.body.profile.username.includes(expected))
+        token = res.body.token;
       })
   });
 
   it("student failed login", async () => {
 
-    let expected = 'Error: Invalid Username or Password'
+    let expected = { 'auth': false, 'message': 'Error: Incorrect Username or Password' }
 
     await request.post('/login').send(
       {
@@ -152,31 +154,22 @@ describe("testing student api routes", () => {
         "password": "test"
       })
       .expect(401)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        assert.deepEqual(res.body, expected)
       })
   });
 
-  it("student login then update", async () => {
-    await request.post('/login').send(
+  it("student update", async () => {
+    await request.post('/student/update').send(
       {
-        "email": user2.email,
-        "password": user2.password
-      })
+        email: user2.email,
+        program: 'soen'
+      }
+    )
+      .set('authorization', token)
       .expect(200)
-      .expect(async (res) => {
-        assert.ok(res.text.includes(user2.username))
-        await request.post('/student/update').send(
-          {
-            email: user2.email,
-            program: 'soen'
-          }
-        )
-          .set('authorization', JSON.parse(res.text).token)
-          .expect(200)
-          .expect((res) => {
-            assert.ok(res.text.includes(user2.email))
-          })
+      .then((res) => {
+        assert.ok(res.body.includes(user2.email))
       })
   });
 
@@ -188,8 +181,9 @@ describe("testing student api routes", () => {
       }
     )
       .expect(401)
-      .expect((res) => {
-        assert.ok(res.text.includes('No token found in request'))
+      .then((res) => {
+        console.log(res.body)
+        assert.deepEqual(res.body, { auth: false, message: 'No token found in request' })
       })
   });
 
@@ -201,8 +195,9 @@ describe("testing student api routes", () => {
       }
     )
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes('Friendlists updated.'))
+      .then((res) => {
+        console.log(res.body)
+        assert.ok(res.body.includes('Friend request sent.'))
       })
   });
 
@@ -218,24 +213,26 @@ describe("testing student api routes", () => {
 
   it("delete a Student ", async () => {
 
-    let expected = 'deleted 1 student'
+    let expected = '1 deleted'
 
     await request.delete('/student/email/' + user1.email)
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        console.log(res.body)
+        assert.ok(res.body.includes(expected))
       })
 
   });
 
   it("delete a non existent student ", async () => {
 
-    let expected = 'deleted 0 student'
+    let expected = '0 deleted'
 
     await request.delete('/student/email/' + user1.email)
       .expect(200)
-      .expect((res) => {
-        assert.ok(res.text.includes(expected))
+      .then((res) => {
+        console.log(res.body)
+        assert.ok(res.body.includes(expected))
       })
 
   });

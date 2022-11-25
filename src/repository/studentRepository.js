@@ -11,19 +11,15 @@ module.exports = class StudentRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            StudentValidator.validateCreateData(data).then((errs) => {
-                if (errs.errors[0]) {
-                    reject(errs)
-                }
-                else {
-                    createStudent(data).then((newStudent) => {
-                        newStudent.save((err, student) => {
-                            if (err) { reject(err); }
-                            resolve(student);
-                        })
+            StudentValidator.validateCreateData(data).then(() => {
+                createStudent(data).then((newStudent) => {
+                    newStudent.save((err, student) => {
+                        if (err) { reject(err); }
+                        resolve(student);
                     })
-                }
+                })
             })
+                .catch(errs => reject(errs))
         })
 
     }
@@ -126,10 +122,15 @@ module.exports = class StudentRepository {
      */
     static updateOne(student) {
         return new Promise((resolve, reject) => {
-            student.save((err, student) => {
-                if (err) { reject(err); }
-                resolve(student);
-            })
+            StudentValidator.validateUpdateData(student)
+                .then(() => {
+                    student.save((err, student) => {
+                        if (err) { reject(err); }
+                        resolve(student);
+                    })
+                })
+                .catch(errs => reject(errs))
+
         })
     }
 

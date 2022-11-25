@@ -28,35 +28,33 @@ describe("testing room api routes", () => {
 
     it("create 4 students", async () => {
 
-        let expected = user1.username
-
         await request.post('/student/add').send(
             user1
         )
             .expect(200)
-            .expect((res) => {
-                assert.ok(res.text.includes(expected))
+            .then((res) => {
+                assert.ok(res.body.includes(user1.email))
             })
         await request.post('/student/add').send(
             user2
         )
             .expect(200)
-            .expect((res) => {
-                assert.ok(res.text.includes(expected))
+            .then((res) => {
+                assert.ok(res.body.includes(user2.email))
             })
         await request.post('/student/add').send(
             user3
         )
             .expect(200)
-            .expect((res) => {
-                assert.ok(res.text.includes(expected))
+            .then((res) => {
+                assert.ok(res.body.includes(user3.email))
             })
         await request.post('/student/add').send(
             user4
         )
             .expect(200)
-            .expect((res) => {
-                assert.ok(res.text.includes(expected))
+            .then((res) => {
+                assert.ok(res.body.includes(user4.email))
             })
     });
 
@@ -67,9 +65,8 @@ describe("testing room api routes", () => {
 
         await request.post('/room/').send(room1)
             .expect(200)
-            .expect((res) => {
-                console.log(res.text)
-                assert.ok(res.text.includes('created'))
+            .then((res) => {
+                assert.ok(res.body.includes('created'))
             })
 
     });
@@ -78,9 +75,9 @@ describe("testing room api routes", () => {
 
         await request.get('/room/' + user1.email)
             .expect(200)
-            .expect((res) => {
-                assert.ok(res.text.includes(room1.owner));
-                room1ID = JSON.parse(res.text)[0].studyRoomID;
+            .then((res) => {
+                assert.ok(res.body[0].owner.includes(room1.owner));
+                room1ID = res.body[0].studyRoomID;
             })
     });
 
@@ -88,8 +85,9 @@ describe("testing room api routes", () => {
 
         await request.get('/room/fetch/' + room1ID)
             .expect(200)
-            .expect((res) => {
-                assert.ok(res.text.includes(room1ID));
+            .then((res) => {
+                console.log(res.body);
+                assert.ok(res.body.studyRoomID.includes(room1ID));
             })
     });
     /// delete a study room

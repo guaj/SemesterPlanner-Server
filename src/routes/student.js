@@ -8,7 +8,7 @@ const StudentRepository = require('../repository/studentRepository');
 router.route('/').get((req, res) => {
     StudentRepository.findAll()
         .then(users => res.json(users))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
 });
 
 /**
@@ -17,7 +17,7 @@ router.route('/').get((req, res) => {
 router.route('/id/:id').get((req, res) => {
     StudentRepository.findOneByID(req.params.id)
         .then(user => res.json(user))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
 });
 
 /**
@@ -26,7 +26,7 @@ router.route('/id/:id').get((req, res) => {
 router.route('/username/:username').get((req, res) => {
     StudentRepository.findOneByUsername(req.params.username)
         .then(user => res.json(user))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
 });
 
 /**
@@ -35,7 +35,7 @@ router.route('/username/:username').get((req, res) => {
 router.route('/email/:email').get((req, res) => {
     StudentRepository.findOneByEmail(req.params.email)
         .then(user => res.json(user))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
 });
 
 /**
@@ -44,7 +44,7 @@ router.route('/email/:email').get((req, res) => {
 router.route('/:id').delete((req, res) => {
     StudentRepository.deleteOne(req.params.id)
         .then(status => res.json(`${status} deleted`))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
 })
 
 /**
@@ -62,12 +62,6 @@ router.route('/email/:email').delete((req, res) => {
 router.route('/update').post(TokenVerify, async (req, res) => {
     StudentRepository.findOneByEmail(req.body.email)
         .then(async (student) => {
-            if (req.body.username) {
-                student.username = req.body.username;
-            }
-            if (req.body.email) {
-                student.email = req.body.email;
-            }
             if (req.body.password) {
                 student.password = await bcrypt.hash(req.body.password, 10);
             }
@@ -82,9 +76,9 @@ router.route('/update').post(TokenVerify, async (req, res) => {
             }
             StudentRepository.updateOne(student)
                 .then((student) => res.json(`Student ${student.email} updated`))
-                .catch(err => res.status(400).json('Error: ' + err));
+                .catch(err => { res.status(400).json(err) });
         })
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
 });
 
 /**
