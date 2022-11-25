@@ -1,14 +1,14 @@
-const Student = require('../models/student.model');
+const StudyRoom = require('../models/studyRoom.model');
 
-module.exports = class StudentValidator {
+module.exports = class RoomValidator {
 
     /**
-     * Validator for student creation.
-     * @param {*} data Student creation data. It should contain: username, email, password, program (optional), faculty (optional) and privateProfile.
+     * Validator for studyRoom creation.
+     * @param {*} data StudyRoom creation data. It should contain: owner, email, password, program (optional), faculty (optional) and privateProfile.
      * @returns {[string]} Returns a promise. Resolves with an array of errors (if there are any).
      */
     static validateCreateData(data) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             let res = { 'errors': [] };
             if (data.username == undefined || data.username == "") {
                 res.errors.push('Missing username');
@@ -24,19 +24,29 @@ module.exports = class StudentValidator {
             }
 
             if (data.username && data.email) {
-                var student = await Student.findOne({ username: data.username })
-                if (student != null) {
-                    res.errors.push('Username already exists');
-                }
-                student = await Student.findOne({ email: data.email })
-                if (student != null) {
-                    res.errors.push('Email already exists');
-                }
+                Student.findOne({ username: data.username }).then(student => {
+                    if (student != null) {
+                        res.errors.push('Username already exists');
+                    }
+                    Student.findOne({ email: data.email }).then(student => {
+                        if (student != null) {
+                            res.errors.push('Email already exists');
+                        }
+
+                        if (res.errors[0]) {
+                            reject(res);
+                        }
+                        resolve();
+
+                    })
+                })
             }
-            if (res.errors[0]) {
-                reject(res);
+            else {
+                if (res.errors[0]) {
+                    reject(res);
+                }
+                resolve();
             }
-            resolve();
             // TO DO: validate program and faculty
         })
 

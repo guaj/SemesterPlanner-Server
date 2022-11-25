@@ -26,7 +26,7 @@ describe("testing room api routes", () => {
     let user3 = createUser();
     let user4 = createUser();
 
-    it("create 4 students", async () => {
+    it("Create 4 students", async () => {
 
         await request.post('/student/add').send(
             user1
@@ -61,7 +61,7 @@ describe("testing room api routes", () => {
     let room1 = createRoom(user1.email)
     var room1ID;
 
-    it("create a study room", async () => {
+    it("Create a study room", async () => {
 
         await request.post('/room/').send(room1)
             .expect(200)
@@ -81,7 +81,7 @@ describe("testing room api routes", () => {
             })
     });
 
-    it("get room by studyRoomID", async () => {
+    it("Get room by studyRoomID", async () => {
 
         await request.get('/room/fetch/' + room1ID)
             .expect(200)

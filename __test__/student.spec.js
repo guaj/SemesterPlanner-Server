@@ -20,7 +20,7 @@ afterAll(async () => {
 
 jest.useRealTimers();
 
-describe("testing student api routes", () => {
+describe("Testing student api routes", () => {
 
   let user1 = createUser();
   let user2 = createUser();
@@ -28,7 +28,7 @@ describe("testing student api routes", () => {
   let user4 = createUser();
   let token;
 
-  it("add a Student", async () => {
+  it("Add a Student", async () => {
 
     let expected = user1.email
 
@@ -41,7 +41,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("adding a duplicate student", async () => {
+  it("Adding a duplicate student", async () => {
 
     let expected = { 'errors': ['Username already exists', 'Email already exists'] }
 
@@ -54,7 +54,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("adding an invalid student", async () => {
+  it("Adding an invalid student", async () => {
 
     let expected = { 'errors': ['Missing password'] }
 
@@ -71,7 +71,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("add a second Student", async () => {
+  it("Add a second Student", async () => {
 
     let expected = user2.email
 
@@ -83,7 +83,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("add a third Student", async () => {
+  it("Add a third Student", async () => {
 
     let expected = user3.email
     await request.post('/student/add').send(
@@ -94,7 +94,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("add a fourth Student", async () => {
+  it("Add a fourth Student", async () => {
 
     let expected = user4.email
 
@@ -128,7 +128,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("student login", async () => {
+  it("Student login", async () => {
 
     let expected = user1.username
 
@@ -144,7 +144,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("student failed login", async () => {
+  it("Student failed login", async () => {
 
     let expected = { 'auth': false, 'message': 'Error: Incorrect Username or Password' }
 
@@ -159,7 +159,7 @@ describe("testing student api routes", () => {
       })
   });
 
-  it("student update", async () => {
+  it("Student update", async () => {
     await request.post('/student/update').send(
       {
         email: user2.email,
@@ -211,7 +211,7 @@ describe("testing student api routes", () => {
       .expect(400)
   });
 
-  it("delete a Student ", async () => {
+  it("Delete a Student ", async () => {
 
     let expected = '1 deleted'
 
@@ -224,7 +224,7 @@ describe("testing student api routes", () => {
 
   });
 
-  it("delete a non existent student ", async () => {
+  it("Delete a non existent student ", async () => {
 
     let expected = '0 deleted'
 
