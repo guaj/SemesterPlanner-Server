@@ -4,8 +4,9 @@ const OpenDataImportantDateRepository = require("../repository/conUOpenDataImpor
 const router = require('express').Router();
 
 
-/** runs once on server start then refreshes open data once every 24 hours (if --odrefreshinterval param is not specified;
- * else refreshes every 'odrefreshinterval' ms); open data refresh is not run if --odrefresh param is not set to true
+/** runs once on server start then refreshes open data once every 24 hours (if --odrefreshinterval param is not
+ * specified or is more that 24 [days]; else refreshes every 'odrefreshinterval' days); open data refresh is not
+ * run if --odrefresh param is not set to true
  */
 if (process.env.npm_config_odrefresh === "true")
     setInterval(
@@ -15,7 +16,7 @@ if (process.env.npm_config_odrefresh === "true")
             OpenDataImportantDateRepository.refreshImportantDateData();
 
             return openDataRefresh;
-        }(), (process.env.npm_config_odrefreshinterval && Number.isInteger(Number(process.env.npm_config_odrefreshinterval)) ? Number(process.env.npm_config_odrefreshinterval) : 86400000));
+        }(), (process.env.npm_config_odrefreshinterval && Number.isInteger(Number(process.env.npm_config_odrefreshinterval) && Number(process.env.npm_config_odrefreshinterval) <= 24) ? (Number(process.env.npm_config_odrefreshinterval) * 86400000) : 86400000));
 
 /**
  * add a faculty to a department
