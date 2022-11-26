@@ -98,12 +98,12 @@ module.exports = class FriendValidator {
             let student, request;
             let res = { 'errors': [] };
             if (email == undefined || email == "") {
-                res.errors.push('Missing receiver email');
+                res.errors.push('Missing sender email');
             }
             else {
                 student = await Student.findOne({ email: email.toString() })
                 if (!student) {
-                    res.errors.push('Receiver does not exist');
+                    res.errors.push('Sender does not exist');
                 }
             }
             if (requestID == undefined || requestID == "") {
