@@ -53,11 +53,10 @@ router.route('/:id').delete((req, res) => {
  * Delete a user by email
  */
 router.route('/email/:email').delete((req, res) => {
-
-    // If the room has no participants left, delete the room.
-    // If the student is the owner of the room, change owner to whoever is next, i.e. whoever is participants[0].
     StudentValidator.validateDelete(req.params.email).then(() => {
         StudyRoomRepository.findAllbyStudentEmail(req.params.email.toString()).then((rooms) => {
+            // If the room has no participants left, delete the room.
+            // If the student is the owner of the room, change owner to whoever is next, i.e. whoever is participants[0].
             if (rooms.length > 0) {
                 for (i = 0; i < rooms.length; i++) {
                     let participants = rooms[i].participants

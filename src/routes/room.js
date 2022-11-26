@@ -140,10 +140,12 @@ router.route('/:email').get(async (req, res) => {
 
 // delete studyRoom by ID
 router.route('/').delete(async (req, res) => {
+
   const roomID = req.body.studyRoomID.toString()
   StudyRoomValidator.validateDelete(roomID).then(() => {
     StudyRoomRepository.findOne(roomID).then(async (room) => {
       let participants = room.participants;
+      // Removes the room from its list of participants before deleting the room
       for (i = 0; i < participants.length; i++) {
 
         let student = await StudentRepository.findOneByEmail(participants[i])
