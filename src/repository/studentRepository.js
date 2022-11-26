@@ -174,7 +174,7 @@ module.exports = class StudentRepository {
      */
     static async addToFriendList(email1, email2) {
         return new Promise(async (resolve, reject) => {
-            Student.findOne({ email: email1 })
+            Student.findOne({ email: email1.toString() })
                 .then((student) => {
                     student.friends.push(email2);
                     student.save()
