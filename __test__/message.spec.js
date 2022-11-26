@@ -56,9 +56,9 @@ describe("testing message api routes", () => {
     });
 
     let room1 = createRoom(user1.email)
-    var room1ID;
+    let room1ID;
     let room2 = createRoom(user1.email)
-    var room2ID;
+    let room2ID;
     it("Create 2 study rooms and add student to 1", async () => {
 
         await request.post('/room/').send(room1)
@@ -150,7 +150,7 @@ describe("testing message api routes", () => {
 
 
     it("Create 50 messages", async () => {
-        for (i = 0; i < 50; i++) {
+        for (let i = 0; i < 50; i++) {
             randomString = generateString(1000);
             let user = user1;
             if (Math.round(Math.random()) == 1) { user = user2 }

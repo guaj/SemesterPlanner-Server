@@ -75,7 +75,7 @@ router.route('/add').post(async (req, res) => {
   StudyRoomValidator.validateAddingStudent(email, ID).then(() => {
     StudyRoomRepository.findOne(ID)
       .then((room) => {
-        var participants = room.participants;
+        let participants = room.participants;
         participants.push(email);
         StudyRoomRepository.updateParticipants(ID, participants)
           .then((room) => {
@@ -103,7 +103,7 @@ router.route('/remove').post(async (req, res) => {
   StudyRoomValidator.validateDeletingStudent(email, ID).then(() => {
     StudyRoomRepository.findOne(ID)
       .then((room) => {
-        var participants = room.participants
+        let participants = room.participants
         const participantIndex = participants.indexOf(email);
         participants.splice(participantIndex, 1);
         StudyRoomRepository.updateParticipants(ID, participants)
@@ -146,7 +146,7 @@ router.route('/').delete(async (req, res) => {
     StudyRoomRepository.findOne(roomID).then(async (room) => {
       let participants = room.participants;
       // Removes the room from its list of participants before deleting the room
-      for (i = 0; i < participants.length; i++) {
+      for (let i = 0; i < participants.length; i++) {
 
         let student = await StudentRepository.findOneByEmail(participants[i])
         let studyRooms = student.studyRooms;

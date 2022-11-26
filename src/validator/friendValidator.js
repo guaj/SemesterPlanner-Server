@@ -76,7 +76,7 @@ module.exports = class FriendValidator {
                 }
             }
             if (student && request) {
-                if (!(student.email == request.receiverEmail)) {
+                if (student.email != request.receiverEmail) {
                     res.errors.push('Not the receiver of the request')
                 }
             }
@@ -116,7 +116,7 @@ module.exports = class FriendValidator {
                 }
             }
             if (student && request) {
-                if (!(student.email == request.senderEmail)) {
+                if (student.email != request.senderEmail) {
                     res.errors.push('Not the sender of the request')
                 }
             }

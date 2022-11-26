@@ -58,7 +58,7 @@ router.route('/email/:email').delete((req, res) => {
             // If the room has no participants left, delete the room.
             // If the student is the owner of the room, change owner to whoever is next, i.e. whoever is participants[0].
             if (rooms.length > 0) {
-                for (i = 0; i < rooms.length; i++) {
+                for (let i = 0; i < rooms.length; i++) {
                     let participants = rooms[i].participants
                     if (participants.length == 1) {
                         StudyRoomRepository.deleteOne(rooms[i].studyRoomID);
@@ -96,7 +96,9 @@ router.route('/update').post(TokenVerify, async (req, res) => {
             if (req.body.faculty) {
                 student.faculty = req.body.faculty;
             }
-            student.privateProfile = req.body.privateProfile;
+            if (req.body.privateProfile) {
+                student.privateProfile = req.body.privateProfile;
+            }
 
             StudentRepository.updateOne(student)
                 .then((student) => res.json(`Student ${student.email} updated`))

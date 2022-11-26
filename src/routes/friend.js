@@ -14,8 +14,7 @@ const FriendValidator = require('../validator/friendValidator')
  * @return {FriendRequest} FrienRequest : FriendRequest of the friend request created.
  */
 router.route('/add').post(async (req, res) => {
-  const senderEmail = req.body.senderEmail.toString();
-  const receiverEmail = req.body.receiverEmail.toString();
+
   FriendValidator.validateCreateData(req.body).then(() => {
     const friendrequest = createFriendRequest(req.body);
     FriendRequestRepository.save(friendrequest)

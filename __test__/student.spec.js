@@ -1,4 +1,3 @@
-// INCOMPLETE
 const { request, assert } = require("./helper/app");
 const { createUser } = require('./helper/Student_test_data')
 const dbHandler = require('./helper/db-handler')

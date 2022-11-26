@@ -1,11 +1,7 @@
-// INCOMPLETE
 const { request, assert } = require("./helper/app");
 const { createRoom } = require("./helper/room_test_data");
 const { createUser } = require('./helper/Student_test_data')
 const dbHandler = require('./helper/db-handler')
-
-// TODO: Test deleting a room.
-// TODO: Proper documentation
 
 /**
  * Connect to a new in-memory database before running any tests.
@@ -75,7 +71,7 @@ describe("testing room api routes", () => {
     });
 
     let room1 = createRoom(user1.email)
-    var room1ID;
+    let room1ID;
 
     // Studyroom creation tests
     it("Create a study room", async () => {
