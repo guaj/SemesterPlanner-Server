@@ -1,6 +1,6 @@
-const studyRoomRepository = require('../models/studyRoom.model');
 const { createStudyRoom } = require("../factory/roomFactory");
 const StudyRoom = require('../models/studyRoom.model');
+const StudyRoomValidator = require('../validator/roomValidator')
 
 module.exports = class studyRoomRepository {
     /**
@@ -11,10 +11,13 @@ module.exports = class studyRoomRepository {
     static create(data) {
         return new Promise((resolve, reject) => {
             const newRoom = createStudyRoom(data)
-            newRoom.save((err, room) => {
-                if (err) { reject(err); }
-                resolve(room);
+            StudyRoomValidator.validateStudyRoom(newRoom).then(() => {
+                newRoom.save((err, room) => {
+                    if (err) { reject(err); }
+                    resolve(room);
+                })
             })
+                .catch((errs) => reject(errs))
         })
     }
 
@@ -54,10 +57,13 @@ module.exports = class studyRoomRepository {
      */
     static updateOne(studyRoom) {
         return new Promise((resolve, reject) => {
-            studyRoom.save((err, room) => {
-                if (err) { reject(err); }
-                resolve(room);
+            StudyRoomValidator.validateUpdateData(studyRoom).then(() => {
+                studyRoom.save((err, room) => {
+                    if (err) { reject(err); }
+                    resolve(room);
+                })
             })
+                .catch((errs) => reject(errs))
         })
     }
 

@@ -27,17 +27,32 @@ router.route('/').put((req, res) => {
       }
       StudyRoomRepository.updateOne(room)
         .then((room) => res.json(`Room ${room.studyRoomID} updated`))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
     })
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 
 })
 
 //create a study room
 router.route('/').post((req, res) => {
   StudyRoomRepository.create(req.body)
-    .then((room) => res.json(`Study room ${room.studyRoomID} created`).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .then((room) => {
+      StudentRepository.findOneByEmail(req.body.owner)
+        .then((student) => {
+          console.log(student)
+          let studyRooms = student.studyRooms;
+          studyRooms.push(room.studyRoomID);
+          StudentRepository.updateStudyRooms(req.body.owner, studyRooms)
+            .then((student) => {
+              console.log(student)
+              res.json(`Study room ${room.studyRoomID} created`).status(200)
+            })
+            .catch(err => res.status(400).json(err));
+        })
+        .catch(err => res.status(400).json(err));
+    })
+
+    .catch(err => res.status(400).json(err));
 });
 
 /**
@@ -49,7 +64,7 @@ router.get('/fetch/:studyRoomID', async (req, res) => {
   const studyRoomID = req.params.studyRoomID.toString()
   StudyRoomRepository.findOne(studyRoomID)
     .then((room) => res.json(room).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 
 })
 
@@ -77,11 +92,11 @@ router.route('/add').post(async (req, res) => {
               studyRooms.push(ID);
               StudentRepository.updateStudyRooms(email, studyRooms)
                 .then(() => res.json(email + " added to studyroom").status(200))
-                .catch(err => res.status(400).json('Error: ' + err));
+                .catch(err => res.status(400).json(err));
             })
-            .catch(err => res.status(400).json('Error: ' + err));
+            .catch(err => res.status(400).json(err));
         })
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
     })
 
 })
@@ -111,18 +126,18 @@ router.route('/remove').post(async (req, res) => {
                 studyRooms.splice(roomIndex, 1);
                 StudentRepository.updateStudyRooms(email, studyRooms)
                   .then(() => res.json(email + " removed from studyroom").status(200))
-                  .catch(err => res.status(400).json('Error: ' + err));
+                  .catch(err => res.status(400).json(err));
               }
               else {
                 res.json('Room not found').status(404);
                 return;
               }
             })
-            .catch(err => res.status(400).json('Error: ' + err));
+            .catch(err => res.status(400).json(err));
         })
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
     })
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 /**
@@ -134,7 +149,7 @@ router.route('/:email').get(async (req, res) => {
   const email = req.params.email.toString()
   StudyRoomRepository.findAllbyStudentEmail(email)
     .then((rooms) => res.json(rooms).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 // delete studyRoom by ID
@@ -142,7 +157,7 @@ router.route('/delete').post(async (req, res) => {
   const roomID = req.body.studyRoomID.toString()
   StudyRoomRepository.deleteOne(roomID)
     .then((status) => res.send("deleted" + status + 'rooms'))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 
@@ -151,27 +166,27 @@ router.route('/delete').post(async (req, res) => {
 router.post('/file', (req, res) => {
   CourseNotesRepository.create(req.body)
     .then(() => res.send("successfuly uploaded"))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 });
 
 // get file BY courseNoteID
 router.route('/file/:courseNotesID').get(async (req, res) => {
   CourseNotesRepository.findOne(req.params.courseNotesID)
     .then(note => res.json(note).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 router.route('/file/:courseNotesID').delete(async (req, res) => {
   CourseNotesRepository.deleteOne(req.params.courseNotesID)
     .then(status => res.json("deleted " + status + " file").status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 // route to fetch all the file  by studyRoomID
 router.route('/files/:studyRoomID').get(async (req, res) => {
   CourseNotesRepository.findAllbyStudyRoomID(req.params.studyRoomID)
     .then(notes => res.json(notes).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 

@@ -6,7 +6,7 @@ const studyRoomSchema = new Schema({
     studyRoomID: { type: String, required: true, unique: true },
     owner: { type: String, required: true },
     title: { type: String, required: true },
-    description: { type: String },
+    description: { type: String, required: true },
     avatar: { type: String },
     color: { type: String, required: true },
     participants: { type: [String], required: true },

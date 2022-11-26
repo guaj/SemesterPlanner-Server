@@ -182,7 +182,6 @@ describe("Testing student api routes", () => {
     )
       .expect(401)
       .then((res) => {
-        console.log(res.body)
         assert.deepEqual(res.body, { auth: false, message: 'No token found in request' })
       })
   });
@@ -196,7 +195,7 @@ describe("Testing student api routes", () => {
     )
       .expect(200)
       .then((res) => {
-        console.log(res.body)
+
         assert.ok(res.body.includes('Friend request sent.'))
       })
   });
@@ -218,7 +217,6 @@ describe("Testing student api routes", () => {
     await request.delete('/student/email/' + user1.email)
       .expect(200)
       .then((res) => {
-        console.log(res.body)
         assert.ok(res.body.includes(expected))
       })
 
@@ -231,7 +229,6 @@ describe("Testing student api routes", () => {
     await request.delete('/student/email/' + user1.email)
       .expect(200)
       .then((res) => {
-        console.log(res.body)
         assert.ok(res.body.includes(expected))
       })
 

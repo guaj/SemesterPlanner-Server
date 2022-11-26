@@ -1,77 +1,86 @@
 const StudyRoom = require('../models/studyRoom.model');
+const Student = require('../models/student.model')
 
 module.exports = class RoomValidator {
 
     /**
-     * Validator for studyRoom creation.
-     * @param {*} data StudyRoom creation data. It should contain: owner, email, password, program (optional), faculty (optional) and privateProfile.
-     * @returns {[string]} Returns a promise. Resolves with an array of errors (if there are any).
+     * Regex hex color validator
+     * @param {*} color the color in hex (#FFFFFF)
+     * @returns true/false
      */
-    static validateCreateData(data) {
-        return new Promise((resolve, reject) => {
-            let res = { 'errors': [] };
-            if (data.username == undefined || data.username == "") {
-                res.errors.push('Missing username');
-            }
-            if (data.email == undefined || data.email == "") {
-                res.errors.push('Missing email');
-            }
-            if (data.password == undefined || data.password == "") {
-                res.errors.push('Missing password');
-            }
-            if (data.privateProfile != 'true' && data.privateProfile != 'false' && data.privateProfile != undefined) {
-                res.errors.push('Invalid parameter for privateProfile (should be true or false)');
-            }
-
-            if (data.username && data.email) {
-                Student.findOne({ username: data.username }).then(student => {
-                    if (student != null) {
-                        res.errors.push('Username already exists');
-                    }
-                    Student.findOne({ email: data.email }).then(student => {
-                        if (student != null) {
-                            res.errors.push('Email already exists');
-                        }
-
-                        if (res.errors[0]) {
-                            reject(res);
-                        }
-                        resolve();
-
-                    })
-                })
-            }
-            else {
-                if (res.errors[0]) {
-                    reject(res);
-                }
-                resolve();
-            }
-            // TO DO: validate program and faculty
-        })
-
-
-    }
+    static validateColor = (color) => {
+        return String(color)
+            .match(
+                /^#(?:[0-9a-fA-F]{3}){1,2}$/ig
+            );
+    };
 
     /**
-     * Validator for student update.
-     * @param {*} student Updated Student object.
-     * @returns {[string]} Returns a promise. Resolves with an array of errors (if there are any).
+     * Validator for studyRoom creation.
+     * @param {*} studyroom StudyRoom created object. It should contain: owner, title, description.
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateUpdateData(student) {
-        return new Promise((resolve, reject) => {
+    static validateStudyRoom(studyroom) {
+        return new Promise(async (resolve, reject) => {
             let res = { 'errors': [] };
-            if (student.privateProfile != true && student.privateProfile != false && student.privateProfile != undefined && student.privateProfile != '') {
-                res.errors.push('Invalid parameter for privateProfile (should be true or false)')
+            if (studyroom.owner == undefined || studyroom.owner == "") {
+                res.errors.push('Missing owner');
             }
-
-            // TO DO: validate program and faculty
+            else {
+                let owner = await Student.findOne({ email: studyroom.owner })
+                if (!owner) {
+                    res.errors.push('Owner does not exist');
+                }
+            }
+            if (studyroom.title.length > 128) {
+                res.errors.push('Room title length exceeds 128 characters');
+            }
+            if (studyroom.description.length > 2048) {
+                res.errors.push('Room description length exceeds 2048 characters');
+            }
+            if (!this.validateColor(studyroom.color)) {
+                res.errors.push('Invalid hex color');
+            }
 
             if (res.errors[0]) {
                 reject(res);
             }
             resolve();
+        })
+    }
 
+    /**
+     * Validator for room update.
+     * @param {*} studyroom Updated studyroom object.
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
+     */
+    static validateUpdateData(studyroom) {
+        return new Promise(async (resolve, reject) => {
+            let res = { 'errors': [] };
+            if (studyroom.owner == undefined || studyroom.owner == "") {
+                res.errors.push('Invalid new room owner');
+            }
+            else {
+                if (!studyroom.participants.includes(studyroom.owner)) {
+                    res.errors.push('Room owner is not part of the room');
+                }
+            }
+            if (studyroom.title.length > 128) {
+                res.errors.push('Room title length exceeds 128 characters');
+            }
+            if (studyroom.description.length > 1024) {
+                res.errors.push('Room description length exceeds 1024 characters');
+            }
+            if (!this.validateColor(studyroom.color)) {
+                res.errors.push('Invalid hex color');
+            }
+            if (studyroom.participants.length <= 0) {
+                res.errors.push('Room cannot have fewer than 1 participants');
+            }
+            if (res.errors[0]) {
+                reject(res);
+            }
+            resolve();
         })
     }
 

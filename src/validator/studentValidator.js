@@ -5,7 +5,7 @@ module.exports = class StudentValidator {
     /**
      * Validator for student creation.
      * @param {*} data Student creation data. It should contain: username, email, password, program (optional), faculty (optional) and privateProfile.
-     * @returns {[string]} Returns a promise. Resolves with an array of errors (if there are any).
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
     static validateCreateData(data) {
         return new Promise(async (resolve, reject) => {
@@ -46,7 +46,7 @@ module.exports = class StudentValidator {
     /**
      * Validator for student update.
      * @param {*} student Updated Student object.
-     * @returns {[string]} Returns a promise. Resolves with an array of errors (if there are any).
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
     static validateUpdateData(student) {
         return new Promise((resolve, reject) => {
