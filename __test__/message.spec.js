@@ -93,6 +93,7 @@ describe("testing message api routes", () => {
     //Message creation
     let messageID;
     let randomString = generateString(1000);
+    let messages = []
     it("Create a message", async () => {
         await request.post('/message/send').send(
             {
@@ -107,6 +108,7 @@ describe("testing message api routes", () => {
                 assert.deepEqual(res.body.content, randomString);
                 assert.deepEqual(res.body.studyRoomID, room1ID);
                 messageID = res.body.messageID
+                messages.unshift(res.body)
             })
     });
 
@@ -145,6 +147,8 @@ describe("testing message api routes", () => {
                 assert.deepEqual(res.body, { "errors": ["Message author does not belong to studyRoom"] });
             })
     });
+
+
     it("Create 50 messages", async () => {
         for (i = 0; i < 50; i++) {
             randomString = generateString(1000);
@@ -162,12 +166,47 @@ describe("testing message api routes", () => {
                     assert.deepEqual(res.body.email, user.email);
                     assert.deepEqual(res.body.content, randomString);
                     assert.deepEqual(res.body.studyRoomID, room1ID);
-                    messageID = res.body.messageID
+                    messages.unshift(res.body);
                 })
         }
     });
 
     //retrieving messages in bulk
+    it("Retrieve 60 most recent messages", async () => {
+        await request.get('/message/bulk/' + room1ID + '/60')
+            .expect(200)
+            .then((res) => {
+                assert.equal(res.body.length, 51)
+                assert.deepEqual(res.body, messages);
+            })
+    });
 
+    it("Retrieve 40 most recent messages past the first 20", async () => {
+        messages.splice(0, 20)
+        await request.get('/message/bulk/' + room1ID + '/40/20')
+            .expect(200)
+            .then((res) => {
+                assert.equal(res.body.length, 31)
+                assert.deepEqual(res.body, messages);
+            })
+    });
+
+    it("Retrieve bulk route with a bad amount", async () => {
+        messages.splice(0, 20)
+        await request.get('/message/bulk/' + room1ID + '/-60/')
+            .expect(400)
+            .then((res) => {
+                assert.deepEqual(res.body, { "errors": ["Amount less than 1"] });
+            })
+    });
+
+    it("Retrieve bulk route with a bad amount and ignore", async () => {
+        messages.splice(0, 20)
+        await request.get('/message/bulk/' + room1ID + '/-60/asd')
+            .expect(400)
+            .then((res) => {
+                assert.deepEqual(res.body, { "errors": ["Amount less than 1", "Ignore is not a number"] });
+            })
+    });
 })
 

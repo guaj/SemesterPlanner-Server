@@ -186,6 +186,8 @@ describe("Testing student api routes", () => {
       })
   });
 
+  //Friend request tests
+  let FriendRequest, FriendRequest2;
   it("Send a friend request", async () => {
     await request.post('/friend/add').send(
       {
@@ -195,9 +197,9 @@ describe("Testing student api routes", () => {
     )
       .expect(200)
       .then((res) => {
-        console.log(res.body)
         assert.deepEqual(res.body.senderEmail, user1.email)
         assert.deepEqual(res.body.receiverEmail, user2.email)
+        FriendRequest = res.body;
       })
   });
 
@@ -208,9 +210,168 @@ describe("Testing student api routes", () => {
         receiverEmail: 'does not exist'
       }
     )
-      .expect(200)
+      .expect(400)
+      .then((res) => {
+        assert.deepEqual(res.body, { "errors": ["Receiver does not exist"] })
+      })
   });
 
+  it("Send an already existing friend request", async () => {
+    await request.post('/friend/add').send(
+      {
+        senderEmail: user1.email,
+        receiverEmail: user2.email
+      }
+    )
+      .expect(400)
+      .then((res) => {
+        assert.deepEqual(res.body, { "errors": ["Friend request already exists"] })
+      })
+  });
+
+  it("Get outgoing requests", async () => {
+    await request.get('/friend/outgoing-requests/' + user1.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, [FriendRequest])
+      })
+  });
+
+  it("Get incoming requests", async () => {
+    await request.get('/friend/incoming-requests/' + user2.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, [FriendRequest])
+      })
+  });
+
+  it("Cancelling request", async () => {
+    await request.post('/friend/cancel-request').send(
+      {
+        senderEmail: user1.email,
+        requestID: FriendRequest._id
+      }
+    )
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, "Cancelled request to " + user2.email)
+      })
+  });
+
+  it("Verifying request deletion", async () => {
+    await request.get('/friend/outgoing-requests/' + user1.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, [])
+      })
+    await request.get('/friend/incoming-requests/' + user2.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, [])
+      })
+  });
+
+  it("Send new friend requests", async () => {
+    await request.post('/friend/add').send(
+      {
+        senderEmail: user1.email,
+        receiverEmail: user2.email
+      }
+    )
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.senderEmail, user1.email)
+        assert.deepEqual(res.body.receiverEmail, user2.email)
+        FriendRequest = res.body;
+      })
+    await request.post('/friend/add').send(
+      {
+        senderEmail: user3.email,
+        receiverEmail: user2.email
+      }
+    )
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.senderEmail, user3.email)
+        assert.deepEqual(res.body.receiverEmail, user2.email)
+        FriendRequest2 = res.body;
+      })
+  });
+
+  it("Cancelling wrong request", async () => {
+    await request.post('/friend/cancel-request').send(
+      {
+        senderEmail: user2.email,
+        requestID: FriendRequest._id
+      }
+    )
+      .expect(400)
+      .then((res) => {
+        assert.deepEqual(res.body, { "errors": ["Not the sender of the request"] })
+      })
+  });
+
+  it("Answering wrong request", async () => {
+    await request.post('/friend/answerFriendRequest').send(
+      {
+        receiverEmail: user1.email,
+        requestID: FriendRequest._id,
+        answer: 'accepted'
+      }
+    )
+      .expect(400)
+      .then((res) => {
+        assert.deepEqual(res.body, { "errors": ["Not the receiver of the request"] })
+      })
+  });
+
+  it("Answering request", async () => {
+    await request.post('/friend/answerFriendRequest').send(
+      {
+        receiverEmail: user2.email,
+        requestID: FriendRequest._id,
+        answer: 'accepted'
+      }
+    )
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, 'Friend request with ' + user1.email + ' accepted.')
+      })
+    await request.post('/friend/answerFriendRequest').send(
+      {
+        receiverEmail: user2.email,
+        requestID: FriendRequest2._id,
+        answer: 'accepted'
+      }
+    )
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, 'Friend request with ' + user3.email + ' accepted.')
+      })
+  });
+
+  it("Verifying friends", async () => {
+    await request.get('/student/email/' + user1.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.email, user1.email)
+        assert.deepEqual(res.body.friends, [user2.email])
+      })
+    await request.get('/student/email/' + user3.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.email, user3.email)
+        assert.deepEqual(res.body.friends, [user2.email])
+      })
+    await request.get('/student/email/' + user2.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.email, user2.email)
+        assert.deepEqual(res.body.friends, [user1.email, user3.email])
+      })
+  });
+
+  //Delete student tests
   it("Delete a Student ", async () => {
     let expected = '1 deleted'
     await request.delete('/student/email/' + user1.email)

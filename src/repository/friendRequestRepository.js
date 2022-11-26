@@ -6,12 +6,25 @@ module.exports = class FriendRequestRepository {
 
     /**
      * Delete a friend request.
-     * @param {string} requestId : id of the request to delte
+     * @param {string} requestId : id of the request to delete
      * @returns {Promise<unknown>}
      */
     static async deleteFriendRequest(requestId) {
         return await new Promise((resolve, reject) => {
             FriendRequest.findOneAndDelete({ _id: requestId })
+                .then((result) => resolve(result))
+                .catch((error) => reject(error))
+        })
+    }
+
+    /**
+     * Find a friend request by requestID.
+     * @param {string} _id : id of the request
+     * @returns {Promise<unknown>}
+     */
+    static async findByID(_id) {
+        return await new Promise((resolve, reject) => {
+            FriendRequest.findOne({ _id: _id })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
         })
@@ -24,7 +37,7 @@ module.exports = class FriendRequestRepository {
      */
     static async findBySenderEmail(email) {
         return await new Promise((resolve, reject) => {
-            FriendRequest.findOne({ senderEmail: email })
+            FriendRequest.find({ senderEmail: email })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
         })
@@ -37,10 +50,9 @@ module.exports = class FriendRequestRepository {
      */
     static async findByReceiverEmail(email) {
         return await new Promise(
-            (resolve, reject) => FriendRequest.find({ receiverEmail: email }
+            (resolve, reject) => FriendRequest.find({ receiverEmail: email })
                 .then(result => resolve(result))
                 .catch(error => reject(error))
-            )
         )
     }
 
