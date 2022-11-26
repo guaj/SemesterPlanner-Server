@@ -4,6 +4,9 @@ const { createRoom } = require("./helper/room_test_data");
 const { createUser } = require('./helper/Student_test_data')
 const dbHandler = require('./helper/db-handler')
 
+// TODO: Test deleting a room.
+// TODO: Proper documentation
+
 /**
  * Connect to a new in-memory database before running any tests.
  */
