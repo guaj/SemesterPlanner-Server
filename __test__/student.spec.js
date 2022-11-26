@@ -144,6 +144,17 @@ describe("Testing student api routes", () => {
       })
   });
 
+  it("Student bad login", async () => {
+    await request.post('/login').send(
+      {
+        "email": user1.email
+      })
+      .expect(400)
+      .then((res) => {
+        assert.deepEqual(res.body, { 'errors': ['Missing password'] })
+      })
+  });
+
   it("Student failed login", async () => {
 
     let expected = { 'auth': false, 'message': 'Error: Incorrect Username or Password' }
