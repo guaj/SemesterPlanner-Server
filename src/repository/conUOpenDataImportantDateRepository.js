@@ -7,7 +7,7 @@ module.exports = class OpenDataImportantDateRepository {
     /**
      * Create an important date record.
      * @param {*} data The body/params of the request. It should contain: date, description.
-     * @returns [{ImportantDate}] Returns a promise. Resolves with the ImportantDate record added.
+     * @returns {ImportantDate} Returns a promise. Resolves with the ImportantDate record added.
      */
     static create(data) {
         return new Promise((resolve, reject) => {
@@ -23,7 +23,7 @@ module.exports = class OpenDataImportantDateRepository {
 
     /**
      * Get a list of all important dates.
-     * @returns [{ImportantDate}] Returns a promise. Resolves with the ImportantDate records.
+     * @returns {[ImportantDate]} Returns a promise. Resolves with the ImportantDate records.
      */
     static getAllImportantDates() {
         return new Promise((resolve, reject) => {
@@ -38,7 +38,7 @@ module.exports = class OpenDataImportantDateRepository {
     /**
      * Get text description of a text node on Concordia's Academic Dates webpage.
      * @param {div} textNode The text node for which the description text needs to be extracted.
-     * @returns {string} Returns a string containing the text inside the textNode of interest (passed in params).
+     * @returns {String} Returns a string containing the text inside the textNode of interest (passed in params).
      */
     static getText(textNode) {
         let string = "";
@@ -55,7 +55,7 @@ module.exports = class OpenDataImportantDateRepository {
 
     /**
      * Get a list of important dates from Concordia's Academic Dates webpage.
-     * @returns [{ImportantDate}] Returns a list containing ImportantDate records.
+     * @returns {[ImportantDate]} Returns a list containing ImportantDate records.
      */
     static getImportantDates() {
         let isCurrentYear = true;
@@ -90,7 +90,7 @@ module.exports = class OpenDataImportantDateRepository {
 
     /**
      * Drops the opendataimportantdates table
-     * @returns boolean, returns true if the table is dropped, returns false if the table is not dropped
+     * @returns {boolean} returns true if the table is dropped, returns false if the table is not dropped
      */
     static dropTable() {
         return new Promise((resolve, reject) => {
@@ -104,7 +104,8 @@ module.exports = class OpenDataImportantDateRepository {
 
     /**
      * Creates table of ImportantDate records using an array of ImportantDate records.
-     * @returns [{ImportantDate}] Returns a promise. Resolves with an array of ImportantDate added to the table.
+     * @param {[ImportantDate]}, takes an array of ImportantDate to be added to the opendataimportantdates collection in the database
+     * @returns {[ImportantDate]} Returns a promise. Resolves with an array of ImportantDate added to the table.
      */
     static batchCreateImportantDate(importantDateData) {
         return new Promise((resolve, reject) => {

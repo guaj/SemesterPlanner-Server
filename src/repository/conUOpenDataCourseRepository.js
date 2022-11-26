@@ -11,19 +11,19 @@ module.exports = class OpenDataCourseRepository {
     static create(data) {
         return new Promise((resolve, reject) => {
             const newOpenDataCourse = createOpenDataCourse(data)
-            newOpenDataCourse.save((err, faculty) => {
+            newOpenDataCourse.save((err, course) => {
                 if (err) {
                     reject(err);
                 }
-                resolve(faculty);
+                resolve(course);
             })
         })
     }
 
     /**
      * Find all courses with a specific course code.
-     * @param {string} courseCode, the course code of interest.
-     * @returns [{Course}] Returns a promise. Resolves with an array of Courses associated with the courseCode param.
+     * @param {String} courseCode, the course code of interest.
+     * @returns {[Course]} Returns a promise. Resolves with an array of Courses associated with the courseCode param.
      */
     static findAllByCourseCode(courseCode) {
         return new Promise((resolve, reject) => {
@@ -39,9 +39,9 @@ module.exports = class OpenDataCourseRepository {
 
     /**
      * Find a specific course with a specific course code and course number.
-     * @param {string} courseCode the course code of interest.
-     * @param {string, int} courseNumber the course number of interest.
-     * @returns [{Course}] Returns a promise. Resolves with an array of Course associated with the courseCode and courseNumber param.
+     * @param {String} courseCode the course code of interest.
+     * @param {String, Integer} courseNumber the course number of interest.
+     * @returns {[Course]} Returns a promise. Resolves with an array of Course associated with the courseCode and courseNumber param.
      */
     static findByCourseCodeAndNumber(courseCode, courseNumber) {
         return new Promise((resolve, reject) => {
@@ -58,7 +58,7 @@ module.exports = class OpenDataCourseRepository {
 
     /**
      * Drops the opendatacourses table
-     * @returns boolean, returns true if the table is dropped, returns false if the table is not dropped
+     * @returns {boolean}, returns true if the table is dropped, returns false if the table is not dropped
      */
     static dropTable() {
         return new Promise((resolve, reject) => {
@@ -72,7 +72,8 @@ module.exports = class OpenDataCourseRepository {
 
     /**
      * Creates table of Course records using an array of Course records.
-     * @returns [{Course}] Returns a promise. Resolves with an array of Courses added to the table.
+     * @param {[Course]}, takes an array of Courses to be added to the opendatacourses collection in the database
+     * @returns{[Course]} Returns a promise. Resolves with an array of Courses added to the table.
      */
     static batchCreateCourse(coursesData) {
         return new Promise((resolve, reject) => {

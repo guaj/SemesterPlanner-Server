@@ -39,7 +39,7 @@ module.exports = class OpenDataFacultyRepository {
 
     /**
      * Find all faculty codes and faculty descriptions in the university.
-     * @returns [faculties] Returns a promise. Resolves with an array of faculty codes and descriptions in the university.
+     * @returns {[Faculty]} Returns a promise. Resolves with an array of faculty codes and descriptions in the university.
      */
     static getFacultyList() {
         return new Promise((resolve, reject) => {
@@ -64,7 +64,7 @@ module.exports = class OpenDataFacultyRepository {
 
     /**
      * Drops the opendatafaculties table
-     * @returns boolean, returns true if the table is dropped, returns false if the table is not dropped
+     * @returns {boolean}, returns true if the table is dropped, returns false if the table is not dropped
      */
     static dropTable() {
         return new Promise((resolve, reject) => {
@@ -78,7 +78,8 @@ module.exports = class OpenDataFacultyRepository {
 
     /**
      * Creates table of Faculty records using an array of Faculty records.
-     * @returns [{Faculty}] Returns a promise. Resolves with an array of Faculties added to the table.
+     * @param {[Faculty]} takes an array of Faculty to be added to the opendatafaculties collection in the database
+     * @returns {[Faculty]} Returns a promise. Resolves with an array of Faculties added to the table.
      */
     static batchCreateFaculty(facultiesData) {
         return new Promise((resolve, reject) => {

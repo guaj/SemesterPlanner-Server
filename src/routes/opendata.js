@@ -19,7 +19,10 @@ if (process.env.npm_config_odrefresh === "true")
 
 /**
  * add a faculty to a department
- * @param {facultyCode, facultyDescription, departmentCode, departmentDescription}: passed as request body and added to the opendatafaculties collection
+ * @param {String} facultyCode: passed in the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} facultyDescription: passed in the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} departmentCode: passed in the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} departmentDescription: passed in the request body and added to the newly created record in the opendatafaculties collection
  * @returns {string} Returns a string with the operation's result.
  */
 router.route('/faculty/').post((req, res) => {
@@ -47,7 +50,7 @@ router.route('/faculty/').get(async (req, res) => {
 
 /**
  * find all departments in a faculty
- * @param facultyCode: passed in URL corresponds to the faculty of interest
+ * @param {String} facultyCode: passed in URL corresponds to the faculty of interest
  * @returns {[Faculty]} Returns an array of Faculty with the provided facultyCode param.
  */
 router.route('/faculty/:facultyCode').get(async (req, res) => {
@@ -62,15 +65,15 @@ router.route('/faculty/:facultyCode').get(async (req, res) => {
 
 /**
  * add a course
- * @param {ID,
- *     title,
- *     subject,
- *     catalog,
- *     career,
- *     classUnit,
- *     prerequisites,
- *     crosslisted}: passed as request body and added to the opendatafaculties collection
- * @returns {string} Returns a string with the operation's result.
+ * @param {String} ID, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} title, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} subject, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} catalog, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} career, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} classUnit, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} prerequisites, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @param {String} crosslisted, passed as part of the request body and added to the newly created record in the opendatafaculties collection
+ * @returns {String} Returns a string with the operation's result.
  */
 router.route('/course/').post((req, res) => {
     OpenDataCourseRepository.create(req.body)
@@ -83,8 +86,8 @@ router.route('/course/').post((req, res) => {
 
 /**
  * find all courses by course code
- * @param courseCode: passed in URL corresponds to the course code (eg. ENCS, SOEN, ENGR) of interest
- * @returns [{Course}] Returns an array of Courses associated with the courseCode param.
+ * @param {String} courseCode: passed in URL corresponds to the course code (eg. ENCS, SOEN, ENGR) of interest
+ * @returns {[Course]} Returns an array of Courses associated with the courseCode param.
  */
 router.route('/course/:courseCode').get(async (req, res) => {
     const courseCode = req.params.courseCode.toString();
@@ -98,8 +101,9 @@ router.route('/course/:courseCode').get(async (req, res) => {
 
 /**
  * find a specific course by course code and course number
- * @param {courseCode, courseNumber}: passed in URL correspond to the course code (eg. ENCS, SOEN, ENGR) and number of interest
- * @returns [{Course}] Returns an array containing a Course record associated with the courseCode and courseNumber param.
+ * @param {String} courseCode: passed in URL correspond to the course code (eg. ENCS, SOEN, ENGR)
+ * @param {String, Integer} courseNumber: passed in URL correspond to the course number (eg. 282, 490, 301)
+ * @returns {[Course]} Returns an array containing a Course record associated with the courseCode and courseNumber param.
  */
 router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
     const courseCode = req.params.courseCode.toString();
@@ -114,7 +118,7 @@ router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
 
 /**
  * get all important dates
- * @returns [{ImportantDate}] Returns an array with the ImportantDate records.
+ * @returns {[ImportantDate]} Returns an array with the ImportantDate records.
  */
 router.route('/importantdates/').get(async (req, res) => {
     console.info(`Important dates requested.`)
