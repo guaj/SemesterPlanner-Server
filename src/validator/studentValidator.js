@@ -65,4 +65,29 @@ module.exports = class StudentValidator {
         })
     }
 
+    /**
+     * Validator for deleting student.
+     * @param {string} email The student's email.
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
+     */
+    static validateDelete(email) {
+        return new Promise(async (resolve, reject) => {
+            let student = undefined;
+            let res = { 'errors': [] };
+            if (email == undefined || email == "") {
+                res.errors.push('Invalid email');
+            }
+            else {
+                student = await Student.findOne({ email: email })
+                if (!student) {
+                    res.errors.push('Student does not exist');
+                }
+            }
+            if (res.errors[0]) {
+                reject(res);
+            }
+            resolve();
+        })
+    }
+
 }

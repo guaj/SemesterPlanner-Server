@@ -109,7 +109,6 @@ describe("testing room api routes", () => {
     });
 
     it("Get room by email", async () => {
-
         await request.get('/room/' + user1.email)
             .expect(200)
             .then((res) => {
@@ -260,13 +259,29 @@ describe("testing room api routes", () => {
 
     let room2 = createRoom(user2.email)
     let room2ID;
-    it("Create a second study room", async () => {
+    let room3 = createRoom(user2.email)
+    let room3ID;
+    it("Create 2 study rooms", async () => {
 
         await request.post('/room/').send(room2)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.owner.includes(user2.email));
                 room2ID = res.body.studyRoomID;
+            })
+
+        await request.post('/room/').send(room3)
+            .expect(200)
+            .then((res) => {
+                assert.ok(res.body.owner.includes(user2.email));
+                room3ID = res.body.studyRoomID;
+            })
+        await request.get('/room/' + user2.email)
+            .expect(200)
+            .then((res) => {
+                assert.deepEqual(res.body[1].studyRoomID, room2ID);
+                assert.deepEqual(res.body[1].owner, user2.email);
+                assert.deepEqual(res.body[2].studyRoomID, room3ID);
             })
 
     });
@@ -290,7 +305,7 @@ describe("testing room api routes", () => {
         await request.get('/student/email/' + user2.email)
             .expect(200)
             .then((res) => {
-                assert.deepEqual(res.body.studyRooms, [room2ID]);
+                assert.deepEqual(res.body.studyRooms, [room2ID, room3ID]);
             })
     });
 
@@ -303,5 +318,61 @@ describe("testing room api routes", () => {
                 assert.deepEqual(res.body, { 'errors': ['StudyRoom does not exist'] })
             })
     });
+
+    it("Add students to the studyRoom", async () => {
+
+        await request.post('/room/add').send({
+            email: user1.email,
+            studyRoomID: room2ID
+        })
+            .expect(200)
+            .then((res) => {
+                assert.ok(res.body.includes(user1.email))
+            })
+        await request.post('/room/add').send({
+            email: user3.email,
+            studyRoomID: room2ID
+        })
+            .expect(200)
+            .then((res) => {
+                assert.ok(res.body.includes(user3.email))
+            })
+        await request.post('/room/add').send({
+            email: user4.email,
+            studyRoomID: room2ID
+        })
+            .expect(200)
+            .then((res) => {
+                assert.ok(res.body.includes(user4.email))
+            })
+
+    });
+
+    it("Delete a student that is owner of study rooms", async () => {
+        let expected = '1 deleted'
+        await request.delete('/student/email/' + user2.email)
+            .expect(200)
+            .then((res) => {
+                assert.ok(res.body.includes(expected))
+            })
+
+    });
+
+    it('Verifying deletion of empty studyRoom', async () => {
+        await request.get('/room/fetch/' + room3ID)
+            .expect(200)
+            .then((res) => {
+                assert.deepEqual(res.body, null);
+            })
+    });
+
+    it('Verifying ownership change of non-empty studyroom', async () => {
+        await request.get('/room/fetch/' + room2ID)
+            .expect(200)
+            .then((res) => {
+                assert.deepEqual(res.body.owner, user1.email);
+            })
+    });
+
 })
 

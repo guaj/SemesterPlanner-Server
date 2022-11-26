@@ -211,9 +211,7 @@ describe("Testing student api routes", () => {
   });
 
   it("Delete a Student ", async () => {
-
     let expected = '1 deleted'
-
     await request.delete('/student/email/' + user1.email)
       .expect(200)
       .then((res) => {
@@ -222,14 +220,20 @@ describe("Testing student api routes", () => {
 
   });
 
-  it("Delete a non existent student ", async () => {
-
-    let expected = '0 deleted'
-
-    await request.delete('/student/email/' + user1.email)
+  it("Verifying student deletion", async () => {
+    await request.get('/student/email/' + user1.email)
       .expect(200)
       .then((res) => {
-        assert.ok(res.body.includes(expected))
+        assert.deepEqual(res.body, null)
+      })
+
+  });
+
+  it("Delete a non existent student ", async () => {
+    await request.delete('/student/email/' + user1.email)
+      .expect(400)
+      .then((res) => {
+        assert.deepEqual(res.body, { 'errors': ['Student does not exist'] });
       })
 
   });

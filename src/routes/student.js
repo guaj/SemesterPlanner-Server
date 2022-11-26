@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const TokenVerify = require('./tokenVerification').verifyJWTAuth;
 const StudentRepository = require('../repository/studentRepository');
+const StudyRoomRepository = require('../repository/studyRoomRepository');
+const StudentValidator = require('../validator/studentValidator');
 
 /**
  * Get all users
@@ -51,8 +53,32 @@ router.route('/:id').delete((req, res) => {
  * Delete a user by email
  */
 router.route('/email/:email').delete((req, res) => {
-    StudentRepository.deleteOne(req.params)
-        .then(status => res.json(`${status} deleted`))
+
+    // If the room has no participants left, delete the room.
+    // If the student is the owner of the room, change owner to whoever is next, i.e. whoever is participants[0].
+    StudentValidator.validateDelete(req.params.email).then(() => {
+        StudyRoomRepository.findAllbyStudentEmail(req.params.email.toString()).then((rooms) => {
+            if (rooms.length > 0) {
+                for (i = 0; i < rooms.length; i++) {
+                    let participants = rooms[i].participants
+                    if (participants.length == 1) {
+                        StudyRoomRepository.deleteOne(rooms[i].studyRoomID);
+                    }
+                    else {
+                        participants.shift();
+                        if (rooms[i].owner == req.params.email) {
+                            rooms[i].owner = participants[0];
+                            StudyRoomRepository.updateOne(rooms[i]);
+                        }
+                        StudyRoomRepository.updateParticipants(rooms[i].studyRoomID, participants)
+                    }
+                }
+            }
+            StudentRepository.deleteOne(req.params)
+                .then(status => res.json(`${status} deleted`))
+                .catch(err => res.status(400).json(err));
+        })
+    })
         .catch(err => res.status(400).json(err));
 });
 
