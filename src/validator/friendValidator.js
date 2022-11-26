@@ -50,18 +50,18 @@ module.exports = class FriendValidator {
     /**
      * Validator for request accepting.
      * @param {string} requestID requestID of the request.
-     * @param {string} email The email of the receiver.
+     * @param {string} receiverEmail The email of the receiver.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateAcceptRequest(requestID, email) {
+    static validateAcceptRequest(requestID, receiverEmail) {
         return new Promise(async (resolve, reject) => {
             let student, request;
             let res = { 'errors': [] };
-            if (email == undefined || email == "") {
+            if (receiverEmail == undefined || receiverEmail == "") {
                 res.errors.push('Missing receiver email');
             }
             else {
-                student = await Student.findOne({ email: email.toString() })
+                student = await Student.findOne({ email: receiverEmail.toString() })
                 if (!student) {
                     res.errors.push('Receiver does not exist');
                 }
@@ -90,18 +90,18 @@ module.exports = class FriendValidator {
     /**
      * Validator for request cancellation.
      * @param {string} requestID requestID of the request.
-     * @param {string} email The email of the sender.
+     * @param {string} senderEmail The email of the sender.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateCancelRequest(requestID, email) {
+    static validateCancelRequest(requestID, senderEmail) {
         return new Promise(async (resolve, reject) => {
             let student, request;
             let res = { 'errors': [] };
-            if (email == undefined || email == "") {
+            if (senderEmail == undefined || senderEmail == "") {
                 res.errors.push('Missing sender email');
             }
             else {
-                student = await Student.findOne({ email: email.toString() })
+                student = await Student.findOne({ email: senderEmail.toString() })
                 if (!student) {
                     res.errors.push('Sender does not exist');
                 }
