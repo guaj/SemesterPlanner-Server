@@ -24,11 +24,11 @@ module.exports = class StudentValidator {
             }
 
             if (data.username && data.email) {
-                var student = await Student.findOne({ username: data.username })
+                var student = await Student.findOne({ username: data.username.toString() })
                 if (student != null) {
                     res.errors.push('Username already exists');
                 }
-                student = await Student.findOne({ email: data.email })
+                student = await Student.findOne({ email: data.email.toString() })
                 if (student != null) {
                     res.errors.push('Email already exists');
                 }
@@ -78,7 +78,7 @@ module.exports = class StudentValidator {
                 res.errors.push('Invalid email');
             }
             else {
-                student = await Student.findOne({ email: email })
+                student = await Student.findOne({ email: email.toString() })
                 if (!student) {
                     res.errors.push('Student does not exist');
                 }

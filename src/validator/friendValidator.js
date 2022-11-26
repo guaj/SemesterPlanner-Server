@@ -36,7 +36,7 @@ module.exports = class FriendValidator {
                 if (await StudentRepository.isInFriendList(data.senderEmail, data.receiverEmail)) {
                     res.errors.push('Students are already friends')
                 }
-                if (await FriendRequest.findOne({ senderEmail: data.senderEmail, receiverEmail: data.receiverEmail })) {
+                if (await FriendRequest.findOne({ senderEmail: data.senderEmail.toString(), receiverEmail: data.receiverEmail.toString() })) {
                     res.errors.push('Friend request already exists')
                 }
             }
