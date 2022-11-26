@@ -1,7 +1,7 @@
 const StudyRoom = require('../models/studyRoom.model');
 const Student = require('../models/student.model')
 
-module.exports = class RoomValidator {
+module.exports = class StudyRoomValidator {
 
     /**
      * Regex hex color validator
@@ -84,4 +84,111 @@ module.exports = class RoomValidator {
         })
     }
 
+    /**
+     * Validator for adding student to room.
+     * @param {string} email Target student's email.
+     * @param {string} studyRoomID The studyRoom's studyRoomID.  
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
+     */
+    static validateAddingStudent(email, studyRoomID) {
+        return new Promise(async (resolve, reject) => {
+            let student = undefined;
+            let room = undefined;
+            let res = { 'errors': [] };
+            if (email == undefined || email == "") {
+                res.errors.push('Invalid student email');
+            }
+            else {
+                student = await Student.findOne({ email: email })
+                if (!student) {
+                    res.errors.push('Student does not exist');
+                }
+            }
+            if (studyRoomID == undefined || studyRoomID == "") {
+                res.errors.push('Invalid studyRoomID');
+            }
+            else {
+                room = await StudyRoom.findOne({ studyRoomID: studyRoomID })
+                if (!room) {
+                    res.errors.push('StudyRoom does not exist');
+                }
+            }
+            if (student && room) {
+                if (room.participants.includes(student.email)) {
+                    res.errors.push('Student is already present in studyroom');
+                }
+            }
+            if (res.errors[0]) {
+                reject(res);
+            }
+            resolve();
+        })
+    }
+
+    /**
+     * Validator for removing student from room.
+     * @param {string} email Target student's email.
+     * @param {string} studyRoomID The studyRoom's studyRoomID.  
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
+     */
+    static validateDeletingStudent(email, studyRoomID) {
+        return new Promise(async (resolve, reject) => {
+            let student = undefined;
+            let room = undefined;
+            let res = { 'errors': [] };
+            if (email == undefined || email == "") {
+                res.errors.push('Invalid student email');
+            }
+            else {
+                student = await Student.findOne({ email: email })
+                if (!student) {
+                    res.errors.push('Student does not exist');
+                }
+            }
+            if (studyRoomID == undefined || studyRoomID == "") {
+                res.errors.push('Invalid studyRoomID');
+            }
+            else {
+                room = await StudyRoom.findOne({ studyRoomID: studyRoomID })
+                if (!room) {
+                    res.errors.push('StudyRoom does not exist');
+                }
+            }
+            if (student && room) {
+                if (!room.participants.includes(student.email)) {
+                    res.errors.push('Student is not in the studyRoom');
+                }
+            }
+            if (res.errors[0]) {
+                reject(res);
+            }
+            resolve();
+        })
+    }
+
+
+    /**
+     * Validator for deleting room.
+     * @param {string} studyRoomID The studyRoom's studyRoomID.  
+     * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
+     */
+    static validateDelete(studyRoomID) {
+        return new Promise(async (resolve, reject) => {
+            let room = undefined;
+            let res = { 'errors': [] };
+            if (studyRoomID == undefined || studyRoomID == "") {
+                res.errors.push('Invalid studyRoomID');
+            }
+            else {
+                room = await StudyRoom.findOne({ studyRoomID: studyRoomID })
+                if (!room) {
+                    res.errors.push('StudyRoom does not exist');
+                }
+            }
+            if (res.errors[0]) {
+                reject(res);
+            }
+            resolve();
+        })
+    }
 }
