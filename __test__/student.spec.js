@@ -189,25 +189,26 @@ describe("Testing student api routes", () => {
   it("Send a friend request", async () => {
     await request.post('/friend/add').send(
       {
-        username: user1.username,
-        friendUsername: user2.username
+        senderEmail: user1.email,
+        receiverEmail: user2.email
       }
     )
       .expect(200)
       .then((res) => {
-
-        assert.ok(res.body.includes('Friend request sent.'))
+        console.log(res.body)
+        assert.deepEqual(res.body.senderEmail, user1.email)
+        assert.deepEqual(res.body.receiverEmail, user2.email)
       })
   });
 
   it("Send a friend request to no one", async () => {
     await request.post('/friend/add').send(
       {
-        username: user1.username,
-        friendUsername: 'does not exist'
+        senderEmail: user1.email,
+        receiverEmail: 'does not exist'
       }
     )
-      .expect(400)
+      .expect(200)
   });
 
   it("Delete a Student ", async () => {

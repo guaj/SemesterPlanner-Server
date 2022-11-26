@@ -11,7 +11,7 @@ module.exports = class FriendRequestRepository {
      */
     static async deleteFriendRequest(requestId) {
         return await new Promise((resolve, reject) => {
-            FriendRequest.findOneAndDelete({_id: requestId})
+            FriendRequest.findOneAndDelete({ _id: requestId })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
         })
@@ -24,7 +24,7 @@ module.exports = class FriendRequestRepository {
      */
     static async findBySenderEmail(email) {
         return await new Promise((resolve, reject) => {
-            FriendRequest.findOne({senderEmail: email})
+            FriendRequest.findOne({ senderEmail: email })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
         })
@@ -37,7 +37,7 @@ module.exports = class FriendRequestRepository {
      */
     static async findByReceiverEmail(email) {
         return await new Promise(
-             (resolve, reject) => FriendRequest.find({receiverEmail: email}
+            (resolve, reject) => FriendRequest.find({ receiverEmail: email }
                 .then(result => resolve(result))
                 .catch(error => reject(error))
             )
@@ -51,7 +51,7 @@ module.exports = class FriendRequestRepository {
      */
     static async delete(requestId) {
         return await new Promise((resolve, reject) => {
-            FriendRequest.deleteOne({_id: requestId})
+            FriendRequest.deleteOne({ _id: requestId })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
 
@@ -65,9 +65,10 @@ module.exports = class FriendRequestRepository {
      */
     static save(data) {
         return new Promise((resolve, reject) => {
-            data.save()
-                .then((result) => resolve(result))
-                .catch((error) => reject(error))
+            data.save((err, message) => {
+                if (err) { reject(err); }
+                resolve(message);
+            })
         })
     }
 }
