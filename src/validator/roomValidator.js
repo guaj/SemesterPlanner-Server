@@ -158,6 +158,9 @@ module.exports = class StudyRoomValidator {
                 if (!room.participants.includes(student.email)) {
                     res.errors.push('Student is not in the studyRoom');
                 }
+                if (email == room.owner) {
+                    res.errors.push('Cannot remove the owner from the studyRoom');
+                }
             }
             if (res.errors[0]) {
                 reject(res);

@@ -244,6 +244,18 @@ describe("testing room api routes", () => {
             })
     });
 
+    it("Removing a the owner from a studyRoom", async () => {
+        await request.post('/room/remove').send({
+            email: user1.email,
+            studyRoomID: room1ID
+        })
+            .expect(400)
+            .then((res) => {
+                assert.deepEqual(res.body, { 'errors': ['Cannot remove the owner from the studyRoom'] });
+            })
+    });
+
+
     it("Removing a nonexistent student from a nonexistent room", async () => {
         await request.post('/room/remove').send({
             email: generateString(10),
