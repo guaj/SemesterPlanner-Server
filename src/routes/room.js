@@ -146,14 +146,13 @@ router.route('/').delete(async (req, res) => {
     StudyRoomRepository.findOne(roomID).then(async (room) => {
       let participants = room.participants;
       // Removes the room from its list of participants before deleting the room
-      for (let i = 0; i < participants.length; i++) {
-
-        let student = await StudentRepository.findOneByEmail(participants[i])
+      for (let participant of participants) {
+        let student = await StudentRepository.findOneByEmail(participant)
         let studyRooms = student.studyRooms;
         const roomIndex = studyRooms.indexOf(roomID);
         studyRooms.splice(roomIndex, 1);
 
-        await StudentRepository.updateStudyRooms(participants[i], studyRooms)
+        await StudentRepository.updateStudyRooms(participant, studyRooms)
           .catch(err => res.status(400).json(err));
       }
       StudyRoomRepository.deleteOne(roomID)

@@ -159,7 +159,7 @@ module.exports = class StudentRepository {
     static updateStudyRooms(email, studyRooms) {
         return new Promise((resolve, reject) => {
             Student.updateOne(
-                { email: email },
+                { email: email.toString() },
                 { studyRooms: studyRooms })
                 .then((student) => { resolve(student); })
                 .catch(err => reject(err))
