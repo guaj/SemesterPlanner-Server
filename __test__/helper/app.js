@@ -1,10 +1,8 @@
 
 const supertest = require('supertest');
 const app = require("../../src/server");
-const { response } = require("../../src/server");
 const request = supertest(app)
 const assert = require('assert');
-const assertEquals = require()
 
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
