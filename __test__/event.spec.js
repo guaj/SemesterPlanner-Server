@@ -1,8 +1,9 @@
 // INCOMPLETE
-const { request, assert } = require("./helper/app");
-const { createRoom } = require("./helper/room_test_data");
+const { request, assert, generateString } = require("./helper/app");
 const { createUser } = require('./helper/Student_test_data')
 const dbHandler = require('./helper/db-handler')
+
+// Event testing
 
 /**
  * Connect to a new in-memory database before running any tests.
@@ -20,18 +21,6 @@ afterAll(async () => {
 });
 
 describe("testing event api routes", () => {
-
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    function generateString(length) {
-        let result = ' ';
-        const charactersLength = characters.length;
-        for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-
-        return result;
-    }
 
     let user1 = createUser();
 
