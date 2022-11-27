@@ -1,5 +1,5 @@
 const { request, assert } = require("./helper/app");
-const { createUser } = require('./helper/Student_test_data')
+const { createUser } = require('./helper/student_test_data')
 const dbHandler = require('./helper/db-handler')
 
 // Student testing

@@ -283,6 +283,7 @@ describe("testing room api routes", () => {
                 assert.deepEqual(res.body[1].studyRoomID, room2ID);
                 assert.deepEqual(res.body[1].owner, user2.email);
                 assert.deepEqual(res.body[2].studyRoomID, room3ID);
+                assert.deepEqual(res.body[2].owner, user2.email);
             })
 
     });
