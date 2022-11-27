@@ -1,6 +1,6 @@
 const { request, assert, generateString } = require("./helper/app");
 const { createRoom } = require("./helper/room_test_data");
-const { createUser } = require('./helper/Student_test_data')
+const { createUser } = require('./helper/student_test_data')
 const dbHandler = require('./helper/db-handler')
 
 // Room testing
