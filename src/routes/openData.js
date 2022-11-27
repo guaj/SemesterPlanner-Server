@@ -2,7 +2,7 @@ const router = require('express').Router();
 const axios = require('axios');
 
 /**
- * Get all events of a certain student
+ * Get specific schedule
  */
 router.route('/schedule/:courseId/:subject/:catalog').get(async (req, res) => {
     res.set('Access-Control-Allow-Origin', '*');
@@ -26,8 +26,8 @@ router.route('/schedule/:courseId/:subject/:catalog').get(async (req, res) => {
 const fetchConcordiaSchedule = async (courseId, subject, catalog) => {
     await axios.get(`https://opendata.concordia.ca/API/v1/course/schedule/filter/${courseId}/${subject}/${catalog}`, {
         auth: {
-            username: '512',
-            password: '216795d408c460f17789580229c48082'
+            username: process.env.OPEN_DATA_USERNAME,
+            password: process.env.OPEN_DATA_PASSWORD
         }
     }).then((scheduleData) => {
         console.log(`scheduleData.data`,scheduleData.data)
