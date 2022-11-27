@@ -5,7 +5,7 @@ const axios = require('axios');
  * Get specific schedule
  */
 router.route('/schedule/:courseId/:subject/:catalog').get(async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Origin', 'https://opendata.concordia.ca/API/*');
     try {
         const scheduleData = await fetchConcordiaSchedule(req.params.courseId, req.params.subject, req.params.catalog)
             console.log(`scheduleData`, scheduleData)
