@@ -58,18 +58,18 @@ router.route('/email/:email').delete((req, res) => {
             // If the room has no participants left, delete the room.
             // If the student is the owner of the room, change owner to whoever is next, i.e. whoever is participants[0].
             if (rooms.length > 0) {
-                for (let i = 0; i < rooms.length; i++) {
-                    let participants = rooms[i].participants
+                for (let room of rooms) {
+                    let participants = room.participants
                     if (participants.length == 1) {
-                        StudyRoomRepository.deleteOne(rooms[i].studyRoomID);
+                        StudyRoomRepository.deleteOne(room.studyRoomID);
                     }
                     else {
                         participants.shift();
-                        if (rooms[i].owner == req.params.email) {
-                            rooms[i].owner = participants[0];
-                            StudyRoomRepository.updateOne(rooms[i]);
+                        if (room.owner == req.params.email) {
+                            room.owner = participants[0];
+                            StudyRoomRepository.updateOne(room);
                         }
-                        StudyRoomRepository.updateParticipants(rooms[i].studyRoomID, participants)
+                        StudyRoomRepository.updateParticipants(room.studyRoomID, participants)
                     }
                 }
             }

@@ -86,20 +86,20 @@ module.exports = class StudyRoomValidator {
 
     /**
      * Validator for adding student to room.
-     * @param {string} email Target student's email.
+     * @param {string} targetEmail Target student's email.
      * @param {string} studyRoomID The studyRoom's studyRoomID.  
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateAddingStudent(email, studyRoomID) {
+    static validateAddingStudent(targetEmail, studyRoomID) {
         return new Promise(async (resolve, reject) => {
             let student = undefined;
             let room = undefined;
             let res = { 'errors': [] };
-            if (email == undefined || email == "") {
+            if (targetEmail == undefined || targetEmail == "") {
                 res.errors.push('Invalid student email');
             }
             else {
-                student = await Student.findOne({ email: email })
+                student = await Student.findOne({ email: targetEmail })
                 if (!student) {
                     res.errors.push('Student does not exist');
                 }
