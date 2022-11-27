@@ -6,12 +6,12 @@ module.exports = class FriendRequestRepository {
 
     /**
      * Delete a friend request.
-     * @param {string} requestId : id of the request to delete
+     * @param {string} requestID : id of the request to delete
      * @returns {Promise<unknown>}
      */
-    static async deleteFriendRequest(requestId) {
+    static async deleteFriendRequest(requestID) {
         return await new Promise((resolve, reject) => {
-            FriendRequest.findOneAndDelete({ _id: requestId })
+            FriendRequest.findOneAndDelete({ _id: requestID })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
         })
@@ -57,20 +57,6 @@ module.exports = class FriendRequestRepository {
     }
 
     /**
-     * Delete a friend request
-     * @param requestId : request id to delete
-     * @returns {Promise<unknown>}
-     */
-    static async delete(requestId) {
-        return await new Promise((resolve, reject) => {
-            FriendRequest.deleteOne({ _id: requestId })
-                .then((result) => resolve(result))
-                .catch((error) => reject(error))
-
-        })
-    }
-
-    /**
      * Save a new friend request
      * @param {FriendRequest} data : friend request object to be saved
      * @returns {Promise<unknown>}
@@ -81,6 +67,19 @@ module.exports = class FriendRequestRepository {
                 if (err) { reject(err); }
                 resolve(message);
             })
+        })
+    }
+
+    /**
+     * Delete a friend request.
+     * @param {string} requestID : id of the request to delete
+     * @returns {Promise<unknown>}
+     */
+    static async delete(requestID) {
+        return await new Promise((resolve, reject) => {
+            FriendRequest.deleteOne({ _id: requestID })
+                .then((result) => resolve(result))
+                .catch((error) => reject(error))
         })
     }
 }

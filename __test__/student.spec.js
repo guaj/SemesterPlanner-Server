@@ -199,7 +199,7 @@ describe("Testing student api routes", () => {
   });
 
   //Friend request tests
-  let FriendRequest, FriendRequest2;
+  let friendRequest, friendRequest2, friendRequest3;
   it("Send a friend request", async () => {
     await request.post('/friend/add').send(
       {
@@ -211,7 +211,7 @@ describe("Testing student api routes", () => {
       .then((res) => {
         assert.deepEqual(res.body.senderEmail, user1.email)
         assert.deepEqual(res.body.receiverEmail, user2.email)
-        FriendRequest = res.body;
+        friendRequest = res.body;
       })
   });
 
@@ -245,7 +245,7 @@ describe("Testing student api routes", () => {
     await request.get('/friend/outgoing-requests/' + user1.email)
       .expect(200)
       .then((res) => {
-        assert.deepEqual(res.body, [FriendRequest])
+        assert.deepEqual(res.body, [friendRequest])
       })
   });
 
@@ -253,7 +253,7 @@ describe("Testing student api routes", () => {
     await request.get('/friend/incoming-requests/' + user2.email)
       .expect(200)
       .then((res) => {
-        assert.deepEqual(res.body, [FriendRequest])
+        assert.deepEqual(res.body, [friendRequest])
       })
   });
 
@@ -261,7 +261,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/cancel-request').send(
       {
         senderEmail: user1.email,
-        requestID: FriendRequest._id
+        requestID: friendRequest._id
       }
     )
       .expect(200)
@@ -294,7 +294,7 @@ describe("Testing student api routes", () => {
       .then((res) => {
         assert.deepEqual(res.body.senderEmail, user1.email)
         assert.deepEqual(res.body.receiverEmail, user2.email)
-        FriendRequest = res.body;
+        friendRequest = res.body;
       })
     await request.post('/friend/add').send(
       {
@@ -306,7 +306,27 @@ describe("Testing student api routes", () => {
       .then((res) => {
         assert.deepEqual(res.body.senderEmail, user3.email)
         assert.deepEqual(res.body.receiverEmail, user2.email)
-        FriendRequest2 = res.body;
+        friendRequest2 = res.body;
+      })
+    await request.post('/friend/add').send(
+      {
+        senderEmail: user1.email,
+        receiverEmail: user3.email
+      }
+    )
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.senderEmail, user1.email)
+        assert.deepEqual(res.body.receiverEmail, user3.email)
+        friendRequest3 = res.body;
+      })
+  });
+
+  it("Get request by its ID", async () => {
+    await request.get('/friend/id/' + friendRequest3._id)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, friendRequest3)
       })
   });
 
@@ -314,7 +334,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/cancel-request').send(
       {
         senderEmail: user2.email,
-        requestID: FriendRequest._id
+        requestID: friendRequest._id
       }
     )
       .expect(400)
@@ -327,7 +347,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/answerFriendRequest').send(
       {
         receiverEmail: user1.email,
-        requestID: FriendRequest._id,
+        requestID: friendRequest._id,
         answer: 'accepted'
       }
     )
@@ -341,7 +361,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/answerFriendRequest').send(
       {
         receiverEmail: user2.email,
-        requestID: FriendRequest._id,
+        requestID: friendRequest._id,
         answer: 'accepted'
       }
     )
@@ -352,7 +372,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/answerFriendRequest').send(
       {
         receiverEmail: user2.email,
-        requestID: FriendRequest2._id,
+        requestID: friendRequest2._id,
         answer: 'accepted'
       }
     )
@@ -401,6 +421,29 @@ describe("Testing student api routes", () => {
         assert.deepEqual(res.body, null)
       })
 
+  });
+
+  it("Verifying friends after student deletion", async () => {
+    await request.get('/student/email/' + user3.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.email, user3.email)
+        assert.deepEqual(res.body.friends, [user2.email])
+      })
+    await request.get('/student/email/' + user2.email)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body.email, user2.email)
+        assert.deepEqual(res.body.friends, [user3.email])
+      })
+  });
+
+  it("Verifying request deletion after student deletion", async () => {
+    await request.get('/friend/id/' + friendRequest3._id)
+      .expect(200)
+      .then((res) => {
+        assert.deepEqual(res.body, null)
+      })
   });
 
   it("Delete a non existent student ", async () => {

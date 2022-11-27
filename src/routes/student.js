@@ -3,6 +3,7 @@ const TokenVerify = require('./tokenVerification').verifyJWTAuth;
 const StudentRepository = require('../repository/studentRepository');
 const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentValidator = require('../validator/studentValidator');
+const FriendRequestRepository = require('../repository/friendRequestRepository');
 
 /**
  * Get all users
@@ -54,14 +55,14 @@ router.route('/:id').delete((req, res) => {
  */
 router.route('/email/:email').delete((req, res) => {
     StudentValidator.validateDelete(req.params.email).then(() => {
-        StudyRoomRepository.findAllbyStudentEmail(req.params.email.toString()).then((rooms) => {
+        StudyRoomRepository.findAllbyStudentEmail(req.params.email.toString()).then(async (rooms) => {
             // If the room has no participants left, delete the room.
             // If the student is the owner of the room, change owner to whoever is next, i.e. whoever is participants[0].
             if (rooms.length > 0) {
                 for (let room of rooms) {
                     let participants = room.participants
                     if (participants.length == 1) {
-                        StudyRoomRepository.deleteOne(room.studyRoomID);
+                        await StudyRoomRepository.deleteOne(room.studyRoomID);
                     }
                     else {
                         participants.shift();
@@ -69,13 +70,40 @@ router.route('/email/:email').delete((req, res) => {
                             room.owner = participants[0];
                             StudyRoomRepository.updateOne(room);
                         }
-                        StudyRoomRepository.updateParticipants(room.studyRoomID, participants)
+                        await StudyRoomRepository.updateParticipants(room.studyRoomID, participants)
                     }
                 }
             }
-            StudentRepository.deleteOne(req.params)
-                .then(status => res.json(`${status} deleted`))
-                .catch(err => res.status(400).json(err));
+
+            // Remove the student from other's friendlist
+            StudentRepository.findOneByEmail(req.params.email.toString()).then(async (student) => {
+                if (student.friends.length > 0) {
+                    let friends = student.friends
+                    for (let friendEmail of friends) {
+                        let friend = await StudentRepository.findOneByEmail(friendEmail)
+                        let friendFriendlist = friend.friends;
+                        const friendIndex = friendFriendlist.indexOf(req.params.email);
+                        friendFriendlist.splice(friendIndex, 1);
+                        await StudentRepository.updateFriendList(friendEmail, friendFriendlist)
+                    }
+                }
+
+                // Removing any incoming or outgoing requests
+                FriendRequestRepository.findByReceiverEmail(req.params.email).then(async (requests) => {
+                    for (let request of requests) {
+                        await FriendRequestRepository.deleteFriendRequest(request._id);
+                    }
+                })
+                FriendRequestRepository.findBySenderEmail(req.params.email).then(async (requests) => {
+                    for (let request of requests) {
+                        await FriendRequestRepository.deleteFriendRequest(request._id);
+                    }
+                })
+
+                StudentRepository.deleteOne(req.params)
+                    .then(status => res.json(`${status} deleted`))
+                    .catch(err => res.status(400).json(err));
+            })
         })
     })
         .catch(err => res.status(400).json(err));

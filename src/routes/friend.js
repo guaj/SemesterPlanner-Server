@@ -42,6 +42,15 @@ router.route('/:email').get(async (req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 })
 
+router.route('/id/:id').get(async (req, res) => {
+
+  FriendRequestRepository.findByID(req.params.id)
+    .then((request) => {
+      res.json(request).status(200)
+    })
+    .catch(err => res.status(400).json('Error: ' + err));
+})
+
 /**
  * @author: Jasmin Guay
  * Endpoint to update a student friend list
@@ -78,7 +87,7 @@ router.route('/answerFriendRequest').post(async (req, res) => {
       } else {
         res.json(`Friend request with ${request.senderEmail} declined.`).status(200)
       }
-      await FriendRequestRepository.delete(requestID);
+      await FriendRequestRepository.deleteFriendRequest(requestID);
     })
   })
     .catch((err) => res.status(400).json(err))
