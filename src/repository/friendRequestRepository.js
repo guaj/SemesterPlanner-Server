@@ -17,6 +17,14 @@ module.exports = class FriendRequestRepository {
         });
     };
 
+    static findById(requestId) {
+        return new Promise((resolve, reject) => {
+            FriendRequest.findOne({_id: requestId})
+                .then(result => { resolve(result) })
+                .catch(error => { reject(error) })
+        })
+    }
+
     /**
      * Find a request by receiver email
      * @param {string} email :
