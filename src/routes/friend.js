@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const Student = require('../models/student.model');
 const StudentRepository = require('../repository/studentRepository')
 const FriendRequest = require('../models/friendRequest.model');
 const createFriendRequest = require('../factory/friendRequestFactory');
@@ -13,14 +12,24 @@ const FriendRequestRepository = require('../repository/friendRequestRepository')
  * @return {string} _id  : id of the friend request created.
  */
 router.route('/add').post(async (req, res) => {
+
+  if (!req.body.receiverEmail) {
+    res.json('receiverEmail needs to be defined').status(401)
+  } else if (!req.body.senderEmail) {
+    res.json('senderEmail needs to be defined').status(401)
+  }
   const senderEmail = req.body.senderEmail.toString();
   const receiverEmail = req.body.receiverEmail.toString();
 
   if (!await StudentRepository.isInFriendList(senderEmail, receiverEmail)) {
     const newFriendRequest = createFriendRequest({senderEmail, receiverEmail});
-    FriendRequestRepository.save({senderEmail, receiverEmail})
-        .then((res) => res.json(result._id).status(200))
-        .catch((err) => res.json(`Unable to add [${receiverEmail}] in your friend list - ${err}`).status(404))
+    const friendRequest = await FriendRequestRepository.save(newFriendRequest);
+
+    if (friendRequest) {
+      res.json(friendRequest._id).status(200)
+    } else {
+      res.json(`Unable to add [${receiverEmail}] in your friend list`).status(404)
+    }
   }
 });
 
@@ -32,12 +41,14 @@ router.route('/add').post(async (req, res) => {
  */
 router.route('/:email').get(async (req, res) => {
   const email = req.params.email.toString();
+  const student = await StudentRepository.findOneByEmail(email);
 
-  StudentRepository.findOneByEmail(email)
-      .then((student) => {
-        res.json(student.friends).status(200)
-      })
-      .catch(err => res.status(400).json('Error: ' + err));
+  if (student.friends) {
+    res.json(student.friends).status(200)
+  } else {
+    res.status(400).json(`Cannot fetch friends for user - [${email}]`)
+  }
+
 })
 
 /**
@@ -48,12 +59,16 @@ router.route('/:email').get(async (req, res) => {
  * @return {[string]} the update friend list.
  */
 router.route('/updateFriendList').post( async (req,res) => {
-    const email = req.body.email.toString();
-    const updatedFriendList = req.body.friends.toString();
+  const email = req.body.email.toString();
+  const updatedFriendList = req.body.friends.toString();
 
-    StudentRepository.updateFriendList(email,updatedFriendList)
-        .then((student) => { res.json(student.friends).status(200) })
-        .catch((err) => { res.json(`Error happened in updateFriendList - ${err}`).status(404) })
+  const student = await StudentRepository.updateFriendList(email, updatedFriendList);
+  if (student.friends) {
+    res.json(student.friends).status(200);
+  } else {
+    res.json(`Error happened in updateFriendList for user [${email}]`).status(404);
+  }
+
 })
 
 
@@ -66,10 +81,8 @@ router.route('/updateFriendList').post( async (req,res) => {
  */
 router.route('/answerFriendRequest').post(async (req, res) => {
   const requestId = req.body.requestId.toString();
-  const user = req.body.user;
   const request = await FriendRequest.findOne({_id: requestId});
-
-  if (!validateFriendRequest(request, user) || request == null) {
+  if ( request == null) {
     res.json(`No request found with id [${requestId}`).status(404);
   } else {
     if (req.body.answer === "accepted") {
@@ -83,19 +96,14 @@ router.route('/answerFriendRequest').post(async (req, res) => {
   }
 });
 
-function validateFriendRequest(request, user) {
-  return user.email === request.senderEmail.toString();
-}
-
 /**
  * Helper to add 2 students in both their friend lists.
  */
 async function addToFriendLists(student1, student2) {
-  StudentRepository.addToFriendList(student1, student2)
-      .then(() => StudentRepository.addToFriendList(student2, student1)
-          .then((res) => res)
-          .catch((err) => err)
-      ).catch((err)=> err)
+  const step1 = await StudentRepository.addToFriendList(student1, student2);
+  if (step1) {
+    await StudentRepository.addToFriendList(student2, student1);
+  }
 }
 
 /**
@@ -105,11 +113,20 @@ async function addToFriendLists(student1, student2) {
  * @return {[FriendRequest]} friendRequests  : list of friend requests sent to the specified student.
  */
 router.route("/incoming-requests/:email").get( async (req, res) => {
-  const email = req.params.email.toString();
 
-  FriendRequestRepository.findByReceiverEmail(email)
-      .then((requests) => res.json(requests).status(200))
-      .catch((err) => res.json(`Cannot fetch incoming requests for [${email}] - ${err}`))
+  if (!req.params.email) {
+    res.json('email needs to be defined').status(401)
+  } else {
+    const email = req.params.email.toString();
+    const friendRequests = await FriendRequestRepository.findByReceiverEmail(email);
+
+    if (friendRequests) {
+      res.json(friendRequests).status(200)
+    } else {
+      res.json(`Cannot fetch incoming requests for [${email}]`)
+    }
+
+  }
 })
 
 /**
@@ -119,11 +136,19 @@ router.route("/incoming-requests/:email").get( async (req, res) => {
  * @return {[FriendRequest]} friendRequests  : list of friend requests received by the specified student.
  */
 router.route("/outgoing-requests/:email").get( async (req, res) => {
-  const email = req.params.email.toString();
+  if (!req.params.email) {
+    res.json('email needs to be defined').status(401)
+  } else {
+    const email = req.params.email.toString();
+    const friendRequests = await FriendRequestRepository.findBySenderEmail(email);
 
-  FriendRequestRepository.findBySenderEmail(email, 'outgoing')
-      .then((requests) => res.json(requests).status(200))
-      .catch((err) => res.json(`Cannot fetch outgoing requests for [${email}] - ${err}`))
+    if (friendRequests) {
+      res.json(friendRequests).status(200)
+    } else {
+      res.json(`Cannot fetch outgoing requests for [${email}]`);
+    }
+  }
+
 })
 
 /**
@@ -133,11 +158,15 @@ router.route("/outgoing-requests/:email").get( async (req, res) => {
  * @return {[FriendRequest]} friendRequests : list of friend requests received by the specified student.
  */
 router.route("/cancel-request").post( async (req, res) => {
-    const requestId = req.body.requestId.toString();
+  const requestId = req.body.requestId.toString();
 
-    FriendRequestRepository.deleteFriendRequest(requestId)
-        .then((requests) => res.json(requests).status(200))
-        .catch((err) => res.json(`Cannot delete request with id [${requestId}] - ${err}`))
+  const deletedRequest = await FriendRequestRepository.delete(requestId);
+  if (deletedRequest) {
+    res.json(deletedRequest).status(200)
+  } else {
+    res.json(`Cannot delete request with id [${requestId}]`);
+  }
+
 })
 
 /**
