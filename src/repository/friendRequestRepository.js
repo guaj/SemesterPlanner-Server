@@ -5,11 +5,11 @@ module.exports = class FriendRequestRepository {
     /**
      * Find a request by sender email
      * @param {string} email : sender email
-     * @returns {Promise<unknown>}
+     * @returns {Promise<FriendRequest>}
      */
     static findBySenderEmail(email) {
         return new Promise((resolve, reject) => {
-            FriendRequest.findOne({senderEmail: email})
+            FriendRequest.find({senderEmail: email})
                 .then((result) => {
                     resolve(result);
                 })
@@ -20,7 +20,7 @@ module.exports = class FriendRequestRepository {
     /**
      * Find a request by receiver email
      * @param {string} email :
-     * @returns {Promise<unknown>}
+     * @returns {Promise<FriendRequest>}
      */
     static findByReceiverEmail(email) {
         return new Promise(
@@ -34,6 +34,20 @@ module.exports = class FriendRequestRepository {
                     })
             });
     };
+
+    /**
+     * Find a request by senderEmail and receiverEmail
+     * @param {string} senderEmail
+     * @param {string} receiverEmail
+     * @returns {Promise<FriendRequest>}
+     */
+    static async findByEmails(senderEmail, receiverEmail) {
+        return await new Promise((resolve, reject) => {
+                FriendRequest.findOne({senderEmail, receiverEmail})
+                    .then(result => { resolve(result) })
+                    .catch(error => { reject(error) })
+        })
+    }
 
     /**
      * Delete a friend request

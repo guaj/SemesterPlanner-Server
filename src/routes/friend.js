@@ -17,21 +17,30 @@ router.route('/add').post(async (req, res) => {
     res.json('receiverEmail needs to be defined').status(401)
   } else if (!req.body.senderEmail) {
     res.json('senderEmail needs to be defined').status(401)
-  }
-  const senderEmail = req.body.senderEmail.toString();
-  const receiverEmail = req.body.receiverEmail.toString();
+  } else {
+    const senderEmail = req.body.senderEmail.toString();
+    const receiverEmail = req.body.receiverEmail.toString();
 
-  if (!await StudentRepository.isInFriendList(senderEmail, receiverEmail)) {
-    const newFriendRequest = createFriendRequest({senderEmail, receiverEmail});
-    const friendRequest = await FriendRequestRepository.save(newFriendRequest);
+    if (await validateNewRequest(senderEmail, receiverEmail)) {
+      const newFriendRequest = createFriendRequest({senderEmail, receiverEmail});
+      const friendRequest = await FriendRequestRepository.save(newFriendRequest);
 
-    if (friendRequest) {
-      res.json(friendRequest._id).status(200)
+      if (friendRequest) {
+        res.json(friendRequest._id).status(200)
+      }
+
     } else {
-      res.json(`Unable to add [${receiverEmail}] in your friend list`).status(404)
+      res.json(`Unable to add [${receiverEmail}] in your friend list.`).status(404)
     }
   }
+
 });
+
+async function validateNewRequest(receiverEmail, senderEmail) {
+  return !(await StudentRepository.isInFriendList(senderEmail, receiverEmail)
+      || await FriendRequestRepository.findByEmails(senderEmail, receiverEmail)
+      || await FriendRequestRepository.findByEmails(receiverEmail, senderEmail));
+}
 
 /**
  * @author: Jasmin Guay
@@ -60,11 +69,21 @@ router.route('/:email').get(async (req, res) => {
  */
 router.route('/updateFriendList').post( async (req,res) => {
   const email = req.body.email.toString();
-  const updatedFriendList = req.body.friends.toString();
-
-  const student = await StudentRepository.updateFriendList(email, updatedFriendList);
-  if (student.friends) {
-    res.json(student.friends).status(200);
+  const updatedFriendList = req.body.friends;
+  let student = await StudentRepository.findOneByEmail(email);
+  const friendsToDelete = student.friends.filter((friend) => !updatedFriendList.some((undeletedFriend) => undeletedFriend === friend));
+  for (const friendToDelete of friendsToDelete) {
+    student = await StudentRepository.findOneByEmail(friendToDelete);
+    const updatedFriendList = student.friends.filter(friend => friend !== email);
+    const email2 = student.email;
+    const res = await StudentRepository.updateFriendList(
+        email2,
+        updatedFriendList
+    )
+  }
+  const updated = await StudentRepository.updateFriendList(email, updatedFriendList);
+  if (updated) {
+    res.json('Success').status(200);
   } else {
     res.json(`Error happened in updateFriendList for user [${email}]`).status(404);
   }

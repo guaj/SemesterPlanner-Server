@@ -134,7 +134,7 @@ module.exports = class StudentRepository {
         return await new Promise((resolve, reject) => {
             Student.updateOne({email: email.toString()}, {
                 friends : updatedFriendList
-            }).then(() => { resolve(student) })
+            }).then((student) => { resolve(student) })
                 .catch((err) => reject(err))
         })
     }
@@ -186,7 +186,9 @@ module.exports = class StudentRepository {
     static async isInFriendList(student1, student2) {
         return await new Promise(async (resolve, reject) => {
             Student.findOne({email: student1})
-                .then((res) => resolve(res != null && res.friends.some((friend) => friend === student2)))
+                .then((res) => {
+                    resolve(res != null && res.friends.some((friend) => friend === student2))
+                })
                 .catch(() => reject(false))
         })
 
