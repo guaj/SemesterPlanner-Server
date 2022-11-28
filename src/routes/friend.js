@@ -21,7 +21,7 @@ router.route('/add').post(async (req, res) => {
     const senderEmail = req.body.senderEmail.toString();
     const receiverEmail = req.body.receiverEmail.toString();
 
-    if (await validateNewRequest(senderEmail, receiverEmail)) {
+    if (await validateNewRequest(receiverEmail, senderEmail)) {
       const newFriendRequest = createFriendRequest({senderEmail, receiverEmail});
       const friendRequest = await FriendRequestRepository.save(newFriendRequest);
 
@@ -76,7 +76,7 @@ router.route('/updateFriendList').post( async (req,res) => {
     student = await StudentRepository.findOneByEmail(friendToDelete);
     const updatedFriendList = student.friends.filter(friend => friend !== email);
     const email2 = student.email;
-    const res = await StudentRepository.updateFriendList(
+    await StudentRepository.updateFriendList(
         email2,
         updatedFriendList
     )
