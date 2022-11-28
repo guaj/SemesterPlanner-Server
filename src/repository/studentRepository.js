@@ -39,7 +39,7 @@ module.exports = class StudentRepository {
      */
     static findOneByEmail(email) {
         return new Promise((resolve, reject) => {
-            Student.findOne({ email: email.toString() })
+            Student.findOne({ email: email })
                 .then((student) => {
                     resolve(student);
                 })
@@ -115,8 +115,8 @@ module.exports = class StudentRepository {
      * @param {Student} student An updated student object.
      * @returns Returns a promise. Resolves with the updated student.
      */
-    static updateOne(student) {
-        return new Promise((resolve, reject) => {
+    static async updateOne(student) {
+        return await new Promise((resolve, reject) => {
             student.save((err, student) => {
                 if (err) { reject(err); }
                 resolve(student);
@@ -130,8 +130,8 @@ module.exports = class StudentRepository {
      * @param {[string]} updatedFriendList The updated friend list
      * @returns {Student} Returns a promise. Resolves with the updated student.
      */
-    static updateFriendList(email, updatedFriendList) {
-        return new Promise((resolve, reject) => {
+    static async updateFriendList(email, updatedFriendList) {
+        return await new Promise((resolve, reject) => {
             Student.updateOne({email: email.toString()}, {
                 friends : updatedFriendList
             }).then(() => { resolve(student) })
@@ -146,8 +146,8 @@ module.exports = class StudentRepository {
      * @param {[string]} studyRooms An array of participant emails.
      * @returns {Student}  Returns a promise. Resolves with the updated student.
      */
-    static updateStudyRooms(email, studyRooms) {
-        return new Promise((resolve, reject) => {
+    static async updateStudyRooms(email, studyRooms) {
+        return await new Promise((resolve, reject) => {
             Student.updateOne(
                 { email: email },
                 { studyRooms: studyRooms })
@@ -163,7 +163,8 @@ module.exports = class StudentRepository {
      * @returns {Student} Returns a promise. Resolves with the updated student.
      */
     static async addToFriendList(email1, email2) {
-        return new Promise(async (resolve, reject) => {
+        console.log(email1, email2);
+        return await new Promise(async (resolve, reject) => {
             Student.findOne({email: email1})
                 .then((student) => {
                     student.friends.push(email2);
@@ -183,7 +184,7 @@ module.exports = class StudentRepository {
      * @returns {Boolean} true if student2 is part of student1 friend list, false otherwise
      */
     static async isInFriendList(student1, student2) {
-        return new Promise(async (resolve, reject) => {
+        return await new Promise(async (resolve, reject) => {
             Student.findOne({email: student1})
                 .then((res) => resolve(res != null && res.friends.some((friend) => friend === student2)))
                 .catch(() => reject(false))
