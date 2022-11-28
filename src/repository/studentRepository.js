@@ -39,7 +39,7 @@ module.exports = class StudentRepository {
      */
     static findOneByEmail(email) {
         return new Promise((resolve, reject) => {
-            Student.findOne({ email: email })
+            Student.findOne({ email: email.toString() })
                 .then((student) => {
                     resolve(student);
                 })
