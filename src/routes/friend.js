@@ -100,8 +100,9 @@ router.route('/updateFriendList').post( async (req,res) => {
  */
 router.route('/answerFriendRequest').post(async (req, res) => {
   const requestId = req.body.requestId.toString();
+  const email = req.body.email.toString()
   const request = await FriendRequestRepository.findById(requestId);
-  if ( request == null) {
+  if (email !== request.receiverEmail) {
     res.json(`No request found with id [${requestId}`).status(404);
   } else {
     if (req.body.answer === "accepted") {

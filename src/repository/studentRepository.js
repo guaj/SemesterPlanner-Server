@@ -163,7 +163,6 @@ module.exports = class StudentRepository {
      * @returns {Student} Returns a promise. Resolves with the updated student.
      */
     static async addToFriendList(email1, email2) {
-        console.log(email1, email2);
         return await new Promise(async (resolve, reject) => {
             Student.findOne({email: email1})
                 .then((student) => {
