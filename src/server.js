@@ -52,6 +52,7 @@ const roomRouter = require('./routes/room.js');
 const friendRouter = require('./routes/friend.js');
 const messageRouter = require('./routes/message.js')
 const eventsRouter = require('./routes/events.js')
+const openDataRouter = require('./routes/opendata.js')
 
 app.use('/student', studentsRouter);
 app.use('/login', loginRouter);
@@ -59,6 +60,7 @@ app.use('/room', roomRouter);
 app.use('/friend', friendRouter);
 app.use('/message', messageRouter);
 app.use('/events', eventsRouter);
+app.use('/opendata', openDataRouter);
 
 // Sockets
 io.sockets.on('connection', function (socket) {
