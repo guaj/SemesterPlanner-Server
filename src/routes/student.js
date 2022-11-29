@@ -53,7 +53,7 @@ router.route('/:id').delete((req, res) => {
 router.route('/email/:email').delete((req, res) => {
     StudentRepository.deleteOne(req.params)
         .then(status => res.json(`${status} deleted`))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(404).json('Error: ' + err));
 });
 
 /**
@@ -77,9 +77,8 @@ router.route('/update').post(TokenVerify, async (req, res) => {
             if (req.body.faculty) {
                 student.faculty = req.body.faculty;
             }
-            if (req.body.privateProfile) {
-                student.privateProfile = req.body.privateProfile;
-            }
+            student.privateProfile = req.body.privateProfile;
+
             StudentRepository.updateOne(student)
                 .then((student) => res.json(`Student ${student.email} updated`))
                 .catch(err => res.status(400).json('Error: ' + err));
