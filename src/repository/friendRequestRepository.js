@@ -5,7 +5,7 @@ module.exports = class FriendRequestRepository {
     /**
      * Delete a friend request.
      * @param {string} requestID : id of the request to delete
-     * @returns {Promise<unknown>}
+     * @returns {Promise<unknown>} Promise will resolve with the request deleted.
      */
     static async deleteFriendRequest(requestID) {
         return await new Promise((resolve, reject) => {
@@ -43,9 +43,9 @@ module.exports = class FriendRequestRepository {
         });
     };
 
-    static findById(requestId) {
+    static findById(requestID) {
         return new Promise((resolve, reject) => {
-            FriendRequest.findOne({ _id: requestId })
+            FriendRequest.findOne({ _id: requestID })
                 .then(result => { resolve(result) })
                 .catch(error => { reject(error) })
         })
@@ -85,12 +85,12 @@ module.exports = class FriendRequestRepository {
 
     /**
      * Delete a friend request
-     * @param requestId : request id to delete
-     * @returns {Promise<unknown>}
+     * @param requestID : request id to delete
+     * @returns {Promise<unknown>} Promise will resolve with the status of the mongoDB transaction.
      */
-    static async delete(requestId) {
+    static async delete(requestID) {
         return await new Promise((resolve, reject) => {
-            FriendRequest.deleteOne({ _id: requestId })
+            FriendRequest.deleteOne({ _id: requestID })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
 
