@@ -39,10 +39,11 @@ module.exports = class EventRepository {
      */
     static findOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.findOne({ eventID: eventID.toString() }).then((event) => {
+            Event.findOne({ _id: eventID.toString() }).then((event) => {
                 resolve(event);
             })
-                .catch(err => reject(err))
+                .catch(err => {
+                    reject(err)})
         })
     }
 
