@@ -346,7 +346,7 @@ describe("Testing student api routes", () => {
   it("Answering wrong request", async () => {
     await request.post('/friend/answerFriendRequest').send(
       {
-        receiverEmail: user1.email,
+        email: user1.email,
         requestId: friendRequest._id,
         answer: 'accepted'
       }
@@ -360,7 +360,7 @@ describe("Testing student api routes", () => {
   it("Answering request", async () => {
     await request.post('/friend/answerFriendRequest').send(
       {
-        receiverEmail: user2.email,
+        email: user2.email,
         requestId: friendRequest._id,
         answer: 'accepted'
       }
@@ -372,7 +372,7 @@ describe("Testing student api routes", () => {
       })
     await request.post('/friend/answerFriendRequest').send(
       {
-        receiverEmail: user2.email,
+        email: user2.email,
         requestId: friendRequest2._id,
         answer: 'accepted'
       }

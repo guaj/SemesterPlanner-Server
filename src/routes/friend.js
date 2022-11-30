@@ -92,20 +92,19 @@ router.route('/updateFriendList').post(async (req, res) => {
  * @return {string || null} studentUsername : username of the student added to the friend list if the request was accepted, null otherwise.
  */
 router.route('/answerFriendRequest').post(async (req, res) => {
-
-  FriendValidator.validateAcceptRequest(req.body.requestId, req.body.receiverEmail, req.body.answer).then(() => {
+  FriendValidator.validateAcceptRequest(req.body.requestId, req.body.email, req.body.answer).then(() => {
     const requestID = req.body.requestId.toString();
     FriendRequestRepository.findByID(requestID).then(async request => {
       if (req.body.answer === "accepted") {
         await addToFriendLists(request.senderEmail, request.receiverEmail);
         res.json(`Friend request with ${request.senderEmail} accepted.`).status(200);
       } else {
-        res.json(`Friend request with ${request.senderEmail} declined.`).status(200)
+        res.json(`Friend request with ${request.senderEmail} declined.`).status(200);
       }
       await FriendRequestRepository.deleteFriendRequest(requestID);
     })
   })
-    .catch((err) => res.status(400).json(err))
+    .catch((err) => { res.status(400).json(err); console.log(err) })
 });
 
 
@@ -179,8 +178,7 @@ router.route("/cancel-request").post(async (req, res) => {
       res.json(`Cannot delete request with id [${requestID}]`);
     }
   })
-    .catch((err) => { res.status(400).json(err); })
-
+    .catch((err) => { res.status(400).json(err); console.log(err) })
 })
 
 /**
