@@ -158,7 +158,7 @@ describe("Testing student api routes", () => {
 
   it("Student failed login", async () => {
 
-    let expected = { 'auth': false, 'message': 'Error: Incorrect Username or Password' }
+    let expected = { 'auth': false, 'message': 'Error: Incorrect Email or Password' }
 
     await request.post('/login').send(
       {

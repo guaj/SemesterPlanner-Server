@@ -39,13 +39,8 @@ router.route('/:email').get(async (req, res) => {
     res.json(student.friends).status(200)
   } else {
     res.status(400).json(`Cannot fetch friends for user - [${email}]`)
+    return;
   }
-
-  StudentRepository.findOneByEmail(email)
-    .then((student) => {
-      res.json(student.friends).status(200)
-    })
-    .catch(err => res.status(400).json('Error: ' + err));
 })
 
 router.route('/id/:id').get(async (req, res) => {
@@ -175,13 +170,12 @@ router.route("/outgoing-requests/:email").get(async (req, res) => {
  * @return {[FriendRequest]} friendRequests : list of friend requests received by the specified student.
  */
 router.route("/cancel-request").post(async (req, res) => {
-
-  FriendValidator.validateCancelRequest(req.body.requestID, req.body.senderEmail).then(async () => {
-    const requestID = req.body.requestID.toString();
-
+  console.log(req.body);
+  FriendValidator.validateCancelRequest(req.body.requestId, req.body.senderEmail).then(async () => {
+    const requestID = req.body.requestId.toString();
     const deletedRequest = await FriendRequestRepository.deleteFriendRequest(requestID);
     if (deletedRequest) {
-      res.json(`Cancelled request to ${deletedRequest.receiverEmail}`).status(200)
+      res.status(200).json(`Cancelled request to ${deletedRequest.receiverEmail}`);
     } else {
       res.json(`Cannot delete request with id [${requestID}]`);
     }

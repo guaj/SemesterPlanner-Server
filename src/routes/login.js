@@ -12,16 +12,16 @@ router.post('/', async (request, response) => {
   LoginValidator.validateLogin(request.body).then(() => {
     // Query MongoDb with email and get matching Student (will be null if none)
     studentRepository.findOneByEmail(body.email).then((user) => {
-      // Bad Username: 401
+      // Bad Email: 401
       if (user == null) {
-        response.status(401).json({ auth: false, message: 'Error: Invalid Username or Password' });
+        response.status(401).json({ auth: false, message: 'Error: Incorrect Email or Password' });
         return;
       }
 
       const isCorrectPassword = bcrypt.compareSync(body.password, user.password);
       // Bad Password: 401
       if (!isCorrectPassword) {
-        response.status(401).json({ auth: false, message: 'Error: Incorrect Username or Password' });
+        response.status(401).json({ auth: false, message: 'Error: Incorrect Email or Password' });
         return;
       }
 

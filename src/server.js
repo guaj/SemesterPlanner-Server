@@ -72,13 +72,13 @@ io.sockets.on('connection', function (socket) {
 
 // Handle unhandled promise rejections
 process.on("unhandledRejection", (err, promise) => {
-  console.log(`Unhandled Promise: ${err}`);
+  console.log(`Unhandled Promise: ${err} ${err.stack}`);
   // Close server & exit process
   process.exit(1);
 });
 
 process.on("uncaughtException", (err) => {
-  console.log(`Unexpected Error: ${err}`);
+  console.log(`Unexpected Error: ${err} ${err.stack}`);
   // Close server & exit process
   process.exit(1);
 });
