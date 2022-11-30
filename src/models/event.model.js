@@ -11,7 +11,7 @@ const ReccurencyTypes = {
 
 const eventSchema = new Schema({
     username: { type: String, required: true },
-    eventID: { type: String, required: true, unique: true, sparse: true },
+    eventID: { type: String, unique: true, sparse: true },
     eventHeader: { type: String, required: true },
     description: { type: String, required: true },
     link: { type: String },

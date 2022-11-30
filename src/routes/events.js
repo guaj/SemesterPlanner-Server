@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { createEvent } = require("../factory/eventFactory");
 const EventRepository = require('../repository/eventRepository')
 
 /**
@@ -25,7 +24,7 @@ router.route('/event/:eventID').get((req, res) => {
  */
 router.route('/:eventID').delete((req, res) => {
     EventRepository.deleteOne(req.params.eventID)
-        .then(event => res.json(`Event deleted`))
+        .then(() => res.json(`Event deleted`))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
@@ -33,7 +32,7 @@ router.route('/:eventID').delete((req, res) => {
  * Update an event
  */
 router.route('/update').post(async (req, res) => {
-    EventRepository.findOne(req.body.eventID)
+    EventRepository.findOne(req.body._id)
         .then((event) => {
             if (req.body.eventHeader) {
                 event.eventHeader = req.body.eventHeader;
