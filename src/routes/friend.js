@@ -86,15 +86,15 @@ router.route('/updateFriendList').post(async (req, res) => {
 /**
  * @author: Jasmin Guay
  * Endpoint to answer a friend request.
- * @param {string} requestID id of the request.
+ * @param {string} requestId id of the request.
  * @param {string} receiverEmail email of the receiver.
  * @param {"accepted" | "declined"} answer : answer to the friend request.
  * @return {string || null} studentUsername : username of the student added to the friend list if the request was accepted, null otherwise.
  */
 router.route('/answerFriendRequest').post(async (req, res) => {
 
-  FriendValidator.validateAcceptRequest(req.body.requestID, req.body.receiverEmail, req.body.answer).then(() => {
-    const requestID = req.body.requestID.toString();
+  FriendValidator.validateAcceptRequest(req.body.requestId, req.body.receiverEmail, req.body.answer).then(() => {
+    const requestID = req.body.requestId.toString();
     FriendRequestRepository.findByID(requestID).then(async request => {
       if (req.body.answer === "accepted") {
         await addToFriendLists(request.senderEmail, request.receiverEmail);
@@ -165,7 +165,7 @@ router.route("/outgoing-requests/:email").get(async (req, res) => {
 /**
  * @author: Jasmin Guay
  * Endpoint to delete an outgoing request
- * @param requestID (string) : id of the request to be deleted
+ * @param requestId (string) : id of the request to be deleted
  * @param senderEmail (string) : email of the request sender
  * @return {[FriendRequest]} friendRequests : list of friend requests received by the specified student.
  */

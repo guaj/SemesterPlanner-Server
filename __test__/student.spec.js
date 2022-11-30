@@ -261,7 +261,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/cancel-request').send(
       {
         senderEmail: user1.email,
-        requestID: friendRequest._id
+        requestId: friendRequest._id
       }
     )
       .expect(200)
@@ -334,7 +334,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/cancel-request').send(
       {
         senderEmail: user2.email,
-        requestID: friendRequest._id
+        requestId: friendRequest._id
       }
     )
       .expect(400)
@@ -347,7 +347,7 @@ describe("Testing student api routes", () => {
     await request.post('/friend/answerFriendRequest').send(
       {
         receiverEmail: user1.email,
-        requestID: friendRequest._id,
+        requestId: friendRequest._id,
         answer: 'accepted'
       }
     )
@@ -361,18 +361,19 @@ describe("Testing student api routes", () => {
     await request.post('/friend/answerFriendRequest').send(
       {
         receiverEmail: user2.email,
-        requestID: friendRequest._id,
+        requestId: friendRequest._id,
         answer: 'accepted'
       }
     )
-      .expect(200)
+      //.expect(200)
       .then((res) => {
+        console.log(res.body)
         assert.deepEqual(res.body, 'Friend request with ' + user1.email + ' accepted.')
       })
     await request.post('/friend/answerFriendRequest').send(
       {
         receiverEmail: user2.email,
-        requestID: friendRequest2._id,
+        requestId: friendRequest2._id,
         answer: 'accepted'
       }
     )
