@@ -170,7 +170,6 @@ router.route("/outgoing-requests/:email").get(async (req, res) => {
  * @return {[FriendRequest]} friendRequests : list of friend requests received by the specified student.
  */
 router.route("/cancel-request").post(async (req, res) => {
-  console.log(req.body);
   FriendValidator.validateCancelRequest(req.body.requestId, req.body.senderEmail).then(async () => {
     const requestID = req.body.requestId.toString();
     const deletedRequest = await FriendRequestRepository.deleteFriendRequest(requestID);
@@ -180,7 +179,7 @@ router.route("/cancel-request").post(async (req, res) => {
       res.json(`Cannot delete request with id [${requestID}]`);
     }
   })
-    .catch((err) => res.status(400).json(err))
+    .catch((err) => { res.status(400).json(err); })
 
 })
 
