@@ -260,7 +260,7 @@ describe("Testing student api routes", () => {
   it("Cancelling request", async () => {
     await request.post('/friend/cancel-request').send(
       {
-        senderEmail: user1.email,
+        email: user1.email,
         requestId: friendRequest._id
       }
     )
@@ -333,7 +333,7 @@ describe("Testing student api routes", () => {
   it("Cancelling wrong request", async () => {
     await request.post('/friend/cancel-request').send(
       {
-        senderEmail: user2.email,
+        email: user2.email,
         requestId: friendRequest._id
       }
     )

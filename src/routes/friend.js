@@ -37,9 +37,9 @@ router.route('/:email').get(async (req, res) => {
 
   if (student.friends) {
     res.json(student.friends).status(200)
-  } else {
+  }
+  else {
     res.status(400).json(`Cannot fetch friends for user - [${email}]`)
-    return;
   }
 })
 
@@ -87,7 +87,7 @@ router.route('/updateFriendList').post(async (req, res) => {
  * @author: Jasmin Guay
  * Endpoint to answer a friend request.
  * @param {string} requestId id of the request.
- * @param {string} receiverEmail email of the receiver.
+ * @param {string} email email of the receiver.
  * @param {"accepted" | "declined"} answer : answer to the friend request.
  * @return {string || null} studentUsername : username of the student added to the friend list if the request was accepted, null otherwise.
  */
@@ -165,11 +165,11 @@ router.route("/outgoing-requests/:email").get(async (req, res) => {
  * @author: Jasmin Guay
  * Endpoint to delete an outgoing request
  * @param requestId (string) : id of the request to be deleted
- * @param senderEmail (string) : email of the request sender
+ * @param email (string) : email of the request sender
  * @return {[FriendRequest]} friendRequests : list of friend requests received by the specified student.
  */
 router.route("/cancel-request").post(async (req, res) => {
-  FriendValidator.validateCancelRequest(req.body.requestId, req.body.senderEmail).then(async () => {
+  FriendValidator.validateCancelRequest(req.body.requestId, req.body.email).then(async () => {
     const requestID = req.body.requestId.toString();
     const deletedRequest = await FriendRequestRepository.deleteFriendRequest(requestID);
     if (deletedRequest) {
