@@ -3,13 +3,39 @@ const FriendRequest = require('../models/friendRequest.model');
 module.exports = class FriendRequestRepository {
 
     /**
+     * Delete a friend request.
+     * @param {string} requestID : id of the request to delete
+     * @returns {Promise<unknown>} Promise will resolve with the request deleted.
+     */
+    static async deleteFriendRequest(requestID) {
+        return await new Promise((resolve, reject) => {
+            FriendRequest.findOneAndDelete({ _id: requestID })
+                .then((result) => resolve(result))
+                .catch((error) => reject(error))
+        })
+    }
+
+    /**
+     * Find a friend request by requestID.
+     * @param {string} _id : id of the request
+     * @returns {Promise<unknown>}
+     */
+    static async findByID(_id) {
+        return await new Promise((resolve, reject) => {
+            FriendRequest.findOne({ _id: _id })
+                .then((result) => resolve(result))
+                .catch((error) => reject(error))
+        })
+    }
+
+    /**
      * Find a request by sender email
      * @param {string} email : sender email
      * @returns {Promise<FriendRequest>}
      */
     static findBySenderEmail(email) {
         return new Promise((resolve, reject) => {
-            FriendRequest.find({senderEmail: email})
+            FriendRequest.find({ senderEmail: email })
                 .then((result) => {
                     resolve(result);
                 })
@@ -17,9 +43,9 @@ module.exports = class FriendRequestRepository {
         });
     };
 
-    static findById(requestId) {
+    static findById(requestID) {
         return new Promise((resolve, reject) => {
-            FriendRequest.findOne({_id: requestId})
+            FriendRequest.findOne({ _id: requestID })
                 .then(result => { resolve(result) })
                 .catch(error => { reject(error) })
         })
@@ -33,7 +59,7 @@ module.exports = class FriendRequestRepository {
     static findByReceiverEmail(email) {
         return new Promise(
             (resolve, reject) => {
-                FriendRequest.find({receiverEmail: email})
+                FriendRequest.find({ receiverEmail: email })
                     .then(result => {
                         resolve(result);
                     })
@@ -51,20 +77,20 @@ module.exports = class FriendRequestRepository {
      */
     static async findByEmails(senderEmail, receiverEmail) {
         return await new Promise((resolve, reject) => {
-                FriendRequest.findOne({senderEmail, receiverEmail})
-                    .then(result => { resolve(result) })
-                    .catch(error => { reject(error) })
+            FriendRequest.findOne({ senderEmail, receiverEmail })
+                .then(result => { resolve(result) })
+                .catch(error => { reject(error) })
         })
     }
 
     /**
      * Delete a friend request
-     * @param requestId : request id to delete
-     * @returns {Promise<unknown>}
+     * @param requestID : request id to delete
+     * @returns {Promise<unknown>} Promise will resolve with the status of the mongoDB transaction.
      */
-    static async delete(requestId) {
+    static async delete(requestID) {
         return await new Promise((resolve, reject) => {
-            FriendRequest.deleteOne({_id: requestId})
+            FriendRequest.deleteOne({ _id: requestID })
                 .then((result) => resolve(result))
                 .catch((error) => reject(error))
 

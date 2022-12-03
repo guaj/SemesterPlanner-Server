@@ -1,5 +1,6 @@
 const Event = require('../models/event.model');
 const { createEvent } = require("../factory/eventFactory");
+const EventValidator = require('../validator/eventValidator')
 
 module.exports = class EventRepository {
 
@@ -10,11 +11,17 @@ module.exports = class EventRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            const newEvent = createEvent(data)
-            newEvent.save((err, event) => {
-                if (err) { reject(err); }
-                resolve(event);
+            EventValidator.validatePreCreateData(data).then(() => {
+                const newEvent = createEvent(data)
+                EventValidator.validateCreateData(newEvent).then(() => {
+                    newEvent.save((err, event) => {
+                        if (err) { reject(err); }
+                        resolve(event);
+                    })
+                })
+                    .catch(errs => reject(errs));
             })
+                .catch(errs => reject(errs));
         })
     }
 
@@ -39,11 +46,12 @@ module.exports = class EventRepository {
      */
     static findOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.findOne({ _id: eventID.toString() }).then((event) => {
+            Event.findOne({ eventID: eventID.toString() }).then((event) => {
                 resolve(event);
             })
                 .catch(err => {
-                    reject(err)})
+                    reject(err)
+                })
         })
     }
 
@@ -83,10 +91,13 @@ module.exports = class EventRepository {
      */
     static updateOne(event) {
         return new Promise((resolve, reject) => {
-            event.save((err, event) => {
-                if (err) { reject(err); }
-                resolve(event);
+            EventValidator.validateCreateData(newEvent).then(() => {
+                event.save((err, event) => {
+                    if (err) { reject(err); }
+                    resolve(event);
+                })
             })
+                .catch(errs => reject(errs));
         })
     }
 }

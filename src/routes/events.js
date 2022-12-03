@@ -44,16 +44,16 @@ router.route('/update').post(async (req, res) => {
                 event.link = req.body.link;
             }
             if (req.body.startDate) {
-                event.startDate = req.body.startDate;
+                event.startDate = Date(req.body.startDate);
             }
             if (req.body.endDate) {
-                event.endDate = req.body.endDate;
+                event.endDate = Date(req.body.endDate);
             }
             if (req.body.startTime) {
-                event.startTime = req.body.startTime;
+                event.startTime = Date(req.body.startTime);
             }
             if (req.body.endTime) {
-                event.endTime = req.body.endTime;
+                event.endTime = Date(req.body.endTime);
             }
             if (req.body.reccurence) {
                 event.reccurence = req.body.reccurence;
@@ -62,10 +62,10 @@ router.route('/update').post(async (req, res) => {
                 event.color = req.body.color;
             }
             EventRepository.updateOne(event)
-                .then(() => res.json(`Event ${event.eventHeader} updated`))
+                .then(() => res.json(event))
                 .catch(err => res.status(400).json('Error: ' + err));
         })
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
 });
 
 /**
@@ -73,8 +73,8 @@ router.route('/update').post(async (req, res) => {
  */
 router.route('/add').post(async (req, res) => {
     EventRepository.create(req.body)
-        .then((event) => res.json(`Event ${event.eventHeader} added`))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .then((event) => res.json(event))
+        .catch(err => res.status(400).json(err));
 });
 
 module.exports = router;

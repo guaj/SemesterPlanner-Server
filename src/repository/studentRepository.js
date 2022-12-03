@@ -1,5 +1,6 @@
 const Student = require('../models/student.model');
 const { createStudent } = require("../factory/studentFactory");
+const StudentValidator = require('../validator/studentValidator')
 
 module.exports = class StudentRepository {
 
@@ -10,13 +11,17 @@ module.exports = class StudentRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            createStudent(data).then((newStudent) => {
-                newStudent.save((err, student) => {
-                    if (err) { reject(err); }
-                    resolve(student);
+            StudentValidator.validateCreateData(data).then(() => {
+                createStudent(data).then((newStudent) => {
+                    newStudent.save((err, student) => {
+                        if (err) { reject(err); }
+                        resolve(student);
+                    })
                 })
             })
+                .catch(errs => reject(errs))
         })
+
     }
 
     /**
@@ -117,10 +122,15 @@ module.exports = class StudentRepository {
      */
     static async updateOne(student) {
         return await new Promise((resolve, reject) => {
-            student.save((err, student) => {
-                if (err) { reject(err); }
-                resolve(student);
-            })
+            StudentValidator.validateUpdateData(student)
+                .then(() => {
+                    student.save((err, student) => {
+                        if (err) { reject(err); }
+                        resolve(student);
+                    })
+                })
+                .catch(errs => reject(errs))
+
         })
     }
 
@@ -132,8 +142,8 @@ module.exports = class StudentRepository {
      */
     static async updateFriendList(email, updatedFriendList) {
         return await new Promise((resolve, reject) => {
-            Student.updateOne({email: email.toString()}, {
-                friends : updatedFriendList
+            Student.updateOne({ email: email.toString() }, {
+                friends: updatedFriendList
             }).then((student) => { resolve(student) })
                 .catch((err) => reject(err))
         })
@@ -149,7 +159,7 @@ module.exports = class StudentRepository {
     static async updateStudyRooms(email, studyRooms) {
         return await new Promise((resolve, reject) => {
             Student.updateOne(
-                { email: email },
+                { email: email.toString() },
                 { studyRooms: studyRooms })
                 .then((student) => { resolve(student); })
                 .catch(err => reject(err))
@@ -164,7 +174,7 @@ module.exports = class StudentRepository {
      */
     static async addToFriendList(email1, email2) {
         return await new Promise(async (resolve, reject) => {
-            Student.findOne({email: email1})
+            Student.findOne({ email: email1 })
                 .then((student) => {
                     student.friends.push(email2);
                     student.save()
@@ -184,7 +194,7 @@ module.exports = class StudentRepository {
      */
     static async isInFriendList(student1, student2) {
         return await new Promise(async (resolve, reject) => {
-            Student.findOne({email: student1})
+            Student.findOne({ email: student1.toString() })
                 .then((res) => {
                     resolve(res != null && res.friends.some((friend) => friend === student2))
                 })

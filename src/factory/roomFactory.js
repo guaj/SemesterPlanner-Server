@@ -4,11 +4,20 @@ const { v4: uuidv4 } = require('uuid');
 function createStudyRoom(data) {
     const studyRoomID = uuidv4();
     const owner = data.owner;
-    const color = data.color
-    const description = data.description
-    const title = data.title
-    const avatar = data.avatarText
-    const participants = data.participants
+    let color = '#808080'; // default gray color
+    if (data.color) {
+        color = data.color;
+    }
+    let description = "A study room."; // default description
+    if (data.description) {
+        description = data.description;
+    }
+    let title = 'Unnamed Room'; // default room name
+    if (data.title) {
+        title = data.title;
+    }
+    const avatar = data.avatarText;
+    let participants = [owner];
     return new StudyRoom({
         studyRoomID,
         owner,
