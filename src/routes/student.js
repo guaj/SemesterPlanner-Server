@@ -176,7 +176,7 @@ router.route('/courses/:email').get((req, res) => {
             let courses = student.courses;
             let courseNames = [];
             for (let course of courses) {
-                courseNames.push(course.subject + course.catalog)
+                courseNames.push({ 'subject': course.subject, 'catalog': course.catalog, 'title': course.title })
             }
             res.status(200).json({ 'courses': courseNames })
         })

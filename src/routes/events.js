@@ -97,6 +97,7 @@ router.route('/add').post(async (req, res) => {
                 let courses = student.courses;
                 let conUCourse = await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog)
                 let course = {
+                    'title': conUCourse.title,
                     'subject': event.subject,
                     'catalog': event.catalog,
                     'classUnit': conUCourse.classUnit,
