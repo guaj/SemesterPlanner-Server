@@ -1,4 +1,4 @@
-const {createOpenDataCourse} = require("../factory/conUOpenDataCourseFactory");
+const { createOpenDataCourse } = require("../factory/conUOpenDataCourseFactory");
 const OpenDataCourse = require('../models/conUOpenDataCourse.model');
 const axios = require("axios");
 
@@ -28,7 +28,7 @@ module.exports = class OpenDataCourseRepository {
     static findAllByCourseCode(courseCode) {
         return new Promise((resolve, reject) => {
             OpenDataCourse.find({
-                subject: {"$in": [courseCode.toUpperCase()]}
+                subject: { "$in": [courseCode.toUpperCase()] }
             })
                 .then((result) => {
                     resolve(result);
@@ -46,8 +46,8 @@ module.exports = class OpenDataCourseRepository {
     static findByCourseCodeAndNumber(courseCode, courseNumber) {
         return new Promise((resolve, reject) => {
             OpenDataCourse.find({
-                subject: {"$in": [courseCode.toUpperCase()]},
-                catalog: {"$in": [courseNumber.toString()]}
+                subject: { "$in": [courseCode.toUpperCase()] },
+                catalog: { "$in": [courseNumber.toString()] }
             })
                 .then((result) => {
                     resolve(result);
@@ -77,7 +77,7 @@ module.exports = class OpenDataCourseRepository {
      */
     static batchCreateCourse(coursesData) {
         return new Promise((resolve, reject) => {
-            OpenDataCourse.collection.insertMany(coursesData, (err, docs) => {
+            OpenDataCourse.insertMany(coursesData, (err, docs) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -90,7 +90,7 @@ module.exports = class OpenDataCourseRepository {
     /**
      * Refreshes Course data in the openadatacourses table using the course data in Concordia's Open Data
      */
-    static refreshCourseData(){
+    static refreshCourseData() {
         console.log("> [INFO][REFRESH START]: of opendatacourses table");
 
         axios.get("https://opendata.concordia.ca/API/v1/course/catalog/filter/*/*/*", {
@@ -102,9 +102,8 @@ module.exports = class OpenDataCourseRepository {
             console.info("> [INFO] Origin OpenData Courses size: " + result.data.length);
             this.dropTable().then((res) => {
                 console.info("— [INFO][COLLECTION DROP] opendatacourses collection dropped: " + res);
-
                 this.batchCreateCourse(result.data).then((res) => {
-                    console.info('+ [INFO][REFRESH COMPLETE] %d courses were successfully added to opendatacourses collection.', res.insertedCount);
+                    console.info('+ [INFO][REFRESH COMPLETE] %d courses were successfully added to opendatacourses collection.', res.length);
                 }).catch((err) => {
                     console.error(err);
                     console.error('[ERR][REFRESH FAILED]: Could not insert data into the opendatacourses collection.');

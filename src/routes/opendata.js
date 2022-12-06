@@ -11,6 +11,7 @@ const router = require('express').Router();
 if (process.env.npm_config_odrefresh === "true")
     setInterval(
         function openDataRefresh() {
+            console.log('Refreshing OpenData database.')
             OpenDataFacultyRepository.refreshFacultyData();
             OpenDataCourseRepository.refreshCourseData();
             OpenDataImportantDateRepository.refreshImportantDateData();

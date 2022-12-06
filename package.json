@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --collect-coverage",
     "start": "node src/server.js",
-    "dev": "nodemon src/server"
+    "dev": "nodemon src/server",
+    "dev-refresh": "npm run dev --odrefresh=true"
   },
   "repository": {
     "type": "git",

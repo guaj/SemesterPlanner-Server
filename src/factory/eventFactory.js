@@ -22,6 +22,10 @@ function createEvent(data) {
     if (data.color) {
         color = data.color;
     }
+    let type = 'None'
+    if (data.type) {
+        type = data.type
+    }
     return new Event({
         eventID,
         username,
@@ -33,7 +37,8 @@ function createEvent(data) {
         startTime,
         endTime,
         recurrence: recurrence,
-        color
+        color,
+        type
     })
 }
 

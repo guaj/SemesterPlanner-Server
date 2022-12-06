@@ -1,4 +1,4 @@
-const {createOpenDataFaculty} = require("../factory/conUOpenDataFacultyFactory");
+const { createOpenDataFaculty } = require("../factory/conUOpenDataFacultyFactory");
 const OpenDataFaculty = require('../models/conUOpenDataFaculty.model');
 const axios = require("axios");
 
@@ -28,7 +28,7 @@ module.exports = class OpenDataFacultyRepository {
     static findAllByFacultyCode(facultyCode) {
         return new Promise((resolve, reject) => {
             OpenDataFaculty.find({
-                facultyCode: {"$in": [facultyCode.toUpperCase()]}
+                facultyCode: { "$in": [facultyCode.toUpperCase()] }
             })
                 .then((result) => {
                     resolve(result);
@@ -83,7 +83,7 @@ module.exports = class OpenDataFacultyRepository {
      */
     static batchCreateFaculty(facultiesData) {
         return new Promise((resolve, reject) => {
-            OpenDataFaculty.collection.insertMany(facultiesData, (err, docs) => {
+            OpenDataFaculty.insertMany(facultiesData, (err, docs) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -112,7 +112,7 @@ module.exports = class OpenDataFacultyRepository {
                 console.info("— [INFO][COLLECTION DROP] opendatafaculties collection dropped: " + res);
 
                 this.batchCreateFaculty(data).then((res) => {
-                    console.info('+ [INFO][REFRESH COMPLETE] %d faculties were successfully added to opendatafaculties collection.', res.insertedCount);
+                    console.info('+ [INFO][REFRESH COMPLETE] %d faculties were successfully added to opendatafaculties collection.', res.length);
                 }).catch((err) => {
                     console.error(err);
                     console.error('[ERR][REFRESH FAILED]: Could not insert data into the opendatafaculties collection.');
