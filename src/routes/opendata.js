@@ -130,8 +130,8 @@ router.route('/course/studyhours/:courseCode/:courseNumber').get(async (req, res
     OpenDataCourseRepository.findByCourseCodeAndNumber(courseCode, courseNumber)
         .then((course) => {
             console.info(`Record of course with course \'${courseCode} ${courseNumber}\' fetched:\n` + course + "\n")
-            let studyhours = parseFloat(course.classUnit) * 1.5;
-            res.status(200).json(studyhours);
+            let studyHours = parseFloat(course.classUnit) * 1.5;
+            res.status(200).json({ 'studyHours': studyHours });
         })
         .catch(err => res.status(400).json('Error: ' + err));
 })

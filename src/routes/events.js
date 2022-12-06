@@ -1,12 +1,14 @@
 const router = require('express').Router();
 const EventRepository = require('../repository/eventRepository')
+const StudentRepository = require('../repository/studentRepository');
+const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 
 /**
  * Get all events of a certain student
  */
 router.route('/:username').get((req, res) => {
     EventRepository.findAllbyStudentUsername(req.params.username)
-        .then(events => res.json(events))
+        .then(events => res.status(200).json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
@@ -15,7 +17,7 @@ router.route('/:username').get((req, res) => {
  */
 router.route('/event/:eventID').get((req, res) => {
     EventRepository.findOne(req.params.eventID)
-        .then(event => res.json(event))
+        .then(event => res.status(200).json(event))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
@@ -24,7 +26,21 @@ router.route('/event/:eventID').get((req, res) => {
  */
 router.route('/:eventID').delete((req, res) => {
     EventRepository.deleteOne(req.params.eventID)
-        .then(() => res.json(`Event deleted`))
+        .then(async (event) => {
+            if (event.type == 'course') {
+                let courses = await EventRepository.findByCourse(event.username, event.subject, event.catalog);
+                if (courses.length == 0) {
+                    let student = await StudentRepository.findOneByUsername(event.username);
+                    let studentCourses = student.courses;
+                    let index = studentCourses.findIndex(function (course, i) {
+                        return (item.subject === event.subject && item.catalog === event.catalog);
+                    });
+                    studentCourses.splice(index, 1);
+                    await StudentRepository.updateCourses(event.username, studentCourses);
+                }
+            }
+            res.status(200).json(`Event deleted`);
+        })
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
@@ -61,9 +77,6 @@ router.route('/update').post(async (req, res) => {
             if (req.body.color) {
                 event.color = req.body.color;
             }
-            if (req.body.type) {
-                event.type = req.body.type;
-            }
             EventRepository.updateOne(event)
                 .then(() => res.json(event))
                 .catch(err => res.status(400).json('Error: ' + err));
@@ -76,7 +89,28 @@ router.route('/update').post(async (req, res) => {
  */
 router.route('/add').post(async (req, res) => {
     EventRepository.create(req.body)
-        .then((event) => res.json(event))
+        .then(async (event) => {
+
+            // Add course to student if doesn't already exist in student's courses list.
+            if (event.type == 'course') {
+                let student = await StudentRepository.findOneByUsername(event.username)
+                let courses = student.courses;
+                let conUCourse = await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog)
+                let course = {
+                    'subject': event.subject,
+                    'catalog': event.catalog,
+                    'classUnit': conUCourse.classUnit,
+                    'studyHours': parseFloat(conUCourse.classUnit) * 1.5
+                }
+                if (!(courses.some(item => _.isEqual(item, course)))) {
+                    courses.push(course);
+                    await StudentRepository.updateCourses(event.username, courses);
+                }
+
+            }
+
+            res.status(200).json(event)
+        })
         .catch(err => res.status(400).json(err));
 });
 

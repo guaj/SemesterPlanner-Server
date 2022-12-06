@@ -10,7 +10,7 @@ const FriendRequestRepository = require('../repository/friendRequestRepository')
  */
 router.route('/').get((req, res) => {
     StudentRepository.findAll()
-        .then(users => res.json(users))
+        .then(users => res.status(200).json(users))
         .catch(err => res.status(400).json(err));
 });
 
@@ -145,6 +145,24 @@ router.route('/add').post(async (req, res) => {
             res.status(400).json(err)
         });
 
+});
+
+/**
+ * Get student studyhours
+ * @param {string} email Student email
+ * @return {number} Total number of studyhours 
+ */
+router.route('/studyhours/:email').get((req, res) => {
+    StudentRepository.findOneByEmail(req.params.email)
+        .then((student) => {
+            let courses = student.courses;
+            let totalHours = 0;
+            for (let course of courses) {
+                totalHours += parseFloat(course.classUnit) * 1.5;
+            }
+            res.status(200).json({ 'studyHours': totalHours })
+        })
+        .catch(err => res.status(400).json(err));
 });
 
 module.exports = router;

@@ -56,6 +56,24 @@ module.exports = class EventRepository {
     }
 
     /**
+     * Find events by course subject and catalog
+     * @param {string} username the username of the student.
+     * @param {string} subject The subject of the course.
+     * @param {string} catalog The catalog of the course.
+     * @returns {[Event]} Returns a promise. Resolves with an array of events.
+     */
+    static findByCourse(username, subject, catalog) {
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), subject: subject.toString(), catalog: catalog.toString() }).then((event) => {
+                resolve(event);
+            })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
+
+    /**
      * Find one event by its MongoDB _id.
      * @param {*} _id The _id of the event.
      * @returns {Event} Returns a promise. Resolves with an event.
@@ -72,13 +90,13 @@ module.exports = class EventRepository {
     /**
      * Delete one event by its eventID.
      * @param {string} eventID The eventID of the event.
-     * @returns {number} Returns a promise. Resolves with the number of events deleted (1 or 0).
+     * @returns {number} Returns a promise. Resolves with the deleted event.
      */
     static deleteOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.deleteOne({ eventID: eventID.toString() })
-                .then((status) => {
-                    resolve(status.deletedCount);
+            Event.findOneAndDelete({ eventID: eventID.toString() })
+                .then((event) => {
+                    resolve(event);
                 })
                 .catch(err => reject(err))
         })
