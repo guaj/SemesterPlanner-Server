@@ -165,4 +165,22 @@ router.route('/studyhours/:email').get((req, res) => {
         .catch(err => res.status(400).json(err));
 });
 
+/**
+ * Get student courses
+ * @param {string} email Student email
+ * @return {[String]} Array of course subjects + catalogs
+ */
+router.route('/courses/:email').get((req, res) => {
+    StudentRepository.findOneByEmail(req.params.email)
+        .then((student) => {
+            let courses = student.courses;
+            let courseNames = [];
+            for (let course of courses) {
+                courseNames.push(course.subject + course.catalog)
+            }
+            res.status(200).json({ 'courses': courseNames })
+        })
+        .catch(err => res.status(400).json(err));
+});
+
 module.exports = router;
