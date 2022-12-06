@@ -33,7 +33,7 @@ router.route('/:eventID').delete((req, res) => {
                     let student = await StudentRepository.findOneByUsername(event.username);
                     let studentCourses = student.courses;
                     let index = studentCourses.findIndex(function (course, i) {
-                        return (item.subject === event.subject && item.catalog === event.catalog);
+                        return (course.subject === event.subject && course.catalog === event.catalog);
                     });
                     studentCourses.splice(index, 1);
                     await StudentRepository.updateCourses(event.username, studentCourses);
