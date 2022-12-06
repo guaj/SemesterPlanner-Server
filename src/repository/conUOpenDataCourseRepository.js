@@ -41,11 +41,11 @@ module.exports = class OpenDataCourseRepository {
      * Find a specific course with a specific course code and course number.
      * @param {String} courseCode the course code of interest.
      * @param {String, Integer} courseNumber the course number of interest.
-     * @returns {[Course]} Returns a promise. Resolves with an array of Course associated with the courseCode and courseNumber param.
+     * @returns {Course} Returns a promise. Resolves with a Course associated with the courseCode and courseNumber param.
      */
     static findByCourseCodeAndNumber(courseCode, courseNumber) {
         return new Promise((resolve, reject) => {
-            OpenDataCourse.find({
+            OpenDataCourse.findOne({
                 subject: { "$in": [courseCode.toUpperCase()] },
                 catalog: { "$in": [courseNumber.toString()] }
             })

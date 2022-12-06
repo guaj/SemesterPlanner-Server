@@ -11,7 +11,8 @@ const studentSchema = new Schema({
     privateProfile: { type: Boolean },
     friends: { type: [String] },  //email
     studyRooms: { type: [String] }, //studyRoomID
-    calendarID: { type: String }
+    calendarID: { type: String },
+    courses: { type: [String] }
 
     // TODO
     // calendar -> id of calendar

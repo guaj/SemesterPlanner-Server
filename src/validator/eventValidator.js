@@ -1,4 +1,5 @@
 const Event = require('../models/event.model');
+const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 
 module.exports = class EventValidator {
 
@@ -30,11 +31,26 @@ module.exports = class EventValidator {
                 res.errors.push('Missing eventHeader');
             }
             if (event.recurrence == undefined || event.recurrence == "") {
-                res.errors.push('Missing recurrence');
+                res.errors.push('Empty recurrence');
             }
             else {
                 if (!['once', 'daily', 'weekly', 'monthly'].includes(event.recurrence)) {
                     res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
+                }
+            }
+            if (event.type == undefined || event.type == "") {
+                res.errors.push('Empty type');
+            }
+            else {
+                if (!['holiday', 'event', 'course'].includes(event.type)) {
+                    res.errors.push('Invalid recurrence (holiday, event, course)')
+                }
+                else {
+                    if (event.type == 'course') {
+                        if (!(await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog))) {
+                            res.errors.push('Invalid course code or number')
+                        }
+                    }
                 }
             }
             if (!this.validateColor(event.color)) {
