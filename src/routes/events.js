@@ -101,7 +101,7 @@ router.route('/add').post(async (req, res) => {
                     'subject': event.subject,
                     'catalog': event.catalog,
                     'classUnit': conUCourse.classUnit,
-                    'studyHours': parseFloat(conUCourse.classUnit) * 1.5
+                    'studyHours': (parseFloat(conUCourse.classUnit) * 1.5).toString()
                 }
                 if (!(courses.some(item => _.isEqual(item, course)))) {
                     courses.push(course);
