@@ -75,13 +75,11 @@ describe("testing event api routes", () => {
     });
     let event2;
     it("Create course events", async () => {
-        let title = 'Soen 490 Captsone Meeting';
-        let desc = generateString(10);
         await request.post('/events/add').send(
             {
                 username: user1.username,
-                eventHeader: title,
-                description: desc,
+                eventHeader: 'Soen 490 Captsone Meeting',
+                description: generateString(10),
                 startDate: new Date(),
                 endDate: new Date(),
                 startTime: new Date(),
@@ -98,13 +96,11 @@ describe("testing event api routes", () => {
                 assert.deepEqual(res.body.username, user1.username);
                 event2 = res.body;
             })
-        title = 'Soen 490 Captsone Meeting 2';
-        desc = generateString(10);
         await request.post('/events/add').send(
             {
                 username: user1.username,
-                eventHeader: title,
-                description: desc,
+                eventHeader: 'Soen 490 Captsone Meeting 2',
+                description: generateString(10),
                 startDate: new Date(),
                 endDate: new Date(),
                 startTime: new Date(),
@@ -120,13 +116,11 @@ describe("testing event api routes", () => {
             .then((res) => {
                 assert.deepEqual(res.body.username, user1.username);
             })
-        title = 'Soen 321 meeting';
-        desc = generateString(10);
         await request.post('/events/add').send(
             {
                 username: user1.username,
-                eventHeader: title,
-                description: desc,
+                eventHeader: 'Soen 321 meeting',
+                description: generateString(10),
                 startDate: new Date(),
                 endDate: new Date(),
                 startTime: new Date(),

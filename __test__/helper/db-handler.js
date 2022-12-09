@@ -46,7 +46,7 @@ module.exports.refreshDatabase = async () => {
         .auth(process.env.OPEN_DATA_USERNAME, process.env.OPEN_DATA_PASSWORD)
         .expect(200)
         .then(async (res) => {
-            await OpenDataCourseRepository.batchCreateCourse(JSON.parse(res.text));
+            OpenDataCourseRepository.batchCreateCourse(JSON.parse(res.text));
         })
 
 }
