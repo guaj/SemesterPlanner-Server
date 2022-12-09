@@ -74,7 +74,7 @@ describe("testing event api routes", () => {
             })
     });
     let event2;
-    it("Create event", async () => {
+    it("Create course events", async () => {
         let title = 'Soen 490 Captsone Meeting';
         let desc = generateString(10);
         await request.post('/events/add').send(
@@ -98,6 +98,50 @@ describe("testing event api routes", () => {
                 assert.deepEqual(res.body.username, user1.username);
                 event2 = res.body;
             })
+        title = 'Soen 490 Captsone Meeting 2';
+        desc = generateString(10);
+        await request.post('/events/add').send(
+            {
+                username: user1.username,
+                eventHeader: title,
+                description: desc,
+                startDate: new Date(),
+                endDate: new Date(),
+                startTime: new Date(),
+                endTime: new Date(),
+                recurrence: 'once',
+                type: 'course',
+                subject: 'SOEN',
+                catalog: '490'
+
+            }
+        )
+            .expect(200)
+            .then((res) => {
+                assert.deepEqual(res.body.username, user1.username);
+            })
+        title = 'Soen 321 meeting';
+        desc = generateString(10);
+        await request.post('/events/add').send(
+            {
+                username: user1.username,
+                eventHeader: title,
+                description: desc,
+                startDate: new Date(),
+                endDate: new Date(),
+                startTime: new Date(),
+                endTime: new Date(),
+                recurrence: 'once',
+                type: 'course',
+                subject: 'SOEN',
+                catalog: '321'
+
+            }
+        )
+            .expect(200)
+            .then((res) => {
+                assert.deepEqual(res.body.username, user1.username);
+            })
     });
 
     it("get event", async () => {
@@ -114,7 +158,55 @@ describe("testing event api routes", () => {
         await request.get('/student/email/' + user1.email)
             .expect(200)
             .then((res) => {
-                assert.deepEqual(res.body.courses, [{ "catalog": "490", "classUnit": "4.00", "studyHours": "6", "subject": "SOEN", "title": "Capstone Software Engineering Design Project" }])
+                assert.deepEqual(res.body.courses,
+                    [
+                        { "catalog": "490", "classUnit": "4.00", "studyHours": "6", "subject": "SOEN", "title": "Capstone Software Engineering Design Project" },
+                        { "catalog": "321", "classUnit": "3.00", "studyHours": "4.5", "subject": "SOEN", "title": "Information Systems Security" }
+                    ]
+                )
+            })
+    });
+
+    it("Create non existent course event", async () => {
+        let title = 'Soen 490 Captsone Meeting';
+        let desc = generateString(10);
+        await request.post('/events/add').send(
+            {
+                username: user1.username,
+                eventHeader: title,
+                description: desc,
+                startDate: new Date(),
+                endDate: new Date(),
+                startTime: new Date(),
+                endTime: new Date(),
+                recurrence: 'once',
+                type: 'course',
+                subject: 'SOEN',
+                catalog: '590'
+
+            }
+        )
+            .expect(400)
+            .then((res) => {
+                assert.deepEqual(res.body, { "errors": ["Invalid course code or number"] });
+            })
+    })
+
+    it("get student study hours", async () => {
+
+        await request.get('/student/studyhours/' + user1.email)
+            .expect(200)
+            .then((res) => {
+                assert.deepEqual(res.body, { "studyHours": 10.5 })
+            })
+    });
+
+    it("get course study hours", async () => {
+
+        await request.get('/opendata/course/studyhours/SOEN/490')
+            .expect(200)
+            .then((res) => {
+                assert.deepEqual(res.body, { "studyHours": 6 })
             })
     });
 })

@@ -2,6 +2,7 @@ const router = require('express').Router();
 const EventRepository = require('../repository/eventRepository')
 const StudentRepository = require('../repository/studentRepository');
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
+const _ = require('lodash');
 
 /**
  * Get all events of a certain student
@@ -90,7 +91,6 @@ router.route('/update').post(async (req, res) => {
 router.route('/add').post(async (req, res) => {
     EventRepository.create(req.body)
         .then(async (event) => {
-
             // Add course to student if doesn't already exist in student's courses list.
             if (event.type == 'course') {
                 let student = await StudentRepository.findOneByUsername(event.username)
@@ -112,7 +112,7 @@ router.route('/add').post(async (req, res) => {
 
             res.status(200).json(event)
         })
-        .catch(err => res.status(400).json(err));
+        .catch(err => { res.status(400).json(err); });
 });
 
 module.exports = router;
