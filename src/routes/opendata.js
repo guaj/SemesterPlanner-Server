@@ -19,6 +19,7 @@ if (process.env.npm_config_odrefresh === "true")
             return openDataRefresh;
         }(), (process.env.npm_config_odrefreshinterval && Number.isInteger(Number(process.env.npm_config_odrefreshinterval) && Number(process.env.npm_config_odrefreshinterval) <= 24) ? (Number(process.env.npm_config_odrefreshinterval) * 86400000) : 86400000));
 
+
 /**
  * add a faculty to a department
  * @param {String} facultyCode: passed in the request body and added to the newly created record in the opendatafaculties collection

@@ -178,7 +178,7 @@ router.route("/cancel-request").post(async (req, res) => {
       res.json(`Cannot delete request with id [${requestID}]`);
     }
   })
-    .catch((err) => { res.status(400).json(err); console.log(err) })
+    .catch((err) => { res.status(400).json(err) })
 })
 
 /**
