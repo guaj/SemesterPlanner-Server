@@ -24,6 +24,22 @@ afterAll(async () => {
     await dbHandler.closeDatabase();
 });
 
+function createCourse(username, title, subject, catalog) {
+    return {
+        username: username,
+        eventHeader: title,
+        description: generateString(10),
+        startDate: new Date(),
+        endDate: new Date(),
+        startTime: new Date(),
+        endTime: new Date(),
+        recurrence: 'once',
+        type: 'course',
+        subject: subject,
+        catalog: catalog
+    }
+}
+
 describe("testing event api routes", () => {
 
     let user1 = createUser();
@@ -76,20 +92,7 @@ describe("testing event api routes", () => {
     let event2;
     it("Create course events", async () => {
         await request.post('/events/add').send(
-            {
-                username: user1.username,
-                eventHeader: 'Soen 490 Captsone Meeting',
-                description: generateString(10),
-                startDate: new Date(),
-                endDate: new Date(),
-                startTime: new Date(),
-                endTime: new Date(),
-                recurrence: 'once',
-                type: 'course',
-                subject: 'SOEN',
-                catalog: '490'
-
-            }
+            createCourse(user1.username, 'Soen 490 Captsone Meeting 1', 'SOEN', '490')
         )
             .expect(200)
             .then((res) => {
@@ -97,40 +100,14 @@ describe("testing event api routes", () => {
                 event2 = res.body;
             })
         await request.post('/events/add').send(
-            {
-                username: user1.username,
-                eventHeader: 'Soen 490 Captsone Meeting 2',
-                description: generateString(10),
-                startDate: new Date(),
-                endDate: new Date(),
-                startTime: new Date(),
-                endTime: new Date(),
-                recurrence: 'once',
-                type: 'course',
-                subject: 'SOEN',
-                catalog: '490'
-
-            }
+            createCourse(user1.username, 'Soen 490 Captsone Meeting 2', 'SOEN', '490')
         )
             .expect(200)
             .then((res) => {
                 assert.deepEqual(res.body.username, user1.username);
             })
         await request.post('/events/add').send(
-            {
-                username: user1.username,
-                eventHeader: 'Soen 321 meeting',
-                description: generateString(10),
-                startDate: new Date(),
-                endDate: new Date(),
-                startTime: new Date(),
-                endTime: new Date(),
-                recurrence: 'once',
-                type: 'course',
-                subject: 'SOEN',
-                catalog: '321'
-
-            }
+            createCourse(user1.username, 'Soen 321 Captsone Meeting', 'SOEN', '321')
         )
             .expect(200)
             .then((res) => {
