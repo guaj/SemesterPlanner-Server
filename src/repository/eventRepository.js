@@ -40,6 +40,24 @@ module.exports = class EventRepository {
     }
 
     /**
+     * Find all events of student.
+     * @param {string} username The username of the student.
+     * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
+     */
+    static findWeeklyCourseEventsByUsername(username) {
+        const today = new Date()
+        const oneWeek = new Date()
+        oneWeek.setDate(today.getDate() + 7)
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), type: 'course', startDate: { '$gte': today, '$lte': oneWeek } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
+    /**
      * Find one event by its eventID.
      * @param {string} eventID The eventID of the event.
      * @returns {Event} Returns a promise. Resolves with an event.

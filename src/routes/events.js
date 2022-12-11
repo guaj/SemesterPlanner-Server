@@ -23,6 +23,15 @@ router.route('/event/:eventID').get((req, res) => {
 });
 
 /**
+ * Get course events of a certain student within a week
+ */
+router.route('/study-events/:username').get((req, res) => {
+    EventRepository.findWeeklyCourseEventsByUsername(req.params.username)
+        .then(events => res.status(200).json(events))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+/**
  * Delete an event by eventId
  */
 router.route('/:eventID').delete((req, res) => {
