@@ -41,7 +41,7 @@ module.exports.clearDatabase = async () => {
     }
 }
 
-module.exports.refreshDatabase = async () => {
+module.exports.refreshCourseDatabase = async () => {
     await request.get('/API/v1/course/catalog/filter/*/*/*')
         .auth(process.env.OPEN_DATA_USERNAME, process.env.OPEN_DATA_PASSWORD)
         .expect(200)

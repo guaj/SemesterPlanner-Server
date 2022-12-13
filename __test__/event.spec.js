@@ -14,7 +14,7 @@ beforeAll(async () => {
 
     await dbHandler.connect();
     await dbHandler.clearDatabase();
-    await dbHandler.refreshDatabase();
+    await dbHandler.refreshCourseDatabase();
 });
 
 /**

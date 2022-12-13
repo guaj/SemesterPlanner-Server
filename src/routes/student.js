@@ -158,7 +158,7 @@ router.route('/studyhours/:email').get((req, res) => {
             let courses = student.courses;
             let totalHours = 0;
             for (let course of courses) {
-                totalHours += parseFloat(course.classUnit) * 1.5;
+                totalHours += parseFloat(course.studyHours);
             }
             res.status(200).json({ 'studyHours': totalHours })
         })
