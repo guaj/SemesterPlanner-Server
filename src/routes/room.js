@@ -2,6 +2,7 @@ const router = require('express').Router();
 const CourseNotesRepository = require("../repository/courseNotesRepository")
 const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentRepository = require('../repository/studentRepository');
+const StudyRoomValidator = require('../validator/roomValidator')
 
 
 router.route('/').put((req, res) => {
@@ -27,17 +28,30 @@ router.route('/').put((req, res) => {
       }
       StudyRoomRepository.updateOne(room)
         .then((room) => res.json(`Room ${room.studyRoomID} updated`))
-        .catch(err => res.status(400).json('Error: ' + err));
+        .catch(err => res.status(400).json(err));
     })
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 
 })
 
 //create a study room
 router.route('/').post((req, res) => {
   StudyRoomRepository.create(req.body)
-    .then((room) => res.json(`Study room ${room.studyRoomID} created`).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .then((room) => {
+      StudentRepository.findOneByEmail(req.body.owner)
+        .then((student) => {
+          let studyRooms = student.studyRooms;
+          studyRooms.push(room.studyRoomID);
+          StudentRepository.updateStudyRooms(req.body.owner, studyRooms)
+            .then(() => {
+              res.json(room).status(200)
+            })
+            .catch(err => res.status(400).json(err));
+        })
+        .catch(err => res.status(400).json(err));
+    })
+
+    .catch(err => res.status(400).json(err));
 });
 
 /**
@@ -49,7 +63,7 @@ router.get('/fetch/:studyRoomID', async (req, res) => {
   const studyRoomID = req.params.studyRoomID.toString()
   StudyRoomRepository.findOne(studyRoomID)
     .then((room) => res.json(room).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 
 })
 
@@ -58,31 +72,27 @@ router.get('/fetch/:studyRoomID', async (req, res) => {
 router.route('/add').post(async (req, res) => {
   const email = req.body.email.toString()
   const ID = req.body.studyRoomID.toString()
-  StudyRoomRepository.findOne(ID)
-    .then((room) => {
-      var participants = room.participants;
-      if (!participants.includes(email)) {
+  StudyRoomValidator.validateAddingStudent(email, ID).then(() => {
+    StudyRoomRepository.findOne(ID)
+      .then((room) => {
+        let participants = room.participants;
         participants.push(email);
-      }
-      else {
-        res.json("Student is already present in studyroom").status(200);
-        return;
-      }
-
-      StudyRoomRepository.updateParticipants(ID, participants)
-        .then((room) => {
-          StudentRepository.findOneByEmail(email)
-            .then((student) => {
-              let studyRooms = student.studyRooms;
-              studyRooms.push(ID);
-              StudentRepository.updateStudyRooms(email, studyRooms)
-                .then(() => res.json(email + " added to studyroom").status(200))
-                .catch(err => res.status(400).json('Error: ' + err));
-            })
-            .catch(err => res.status(400).json('Error: ' + err));
-        })
-        .catch(err => res.status(400).json('Error: ' + err));
-    })
+        StudyRoomRepository.updateParticipants(ID, participants)
+          .then((room) => {
+            StudentRepository.findOneByEmail(email)
+              .then((student) => {
+                let studyRooms = student.studyRooms;
+                studyRooms.push(ID);
+                StudentRepository.updateStudyRooms(email, studyRooms)
+                  .then(() => res.json(email + " added to studyroom").status(200))
+                  .catch(err => res.status(400).json(err));
+              })
+              .catch(err => res.status(400).json(err));
+          })
+          .catch(err => res.status(400).json(err));
+      })
+  })
+    .catch(err => res.status(400).json(err));
 
 })
 
@@ -90,39 +100,30 @@ router.route('/remove').post(async (req, res) => {
   const email = req.body.email.toString()
   const ID = req.body.studyRoomID.toString()
 
-  StudyRoomRepository.findOne(ID)
-    .then((room) => {
-      var participants = room.participants
-      const participantIndex = participants.indexOf(email);
-      if (participantIndex > -1) {
+  StudyRoomValidator.validateDeletingStudent(email, ID).then(() => {
+    StudyRoomRepository.findOne(ID)
+      .then((room) => {
+        let participants = room.participants
+        const participantIndex = participants.indexOf(email);
         participants.splice(participantIndex, 1);
-      }
-      else {
-        res.json('User not found').status(404);
-        return;
-      }
-      StudyRoomRepository.updateParticipants(ID, participants)
-        .then((room) => {
-          StudentRepository.findOneByEmail(email)
-            .then((student) => {
-              let studyRooms = student.studyRooms;
-              const roomIndex = studyRooms.indexOf(ID);
-              if (roomIndex > -1) {
+        StudyRoomRepository.updateParticipants(ID, participants)
+          .then((room) => {
+            StudentRepository.findOneByEmail(email)
+              .then((student) => {
+                let studyRooms = student.studyRooms;
+                const roomIndex = studyRooms.indexOf(ID);
                 studyRooms.splice(roomIndex, 1);
                 StudentRepository.updateStudyRooms(email, studyRooms)
                   .then(() => res.json(email + " removed from studyroom").status(200))
-                  .catch(err => res.status(400).json('Error: ' + err));
-              }
-              else {
-                res.json('Room not found').status(404);
-                return;
-              }
-            })
-            .catch(err => res.status(400).json('Error: ' + err));
-        })
-        .catch(err => res.status(400).json('Error: ' + err));
-    })
-    .catch(err => res.status(400).json('Error: ' + err));
+                  .catch(err => res.status(400).json(err));
+              })
+              .catch(err => res.status(400).json(err));
+          })
+          .catch(err => res.status(400).json(err));
+      })
+      .catch(err => res.status(400).json(err));
+  })
+    .catch(err => res.status(400).json(err));
 })
 
 /**
@@ -134,15 +135,34 @@ router.route('/:email').get(async (req, res) => {
   const email = req.params.email.toString()
   StudyRoomRepository.findAllbyStudentEmail(email)
     .then((rooms) => res.json(rooms).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 // delete studyRoom by ID
-router.route('/delete').post(async (req, res) => {
+router.route('/').delete(async (req, res) => {
+
   const roomID = req.body.studyRoomID.toString()
-  StudyRoomRepository.deleteOne(roomID)
-    .then((status) => res.send("deleted" + status + 'rooms'))
-    .catch(err => res.status(400).json('Error: ' + err));
+  StudyRoomValidator.validateDelete(roomID).then(() => {
+    StudyRoomRepository.findOne(roomID).then(async (room) => {
+      let participants = room.participants;
+      // Removes the room from its list of participants before deleting the room
+      for (let participant of participants) {
+        let student = await StudentRepository.findOneByEmail(participant)
+        let studyRooms = student.studyRooms;
+        const roomIndex = studyRooms.indexOf(roomID);
+        studyRooms.splice(roomIndex, 1);
+
+        await StudentRepository.updateStudyRooms(participant, studyRooms)
+          .catch(err => res.status(400).json(err));
+      }
+      StudyRoomRepository.deleteOne(roomID)
+        .then(status => {
+          res.status(200).json("deleted " + status + " room")
+        })
+        .catch(err => res.status(400).json(err));
+    })
+  })
+    .catch(err => res.status(400).json(err));
 })
 
 
@@ -151,27 +171,27 @@ router.route('/delete').post(async (req, res) => {
 router.post('/file', (req, res) => {
   CourseNotesRepository.create(req.body)
     .then(() => res.send("successfuly uploaded"))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 });
 
 // get file BY courseNoteID
 router.route('/file/:courseNotesID').get(async (req, res) => {
   CourseNotesRepository.findOne(req.params.courseNotesID)
     .then(note => res.json(note).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 router.route('/file/:courseNotesID').delete(async (req, res) => {
   CourseNotesRepository.deleteOne(req.params.courseNotesID)
     .then(status => res.json("deleted " + status + " file").status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 // route to fetch all the file  by studyRoomID
 router.route('/files/:studyRoomID').get(async (req, res) => {
   CourseNotesRepository.findAllbyStudyRoomID(req.params.studyRoomID)
     .then(notes => res.json(notes).status(200))
-    .catch(err => res.status(400).json('Error: ' + err));
+    .catch(err => res.status(400).json(err));
 })
 
 

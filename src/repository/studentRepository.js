@@ -1,5 +1,6 @@
 const Student = require('../models/student.model');
 const { createStudent } = require("../factory/studentFactory");
+const StudentValidator = require('../validator/studentValidator')
 
 module.exports = class StudentRepository {
 
@@ -10,13 +11,17 @@ module.exports = class StudentRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
-            createStudent(data).then((newStudent) => {
-                newStudent.save((err, student) => {
-                    if (err) { reject(err); }
-                    resolve(student);
+            StudentValidator.validateCreateData(data).then(() => {
+                createStudent(data).then((newStudent) => {
+                    newStudent.save((err, student) => {
+                        if (err) { reject(err); }
+                        resolve(student);
+                    })
                 })
             })
+                .catch(errs => reject(errs))
         })
+
     }
 
     /**
@@ -112,51 +117,38 @@ module.exports = class StudentRepository {
 
     /**
      * Update a student by saving it to the database.
-     * @param {*} student An updated student object.
+     * @param {Student} student An updated student object.
      * @returns Returns a promise. Resolves with the updated student.
      */
-    static updateOne(student) {
-        return new Promise((resolve, reject) => {
-            student.save((err, student) => {
-                if (err) { reject(err); }
-                resolve(student);
-            })
+    static async updateOne(student) {
+        return await new Promise((resolve, reject) => {
+            StudentValidator.validateUpdateData(student)
+                .then(() => {
+                    student.save((err, student) => {
+                        if (err) { reject(err); }
+                        resolve(student);
+                    })
+                })
+                .catch(errs => reject(errs))
+
         })
     }
 
     /**
-     * Update a student's sent friend requests.
-     * @param {string} username The username of the student.
-     * @param {[string]} friendRequestsSent The array of usernames who have been sent a friend request.
-     * @returns Returns a promise. Resolves with the updated student.
+     * Update a student's friend list
+     * @param {string} email The email of the student to update
+     * @param {[string]} updatedFriendList The updated friend list
+     * @returns {Student} Returns a promise. Resolves with the updated student.
      */
-    static updateFriendRequestSent(username, friendRequestsSent) {
-        Student.updateOne(
-            { username: username },
-            { friendRequestsSent: friendRequestsSent },
-            (err, docs) => {
-                if (err) { reject(err); }
-                resolve(docs)
-            },
-        );
+    static async updateFriendList(email, updatedFriendList) {
+        return await new Promise((resolve, reject) => {
+            Student.updateOne({ email: email.toString() }, {
+                friends: updatedFriendList
+            }).then((student) => { resolve(student) })
+                .catch((err) => reject(err))
+        })
     }
 
-    /**
-     * Update a student's received friend requests'.
-     * @param {string} username The username of the student.
-     * @param {[string]} friendRequestsReceived The array of usernames who have sent a friend request.
-     * @returns Returns a promise. Resolves with the updated student.
-     */
-    static updateFriendRequestReceived(username, friendRequestsReceived) {
-        Student.updateOne(
-            { username: username },
-            { friendRequestsReceived: friendRequestsReceived },
-            (err, docs) => {
-                if (err) { reject(err); }
-                resolve(docs)
-            },
-        );
-    }
 
     /**
      * Update a student's studyRooms
@@ -164,14 +156,51 @@ module.exports = class StudentRepository {
      * @param {[string]} studyRooms An array of participant emails.
      * @returns {Student}  Returns a promise. Resolves with the updated student.
      */
-    static updateStudyRooms(email, studyRooms) {
-        return new Promise((resolve, reject) => {
+    static async updateStudyRooms(email, studyRooms) {
+        return await new Promise((resolve, reject) => {
             Student.updateOne(
-                { email: email },
+                { email: email.toString() },
                 { studyRooms: studyRooms })
                 .then((student) => { resolve(student); })
                 .catch(err => reject(err))
         })
+    }
+
+    /**
+     * Add a student1 to a student2 friend list.
+     * @param {string} email1 student email to update
+     * @param {string} email2 student email added to friend list
+     * @returns {Student} Returns a promise. Resolves with the updated student.
+     */
+    static async addToFriendList(email1, email2) {
+        return await new Promise(async (resolve, reject) => {
+            Student.findOne({ email: email1 })
+                .then((student) => {
+                    student.friends.push(email2);
+                    student.save()
+                        .then((student) => resolve(student))
+                        .catch((err) => reject(err))
+                })
+                .catch((err) => reject(err))
+
+        })
+    }
+
+    /**
+     * Validate if a student1 is part of student 2 friend list.
+     * @param {string} student1 student email to validate
+     * @param {string} student2 student email to be checked in the friend list
+     * @returns {Boolean} true if student2 is part of student1 friend list, false otherwise
+     */
+    static async isInFriendList(student1, student2) {
+        return await new Promise(async (resolve, reject) => {
+            Student.findOne({ email: student1.toString() })
+                .then((res) => {
+                    resolve(res != null && res.friends.some((friend) => friend === student2))
+                })
+                .catch(() => reject(false))
+        })
+
     }
 
 }

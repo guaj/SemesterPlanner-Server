@@ -125,7 +125,7 @@ router.route('/importantdates/').get(async (req, res) => {
     console.info(`Important dates requested.`)
 
     OpenDataImportantDateRepository.getAllImportantDates().then((importantDates) => {
-        res.json(importantDates).status(200);
+        res.status(200).json(importantDates);
         console.info(`Important dates returned.`);
     }).catch((err) => {
         console.error(err);

@@ -4,15 +4,24 @@ const { v4: uuidv4 } = require('uuid');
 function createEvent(data) {
     const eventID = uuidv4();
     const username = data.username;
-    const eventHeader = data.eventHeader;
-    const description = data.description;
+    let eventHeader = "Unnamed Event"; // default title
+    if (data.eventHeader) {
+        eventHeader = data.eventHeader;
+    }
+    let description = "An event."; // default description
+    if (data.description) {
+        description = data.description;
+    }
     const link = data.link;
-    const startDate = data.startDate;
-    const endDate = data.endDate;
-    const startTime = data.startTime;
-    const endTime = data.endTime;
-    const reccurence = data.reccurence;
-    const color = data.color;
+    const startDate = new Date(data.startDate);
+    const endDate = new Date(data.endDate);
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
+    const recurrence = data.recurrence;
+    let color = '#808080'; // default gray color
+    if (data.color) {
+        color = data.color;
+    }
     return new Event({
         eventID,
         username,
@@ -23,7 +32,7 @@ function createEvent(data) {
         endDate,
         startTime,
         endTime,
-        reccurence,
+        recurrence: recurrence,
         color
     })
 }
