@@ -10,7 +10,10 @@ const router = require('express').Router();
 const Multer = require('multer');
 // create multer instance
 const multer = Multer({
-    storage: Multer.memoryStorage()
+    storage: Multer.memoryStorage(),
+    limits: {
+        fileSize: 8000000
+    }
 });
 
 const config = {
@@ -30,7 +33,6 @@ router.route("/url/").post((req, res) => {
     tesseract
         .recognize(imgUrl, config)
         .then((text) => {
-            console.log("Result:", text);
             res.json(text).status(200);
         })
         .catch((error) => {
@@ -42,7 +44,7 @@ router.route("/url/").post((req, res) => {
 /**
  * Route that obtains text from an image file
  * @param {file} img, image file from which text will be extracted; pass the image under the field name 'img'
- * as **form-data**, not x-www-form-urlencoded
+ * as **form-data**, NOT x-www-form-urlencoded
  * @returns {String}, text from the image url provided
  */
 router.route("/img/").post(multer.single("img"), (req, res) => {
@@ -51,7 +53,6 @@ router.route("/img/").post(multer.single("img"), (req, res) => {
     tesseract
         .recognize(img.buffer, config)
         .then((text) => {
-            console.log("Result:\n", text);
             res.json(text).status(200);
         })
         .catch((error) => {
