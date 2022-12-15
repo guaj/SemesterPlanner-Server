@@ -10,7 +10,7 @@ const router = require('express').Router();
 const Multer = require('multer');
 // create multer instance
 const multer = Multer({
-    storage: Multer.memoryStorage(),
+    dest: "tmp/imgs",
     limits: {
         fileSize: 8000000
     }
@@ -51,7 +51,7 @@ router.route("/img/").post(multer.single("img"), (req, res) => {
     const img = req.file;
 
     tesseract
-        .recognize(img.buffer, config)
+        .recognize(img.path, config)
         .then((text) => {
             res.json(text).status(200);
         })
