@@ -4,10 +4,11 @@
  * Requires restart of IDE!
  */
 
-const tesseract = require("node-tesseract-ocr")
+const tesseract = require("node-tesseract-ocr");
 const router = require('express').Router();
-
+const fs = require('fs');
 const Multer = require('multer');
+
 // create multer instance
 const multer = Multer({
     dest: "tmp/imgs",
@@ -58,7 +59,12 @@ router.route("/img/").post(multer.single("img"), (req, res) => {
         .catch((error) => {
             console.log(error.message)
             res.json(error.message).status(400);
-        })
+        }).finally(() => {
+        fs.unlink(img.path, (err) => {
+            if (err)
+                console.log(err);
+        });
+    })
 })
 
 module.exports = router;
