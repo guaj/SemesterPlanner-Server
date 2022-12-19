@@ -6,7 +6,7 @@ function createUser() {
     "faculty": "encs",
     "email": (Math.random() + 8).toString(36).substring(2) + "@test.ca",
     "program": "coen",
-    "privateProfile": "true"
+    "privateProfile": true
   }
 
 }

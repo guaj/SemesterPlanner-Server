@@ -19,7 +19,8 @@ module.exports = class StudentValidator {
             if (data.password == undefined || data.password == "") {
                 res.errors.push('Missing password');
             }
-            if (data.privateProfile != 'true' && data.privateProfile != 'false' && data.privateProfile != undefined) {
+            console.log(data.privateProfile)
+            if (data.privateProfile != true && data.privateProfile != false && data.privateProfile != undefined) {
                 res.errors.push('Invalid parameter for privateProfile (should be true or false)');
             }
 
@@ -52,7 +53,7 @@ module.exports = class StudentValidator {
         return new Promise((resolve, reject) => {
             let res = { 'errors': [] };
 
-            if ((student.privateProfile.toString() != 'true' && student.privateProfile.toString() != 'false') || (student.privateProfile == undefined || student.privateProfile == '')) {
+            if ((student.privateProfile != true && student.privateProfile != false) || (student.privateProfile == undefined || student.privateProfile == '')) {
                 res.errors.push('Invalid parameter for privateProfile (should be true or false)')
             }
 

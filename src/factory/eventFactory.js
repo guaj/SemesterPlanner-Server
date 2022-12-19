@@ -22,6 +22,12 @@ function createEvent(data) {
     if (data.color) {
         color = data.color;
     }
+    let type = 'event'
+    if (data.type) {
+        type = data.type
+    }
+    const subject = data.subject;
+    const catalog = data.catalog;
     return new Event({
         eventID,
         username,
@@ -33,7 +39,10 @@ function createEvent(data) {
         startTime,
         endTime,
         recurrence: recurrence,
-        color
+        color,
+        type,
+        subject,
+        catalog
     })
 }
 

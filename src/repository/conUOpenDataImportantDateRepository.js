@@ -1,4 +1,4 @@
-const {createOpenDataImportantDate} = require("../factory/conUOpenDataImportantDateFactory");
+const { createOpenDataImportantDate } = require("../factory/conUOpenDataImportantDateFactory");
 const OpenDataImportantDate = require('../models/conUOpenDataImportantDate.model');
 const got = require('got');
 const cheerio = require("cheerio");
@@ -109,7 +109,7 @@ module.exports = class OpenDataImportantDateRepository {
      */
     static batchCreateImportantDate(importantDateData) {
         return new Promise((resolve, reject) => {
-            OpenDataImportantDate.collection.insertMany(importantDateData, (err, docs) => {
+            OpenDataImportantDate.insertMany(importantDateData, (err, docs) => {
                 if (err) {
                     reject(err);
                 } else {
@@ -129,7 +129,7 @@ module.exports = class OpenDataImportantDateRepository {
             this.dropTable().then((res) => {
                 console.info("— [INFO][COLLECTION DROP] opendataimportantdates collection dropped: " + res);
                 this.batchCreateImportantDate(result).then((res) => {
-                    console.info('+ [INFO][REFRESH COMPLETE] %d courses were successfully added to opendataimportantdates collection.', res.insertedCount);
+                    console.info('+ [INFO][REFRESH COMPLETE] %d courses were successfully added to opendataimportantdates collection.', res.length);
                 }).catch((err) => {
                     console.error(err);
                     console.error('[ERR][REFRESH FAILED]: Could not insert data into the opendataimportantdates collection.');

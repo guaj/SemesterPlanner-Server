@@ -152,8 +152,8 @@ module.exports = class StudentRepository {
 
     /**
      * Update a student's studyRooms
-     * @param {string} email The studyRoomID of the studyRoom.
-     * @param {[string]} studyRooms An array of participant emails.
+     * @param {string} email The email of the student.
+     * @param {[string]} studyRooms An array of studyroomIDs.
      * @returns {Student}  Returns a promise. Resolves with the updated student.
      */
     static async updateStudyRooms(email, studyRooms) {
@@ -161,6 +161,22 @@ module.exports = class StudentRepository {
             Student.updateOne(
                 { email: email.toString() },
                 { studyRooms: studyRooms })
+                .then((student) => { resolve(student); })
+                .catch(err => reject(err))
+        })
+    }
+
+    /**
+     * Update a student's courses
+     * @param {string} username The username of the student.
+     * @param {[String]} courses An array of course objects.
+     * @returns {Student}  Returns a promise. Resolves with the updated student.
+     */
+    static async updateCourses(username, courses) {
+        return await new Promise((resolve, reject) => {
+            Student.updateOne(
+                { username: username.toString() },
+                { courses: courses })
                 .then((student) => { resolve(student); })
                 .catch(err => reject(err))
         })

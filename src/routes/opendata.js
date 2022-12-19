@@ -11,12 +11,14 @@ const router = require('express').Router();
 if (process.env.npm_config_odrefresh === "true")
     setInterval(
         function openDataRefresh() {
+            console.log('Refreshing OpenData database.')
             OpenDataFacultyRepository.refreshFacultyData();
             OpenDataCourseRepository.refreshCourseData();
             OpenDataImportantDateRepository.refreshImportantDateData();
 
             return openDataRefresh;
         }(), (process.env.npm_config_odrefreshinterval && Number.isInteger(Number(process.env.npm_config_odrefreshinterval) && Number(process.env.npm_config_odrefreshinterval) <= 24) ? (Number(process.env.npm_config_odrefreshinterval) * 86400000) : 86400000));
+
 
 /**
  * add a faculty to a department
@@ -104,7 +106,7 @@ router.route('/course/:courseCode').get(async (req, res) => {
  * find a specific course by course code and course number
  * @param {String} courseCode: passed in URL correspond to the course code (eg. ENCS, SOEN, ENGR)
  * @param {String, Integer} courseNumber: passed in URL correspond to the course number (eg. 282, 490, 301)
- * @returns {[Course]} Returns an array containing a Course record associated with the courseCode and courseNumber param.
+ * @returns {[Course]} Returns a Course record associated with the courseCode and courseNumber param.
  */
 router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
     const courseCode = req.params.courseCode.toString();
@@ -113,6 +115,24 @@ router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
         .then((course) => {
             res.json(course).status(200);
             console.info(`Record of course with course \'${courseCode} ${courseNumber}\' fetched:\n` + course + "\n")
+        })
+        .catch(err => res.status(400).json('Error: ' + err));
+})
+
+/**
+ * Get the amount of study hours of a specific course by course code and course number
+ * @param {String} courseCode: passed in URL correspond to the course code (eg. ENCS, SOEN, ENGR)
+ * @param {String, Integer} courseNumber: passed in URL correspond to the course number (eg. 282, 490, 301)
+ * @returns {[Course]} Returns a Course record associated with the courseCode and courseNumber param.
+ */
+router.route('/course/studyhours/:courseCode/:courseNumber').get(async (req, res) => {
+    const courseCode = req.params.courseCode.toString();
+    const courseNumber = req.params.courseNumber.toString();
+    OpenDataCourseRepository.findByCourseCodeAndNumber(courseCode, courseNumber)
+        .then((course) => {
+            console.info(`Record of course with course \'${courseCode} ${courseNumber}\' fetched:\n` + course + "\n")
+            let studyHours = parseFloat(course.classUnit) * 1.5;
+            res.status(200).json({ 'studyHours': studyHours });
         })
         .catch(err => res.status(400).json('Error: ' + err));
 })
