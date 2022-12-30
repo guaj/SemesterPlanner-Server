@@ -5,6 +5,7 @@ const util = require('util');
 
 // makes the asynchronous fs.readFile(...) method return a promise; the use of asynchronous fs.readFile(...) instead
 // of synchronous fs.readFileSync(...) for scalability and performance improvement
+
 const readFile = util.promisify(fs.readFile);
 
 module.exports = class CourseNotesRepository {
