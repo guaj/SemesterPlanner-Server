@@ -25,10 +25,7 @@ function createCourseNotes(data) {
         filetype: data.file.mimetype,
         filename: data.file.originalname,
         filesize: data.file.size / 1024,
-        file: {
-            data: filedata,
-            contentType: data.file.mimetype
-        }
+        bufferedFile: filedata
     })
 }
 

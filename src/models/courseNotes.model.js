@@ -9,12 +9,7 @@ const courseNotesSchema = new Schema({
     filetype: { type: String, required: true },
     filename: { type: String, required: true },
     filesize: { type: String, required: true },
-    file: {
-        data: Buffer,
-        ContentType: String
-    }
-
-
+    bufferedFile: {type: Buffer, required: true}
 }, { timestamps: true })
 
 const CourseNotes = mongoose.model('CourseNotes', courseNotesSchema);
