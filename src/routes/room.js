@@ -4,6 +4,15 @@ const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentRepository = require('../repository/studentRepository');
 const StudyRoomValidator = require('../validator/roomValidator')
 
+const Multer = require('multer');
+
+// create multer instance
+const multer = Multer({
+    dest: "tmp/files",
+    limits: {
+        fileSize: 8000000
+    }
+});
 
 router.route('/').put((req, res) => {
   StudyRoomRepository.findOne(req.body.studyRoomID)
@@ -165,24 +174,14 @@ router.route('/').delete(async (req, res) => {
     .catch(err => res.status(400).json(err));
 })
 
-
-const Multer = require('multer');
-
-// create multer instance
-const multer = Multer({
-    dest: "tmp/files",
-    limits: {
-        fileSize: 8000000
-    }
-});
-
-// upload a file to the database  file needs to be transformed to a buffer be being sent
-// the user should send the ID of the study room, 
+// upload a file to the database;  file must be sent as multipart form request
+// the user should send the study room ID and the file owner email under the 'studyRoomID' and 'email' parameters
+// in the request
 router.route("/file").post(multer.single("file"), (req, res) => {
     req.body.file = req.file
 
     CourseNotesRepository.create(req.body)
-        .then(() => res.json("successfully uploaded").status(201))
+        .then(() => res.status(201).json("successfully uploaded"))
         .catch(err => res.status(400).json(err));
 });
 
