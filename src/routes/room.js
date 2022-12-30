@@ -177,10 +177,10 @@ router.route('/').delete(async (req, res) => {
 // upload a file to the database;  file must be sent as multipart form request
 // the user should send the study room ID and the file owner email under the 'studyRoomID' and 'email' parameters
 // in the request
-router.route("/file").post(multer.single("file"), (req, res) => {
+router.route("/file").post(multer.single("file"), async (req, res) => {
     req.body.file = req.file
 
-    CourseNotesRepository.create(req.body)
+    await CourseNotesRepository.create(req.body)
         .then(() => res.status(201).json("successfully uploaded"))
         .catch(err => res.status(400).json(err));
 });
