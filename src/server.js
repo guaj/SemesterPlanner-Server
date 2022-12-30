@@ -24,7 +24,7 @@ app.set('socketio', io);
 
 // Middlewares
 app.use(cors());
-app.use(express.json());    // Allows us to parse json for our Mongo DB
+app.use(express.json({limit: '50mb'}));    // Allows us to parse json for our Mongo DB
 app.use(bodyParser.urlencoded({
   extended: true
 }));
