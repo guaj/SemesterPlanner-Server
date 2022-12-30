@@ -1,7 +1,25 @@
 const CourseNotes = require('../models/courseNotes.model');
 const createCourseNotes = require("../factory/courseNotesFactory");
+const fs = require('fs');
+
 
 module.exports = class CourseNotesRepository {
+
+    static getBufferedFile(data) {
+        let fileData;
+
+        try {
+            fileData = fs.readFileSync(data.file.path);
+            return fileData;
+        } catch (e) {
+            console.log(e);
+        } finally {
+            fs.unlink(data.file.path, (err) => {
+                if (err)
+                    console.log(err);
+            });
+        }
+    }
 
     /**
      * Create an event.
@@ -10,6 +28,7 @@ module.exports = class CourseNotesRepository {
      */
     static create(data) {
         return new Promise((resolve, reject) => {
+            data.bufferedFile = this.getBufferedFile(data);
             const newCourseNotes = createCourseNotes(data)
             newCourseNotes.save((err, event) => {
                 if (err) { reject(err); }
@@ -48,7 +67,7 @@ module.exports = class CourseNotesRepository {
 
     /**
      * Delete one courseNotes by its courseNotesID.
-     * @param {string} courseNotesID The courseNotesID of the courseNotes.
+     * @param {string} courseNoteID The courseNotesID of the courseNotes.
      * @returns {number} Returns a promise. Resolves with the number of courseNotes deleted (1 or 0).
      */
     static deleteOne(courseNoteID) {

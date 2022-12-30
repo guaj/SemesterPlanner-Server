@@ -170,7 +170,7 @@ const Multer = require('multer');
 
 // create multer instance
 const multer = Multer({
-    dest: "tmp/imgs",
+    dest: "tmp/files",
     limits: {
         fileSize: 8000000
     }
