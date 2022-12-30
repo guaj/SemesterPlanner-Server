@@ -166,23 +166,35 @@ router.route('/').delete(async (req, res) => {
 })
 
 
+const Multer = require('multer');
+
+// create multer instance
+const multer = Multer({
+    dest: "tmp/imgs",
+    limits: {
+        fileSize: 8000000
+    }
+});
+
 // upload a file to the database  file needs to be transformed to a buffer be being sent
 // the user should send the ID of the study room, 
-router.post('/file', (req, res) => {
-  CourseNotesRepository.create(req.body)
-    .then(() => res.send("successfuly uploaded"))
-    .catch(err => res.status(400).json(err));
+router.route("/file").post(multer.single("file"), (req, res) => {
+    req.body.file = req.file
+
+    CourseNotesRepository.create(req.body)
+        .then(() => res.json("successfully uploaded").status(201))
+        .catch(err => res.status(400).json(err));
 });
 
 // get file BY courseNoteID
-router.route('/file/:courseNotesID').get(async (req, res) => {
-  CourseNotesRepository.findOne(req.params.courseNotesID)
+router.route('/file/:courseNoteID').get(async (req, res) => {
+    CourseNotesRepository.findOne(req.params.courseNoteID)
     .then(note => res.json(note).status(200))
     .catch(err => res.status(400).json(err));
 })
 
-router.route('/file/:courseNotesID').delete(async (req, res) => {
-  CourseNotesRepository.deleteOne(req.params.courseNotesID)
+router.route('/file/:courseNoteID').delete(async (req, res) => {
+  CourseNotesRepository.deleteOne(req.params.courseNoteID)
     .then(status => res.json("deleted " + status + " file").status(200))
     .catch(err => res.status(400).json(err));
 })

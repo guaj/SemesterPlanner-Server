@@ -34,12 +34,12 @@ module.exports = class CourseNotesRepository {
 
     /**
      * Find one courseNotes by its courseNotesID.
-     * @param {*} courseNotesID The courseNotesID of the courseNotes.
+     * @param {*} courseNoteID The courseNotesID of the courseNotes.
      * @returns {CourseNotes} Returns a promise. Resolves with a courseNotes.
      */
-    static findOne(courseNotesID) {
+    static findOne(courseNoteID) {
         return new Promise((resolve, reject) => {
-            CourseNotes.findOne({ courseNotesID: courseNotesID.toString() }).then((courseNotes) => {
+            CourseNotes.findOne({ courseNoteID: courseNoteID.toString() }).then((courseNotes) => {
                 resolve(courseNotes);
             })
                 .catch(err => reject(err))
@@ -51,9 +51,9 @@ module.exports = class CourseNotesRepository {
      * @param {string} courseNotesID The courseNotesID of the courseNotes.
      * @returns {number} Returns a promise. Resolves with the number of courseNotes deleted (1 or 0).
      */
-    static deleteOne(courseNotesID) {
+    static deleteOne(courseNoteID) {
         return new Promise((resolve, reject) => {
-            CourseNotes.deleteOne({ courseNotesID: courseNotesID.toString() })
+            CourseNotes.deleteOne({ courseNoteID: courseNoteID.toString() })
                 .then((status) => {
                     resolve(status.deletedCount);
                 })
