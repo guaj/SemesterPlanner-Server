@@ -42,7 +42,16 @@ module.exports = class CourseNotesRepository {
     static findAllbyStudyRoomID(studyRoomID) {
         return new Promise((resolve, reject) => {
             CourseNotes.find({studyRoomID: studyRoomID.toString()}).then((courseNotes) => {
-                resolve(courseNotes);
+                // stringify then parse the resulting document to properly recognise it as a json for manipulation
+                // using the map function
+                courseNotes = JSON.stringify(courseNotes);
+                courseNotes = JSON.parse(courseNotes);
+
+                //removing the bufferedFile attribute from the resulting file list
+                let newCourseNotes = courseNotes.map(({bufferedFile, ...remainingCourseNotesAttrs}) => {
+                    return remainingCourseNotesAttrs;
+                })
+                resolve(newCourseNotes);
             })
                 .catch(err => reject(err))
         })
