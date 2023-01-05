@@ -12,8 +12,11 @@ module.exports = class EventRepository {
     static create(data) {
         return new Promise((resolve, reject) => {
             EventValidator.validatePreCreateData(data).then(() => {
+                console.log(data)
                 const newEvent = createEvent(data)
+                console.log(newEvent)
                 EventValidator.validateCreateData(newEvent).then(() => {
+                    console.log("in validateCreateData")
                     newEvent.save((err, event) => {
                         if (err) { reject(err); }
                         resolve(event);
