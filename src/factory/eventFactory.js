@@ -15,8 +15,8 @@ function createEvent(data) {
     const link = data.link;
     const startDate = new Date(data.startDate);
     const endDate = new Date(data.endDate);
-    const startTime = new Date().setHours(data.startTime.split(':')[0], data.startTime.split(':')[1]);
-    const endTime = new Date().setHours(data.endTime.split(':')[0], data.endTime.split(':')[1]);
+    const startTime = new Date(data.startTime);
+    const endTime = new Date(data.endTime);
     const recurrence = data.recurrence;
     let color = '#808080'; // default gray color
     if (data.color) {
