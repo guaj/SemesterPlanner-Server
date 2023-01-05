@@ -33,7 +33,7 @@ router.route('/:eventID').delete((req, res) => {
                 if (courses.length === 0) {
                     let student = await StudentRepository.findOneByUsername(event.username);
                     let studentCourses = student.courses;
-                    let index = studentCourses.findIndex(function (course, i) {
+                    let index = studentCourses.findIndex(function (course) {
                         return (course.subject === event.subject && course.catalog === event.catalog);
                     });
                     studentCourses.splice(index, 1);
@@ -61,16 +61,16 @@ router.route('/update').post(async (req, res) => {
                 event.link = req.body.link;
             }
             if (req.body.startDate) {
-                event.startDate = Date(req.body.startDate);
+                event.startDate = new Date(req.body.startDate);
             }
             if (req.body.endDate) {
-                event.endDate = Date(req.body.endDate);
+                event.endDate = new Date(req.body.endDate);
             }
             if (req.body.startTime) {
-                event.startTime = Date(req.body.startTime);
+                event.startTime = new Date(req.body.startTime);
             }
             if (req.body.endTime) {
-                event.endTime = Date(req.body.endTime);
+                event.endTime = new Date(req.body.endTime);
             }
             if (req.body.reccurence) {
                 event.reccurence = req.body.reccurence;
