@@ -178,7 +178,7 @@ router.route('/courses/:email').get((req, res) => {
             for (let course of courses) {
                 courseNames.push({ 'subject': course.subject, 'catalog': course.catalog, 'title': course.title })
             }
-            res.status(200).json({ 'courses': courseNames })
+            res.status(200).json({ 'courses': courses })
         })
         .catch(err => res.status(400).json(err));
 });
