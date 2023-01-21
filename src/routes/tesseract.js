@@ -54,10 +54,22 @@ router.route("/img/").post(multer.single("img"), (req, res) => {
     tesseract
         .recognize(img.path, config)
         .then((text) => {
-            res.json(text).status(200);
+            if (text && text.includes(":")) { // try to format the text extracted from the image into a json object
+                text = "event name: test event\r\ndescription: test description\r\nstart date:\r\n";
+                let formattedText = '{\"' + text.trim().split('\r\n').map((item) => {
+                    return item.trim();
+                }).join('\",\"').split(':').map((item) => {
+                    return item.trim();
+                }).join('\":\"') + '\"}';
+                res.json(JSON.parse(formattedText)).status(200);
+            } else {
+                const temp = text;
+                text = {};
+                text["event description"] = temp;
+                res.json(text).status(200); // respond with image text if it does not seem to contain key value pairs
+            }
         })
         .catch((error) => {
-            console.log(error.message)
             res.json(error.message).status(400);
         }).finally(() => {
         fs.unlink(img.path, (err) => {
