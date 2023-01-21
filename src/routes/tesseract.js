@@ -55,7 +55,6 @@ router.route("/img/").post(multer.single("img"), (req, res) => {
         .recognize(img.path, config)
         .then((text) => {
             if (text && text.includes(":")) { // try to format the text extracted from the image into a json object
-                text = "event name: test event\r\ndescription: test description\r\nstart date:\r\n";
                 let formattedText = '{\"' + text.trim().split('\r\n').map((item) => {
                     return item.trim();
                 }).join('\",\"').split(':').map((item) => {
