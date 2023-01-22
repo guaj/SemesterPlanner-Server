@@ -46,13 +46,13 @@ else {
 }
 
 // Routes
-const studentsRouter = require('../routes/student.js');
-const loginRouter = require('../routes/login.js');
-const roomRouter = require('../routes/room.js');
-const friendRouter = require('../routes/friend.js');
-const messageRouter = require('../routes/message.js')
-const eventsRouter = require('../routes/events.js')
-const openDataRouter = require('../routes/opendata.js')
+const studentsRouter = require('./routes/student.js');
+const loginRouter = require('./routes/login.js');
+const roomRouter = require('./routes/room.js');
+const friendRouter = require('./routes/friend.js');
+const messageRouter = require('./routes/message.js')
+const eventsRouter = require('./routes/events.js')
+const openDataRouter = require('./routes/opendata.js')
 
 app.use('/student', studentsRouter);
 app.use('/login', loginRouter);

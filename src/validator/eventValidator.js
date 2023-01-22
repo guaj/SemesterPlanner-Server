@@ -89,7 +89,12 @@ module.exports = class EventValidator {
             if (data.endTime == undefined || data.endTime == "") {
                 res.errors.push('Missing endTime');
             }
-
+            if (data.actualStartTime == undefined || data.startTime == "") {
+                res.errors.push('Missing startTime');
+            }
+            if (data.actualEndTime == undefined || data.endTime == "") {
+                res.errors.push('Missing endTime');
+            }
             // TO DO: validate times
 
             if (res.errors[0]) {
