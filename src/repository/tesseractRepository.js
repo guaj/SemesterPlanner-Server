@@ -37,6 +37,8 @@ module.exports = class TesseractRepository {
                         if (item.toLowerCase().includes("date") && !formattedText.date)
                             formattedText.date = item
                     }
+
+                    return null;
                 })
                 return formattedText;
             } catch {
