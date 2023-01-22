@@ -55,18 +55,38 @@ router.route("/img/").post(multer.single("img"), (req, res) => {
         .recognize(img.path, config)
         .then((text) => {
             if (text && text.includes(":")) { // try to format the text extracted from the image into a json object
-                let formattedText = '{\"' + text.trim().split('\r\n').map((item) => {
-                    return item.trim();
-                }).join('\",\"').split(':').map((item) => {
-                    return item.trim();
-                }).join('\":\"') + '\"}';
-                res.json(JSON.parse(formattedText)).status(200);
-            } else {
-                const temp = text;
-                text = {};
-                text["event description"] = temp;
-                res.json(text).status(200); // respond with image text if it does not seem to contain key value pairs
+                try {
+                    let formattedText = text.trim().split('\r\n').join(",");
+                    JSON.parse(JSON.stringify(formattedText));
+                    let temp = formattedText.split(',');
+                    formattedText = {};
+                    temp.map((item) => {
+                        if (item.includes(":")) {
+                            if (item.split(":")[0].toLowerCase().includes("name") && !formattedText.name)
+                                formattedText.name = item.split(":")[1]
+                            if (item.split(":")[0].toLowerCase().includes("description") && !formattedText.description)
+                                formattedText.description = item.split(":")[1]
+                            if (item.split(":")[0].toLowerCase().includes("date") && !formattedText.date)
+                                formattedText.date = item.split(":")[1]
+                        } else {
+                            if (item.toLowerCase().includes("name") && !formattedText.name)
+                                formattedText.name = item
+                            if (item.toLowerCase().includes("description") && !formattedText.description)
+                                formattedText.description = item
+                            if (item.toLowerCase().includes("date") && !formattedText.date)
+                                formattedText.date = item
+                        }
+                    })
+                    res.json(formattedText).status(200);
+                    return;
+                } catch {
+                }
             }
+
+            const temp = text;
+            text = {};
+            text["description"] = temp.trim().split('\r\n').join(" ");
+            res.json(text).status(200); // respond with image text as description if it does not seem to contain key value pairs
         })
         .catch((error) => {
             res.json(error.message).status(400);
