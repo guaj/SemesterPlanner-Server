@@ -10,7 +10,7 @@ module.exports = class TesseractRepository {
                 let formattedText = text.trim().split('\r\n').join(",");
                 let temp = formattedText.split(',');
                 formattedText = {};
-                temp.map((item) => {
+                temp.forEach((item) => {
                     if (item.includes(":")) {
                         if (item.split(":")[0].toLowerCase().includes("name") && !formattedText.name)
                             formattedText.name = item.split(":")[1].trim();
@@ -37,17 +37,14 @@ module.exports = class TesseractRepository {
                         if (item.toLowerCase().includes("date") && !formattedText.date)
                             formattedText.date = item
                     }
-
-                    return null;
                 })
                 return formattedText;
             } catch {
             }
         }
 
-        const temp = text;
-        text = {};
-        text["description"] = temp.trim().split('\r\n').join(" ");
-        return text; // respond with image text as description if it does not seem to contain key value pairs
+        const temp = {};
+        temp["description"] = text.trim().split('\r\n').join(" ");
+        return temp; // respond with image text as description if it does not seem to contain key value pairs
     }
 }
