@@ -158,7 +158,7 @@ router.route('/studyhours/:email').get((req, res) => {
             let courses = student.courses;
             let totalHours = 0;
             for (let course of courses) {
-                totalHours += parseFloat(course.classUnit) * 1.5;
+                totalHours += parseFloat(course.studyHours);
             }
             res.status(200).json({ 'studyHours': totalHours })
         })
@@ -173,12 +173,7 @@ router.route('/studyhours/:email').get((req, res) => {
 router.route('/courses/:email').get((req, res) => {
     StudentRepository.findOneByEmail(req.params.email)
         .then((student) => {
-            let courses = student.courses;
-            let courseNames = [];
-            for (let course of courses) {
-                courseNames.push({ 'subject': course.subject, 'catalog': course.catalog, 'title': course.title })
-            }
-            res.status(200).json({ 'courses': courseNames })
+            res.status(200).json({ 'courses': student.courses })
         })
         .catch(err => res.status(400).json(err));
 });

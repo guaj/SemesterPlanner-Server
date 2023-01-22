@@ -40,6 +40,7 @@ module.exports = class EventRepository {
     }
 
     /**
+<<<<<<< HEAD
      * Find all events of student.
      * @param {string} username The username of the student.
      * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
@@ -89,6 +90,8 @@ module.exports = class EventRepository {
     }
 
     /**
+=======
+>>>>>>> main
      * Find events by course subject and catalog
      * @param {string} username the username of the student.
      * @param {string} subject The subject of the course.
@@ -127,7 +130,7 @@ module.exports = class EventRepository {
      */
     static deleteOne(eventID) {
         return new Promise((resolve, reject) => {
-            Event.findOneAndDelete({ eventID: eventID.toString() })
+            Event.findOneAndDelete({ _id: eventID.toString() })
                 .then((event) => {
                     resolve(event);
                 })
@@ -142,7 +145,7 @@ module.exports = class EventRepository {
      */
     static updateOne(event) {
         return new Promise((resolve, reject) => {
-            EventValidator.validateCreateData(newEvent).then(() => {
+            EventValidator.validateCreateData(event).then(() => {
                 event.save((err, event) => {
                     if (err) { reject(err); }
                     resolve(event);

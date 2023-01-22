@@ -17,7 +17,7 @@ router.route('/:username').get((req, res) => {
  * Get event by eventId
  */
 router.route('/event/:eventID').get((req, res) => {
-    EventRepository.findOne(req.params.eventID)
+    EventRepository.findOneByID(req.params.eventID)
         .then(event => res.status(200).json(event))
         .catch(err => res.status(400).json('Error: ' + err));
 });
@@ -45,12 +45,12 @@ router.route('/study-events-monthly/:username').get((req, res) => {
 router.route('/:eventID').delete((req, res) => {
     EventRepository.deleteOne(req.params.eventID)
         .then(async (event) => {
-            if (event.type == 'course') {
+            if (event.type === 'course') {
                 let courses = await EventRepository.findByCourse(event.username, event.subject, event.catalog);
-                if (courses.length == 0) {
+                if (courses.length === 0) {
                     let student = await StudentRepository.findOneByUsername(event.username);
                     let studentCourses = student.courses;
-                    let index = studentCourses.findIndex(function (course, i) {
+                    let index = studentCourses.findIndex(function (course) {
                         return (course.subject === event.subject && course.catalog === event.catalog);
                     });
                     studentCourses.splice(index, 1);
@@ -66,7 +66,7 @@ router.route('/:eventID').delete((req, res) => {
  * Update an event
  */
 router.route('/update').post(async (req, res) => {
-    EventRepository.findOne(req.body._id)
+    EventRepository.findOneByID(req.body._id)
         .then((event) => {
             if (req.body.eventHeader) {
                 event.eventHeader = req.body.eventHeader;
@@ -78,16 +78,16 @@ router.route('/update').post(async (req, res) => {
                 event.link = req.body.link;
             }
             if (req.body.startDate) {
-                event.startDate = Date(req.body.startDate);
+                event.startDate = new Date(req.body.startDate);
             }
             if (req.body.endDate) {
-                event.endDate = Date(req.body.endDate);
+                event.endDate = new Date(req.body.endDate);
             }
             if (req.body.startTime) {
-                event.startTime = Date(req.body.startTime);
+                event.startTime = new Date(req.body.startTime);
             }
             if (req.body.endTime) {
-                event.endTime = Date(req.body.endTime);
+                event.endTime = new Date(req.body.endTime);
             }
             if (req.body.reccurence) {
                 event.reccurence = req.body.reccurence;
@@ -109,7 +109,7 @@ router.route('/add').post(async (req, res) => {
     EventRepository.create(req.body)
         .then(async (event) => {
             // Add course to student if doesn't already exist in student's courses list.
-            if (event.type == 'course') {
+            if (event.type === 'course') {
                 let student = await StudentRepository.findOneByUsername(event.username)
                 let courses = student.courses;
                 let conUCourse = await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog)

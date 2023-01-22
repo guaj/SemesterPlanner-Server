@@ -142,11 +142,8 @@ router.route('/course/studyhours/:courseCode/:courseNumber').get(async (req, res
  * @returns {[ImportantDate]} Returns an array with the ImportantDate records.
  */
 router.route('/importantdates/').get(async (req, res) => {
-    console.info(`Important dates requested.`)
-
     OpenDataImportantDateRepository.getAllImportantDates().then((importantDates) => {
         res.status(200).json(importantDates);
-        console.info(`Important dates returned.`);
     }).catch((err) => {
         console.error(err);
         res.status(400).json('Error: ' + err);

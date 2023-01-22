@@ -14,7 +14,7 @@ beforeAll(async () => {
 
     await dbHandler.connect();
     await dbHandler.clearDatabase();
-    await dbHandler.refreshDatabase();
+    await dbHandler.refreshCourseDatabase();
 });
 
 /**
@@ -83,7 +83,7 @@ describe("testing event api routes", () => {
 
     it("get event", async () => {
 
-        await request.get('/events/event/' + event1.eventID)
+        await request.get('/events/event/' + event1._id)
             .expect(200)
             .then((res) => {
                 assert.deepEqual(res.body, event1)
@@ -117,7 +117,7 @@ describe("testing event api routes", () => {
 
     it("get event", async () => {
 
-        await request.get('/events/event/' + event2.eventID)
+        await request.get('/events/event/' + event2._id)
             .expect(200)
             .then((res) => {
                 assert.deepEqual(res.body, event2)
