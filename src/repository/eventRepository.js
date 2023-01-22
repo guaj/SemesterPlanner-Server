@@ -47,10 +47,25 @@ module.exports = class EventRepository {
     static findWeeklyCourseEventsByUsername(username) {
         const today = new Date()
         const oneWeek = new Date()
-        oneWeek.setDate(today.getDate() + 7)
+        
+        oneWeek.setDate(today.getDate() - 7)
 
         return new Promise((resolve, reject) => {
-            Event.find({ username: username.toString(), type: 'course', startDate: { '$gte': today, '$lte': oneWeek } }).then((events) => {
+            Event.find({ username: username.toString(), type: 'course', startDate: { '$gte':oneWeek, '$lte':today } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
+    static findMonthlyCourseEventsByUsername(username) {
+        const today = new Date()
+        const oneWeek = new Date()
+        
+        oneWeek.setDate(today.getDate() - 30)
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), type: 'course', startDate: { '$gte':oneWeek, '$lte':today } }).then((events) => {
                 resolve(events);
             })
                 .catch(err => reject(err))
