@@ -40,7 +40,6 @@ module.exports = class EventRepository {
     }
 
     /**
-<<<<<<< HEAD
      * Find all events of student.
      * @param {string} username The username of the student.
      * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
@@ -90,8 +89,6 @@ module.exports = class EventRepository {
     }
 
     /**
-=======
->>>>>>> main
      * Find events by course subject and catalog
      * @param {string} username the username of the student.
      * @param {string} subject The subject of the course.

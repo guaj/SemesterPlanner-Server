@@ -19,10 +19,7 @@ module.exports = class StudentValidator {
             if (data.password == undefined || data.password == "") {
                 res.errors.push('Missing password');
             }
-<<<<<<< HEAD
-=======
             console.log(data.privateProfile)
->>>>>>> main
             if (data.privateProfile != true && data.privateProfile != false && data.privateProfile != undefined) {
                 res.errors.push('Invalid parameter for privateProfile (should be true or false)');
             }
