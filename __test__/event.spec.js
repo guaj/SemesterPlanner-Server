@@ -152,6 +152,8 @@ describe("testing event api routes", () => {
                 endDate: new Date(),
                 startTime: new Date(),
                 endTime: new Date(),
+                actualStartTime: new Date(),
+                actualEndTime: new Date(),
                 recurrence: 'once',
                 type: 'course',
                 subject: 'SOEN',
