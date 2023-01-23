@@ -8,9 +8,7 @@ const LoginValidator = require('../validator/loginValidator')
  * Login
  */
 router.post('/', async (request, response) => {
-  console.log()
   const { body } = request;
-  console.log(body)
   LoginValidator.validateLogin(request.body).then(() => {
     // Query MongoDb with email and get matching Student (will be null if none)
     studentRepository.findOneByEmail(body.email).then((user) => {
