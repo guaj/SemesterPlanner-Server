@@ -70,6 +70,8 @@ describe("testing event api routes", () => {
                 description: desc,
                 startDate: new Date(),
                 endDate: new Date(),
+                actualStartTime: new Date(),
+                actualEndTime: new Date(),
                 startTime: new Date(),
                 endTime: new Date(),
                 recurrence: 'once'
