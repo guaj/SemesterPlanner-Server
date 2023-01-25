@@ -72,6 +72,34 @@ module.exports = class EventRepository {
         })
     }
 
+    static findWeeklyEventsByUsername(username) {
+        const today = new Date()
+        const oneWeek = new Date()
+        
+        oneWeek.setDate(today.getDate() - 7)
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), startTime: { '$gte':oneWeek, '$lte':today } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
+    static findMonthlyEventsByUsername(username) {
+        const today = new Date()
+        const oneMonth= new Date()
+        
+        oneMonth.setDate(today.getDate() - 30)
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), startTime: { '$gte':oneMonth, '$lte':today } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
     /**
      * Find one event by its eventID.
      * @param {string} eventID The eventID of the event.

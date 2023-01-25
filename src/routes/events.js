@@ -31,12 +31,22 @@ router.route('/study-events-weekly/:username').get((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/events-weekly/:username').get((req, res) => {
+    EventRepository.findWeeklyEventsByUsername(req.params.username)
+        .then(events => res.status(200).json(events))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
 router.route('/study-events-monthly/:username').get((req, res) => {
     EventRepository.findMonthlyCourseEventsByUsername(req.params.username)
         .then(events => res.status(200).json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/events-monthly/:username').get((req, res) => {
+    EventRepository.findMonthlyEventsByUsername(req.params.username)
+        .then(events => res.status(200).json(events))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
 
 
 /**
