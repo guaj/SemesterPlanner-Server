@@ -44,7 +44,7 @@ module.exports = class EventRepository {
      * @param {string} username The username of the student.
      * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
      */
-    static findWeeklyCourseEventsByUsername(username) {
+    static findWeeklyStudyEventsByUsername(username) {
         const today = new Date()
         const oneWeek = new Date()
         
@@ -58,7 +58,7 @@ module.exports = class EventRepository {
         })
     }
 
-    static findMonthlyCourseEventsByUsername(username) {
+    static findMonthlyStudyEventsByUsername(username) {
         const today = new Date()
         const oneMonth= new Date()
         
