@@ -42,7 +42,7 @@ module.exports = class EventValidator {
                 res.errors.push('Empty type');
             }
             else {
-                if (!['holiday', 'event', 'course', 'workout', 'study', 'meeting'].includes(event.type)) {
+                if (!['holiday', 'event', 'course', 'workout', 'study', 'appointment'].includes(event.type)) {
                     res.errors.push('Invalid recurrence (holiday, event, course)')
                 }
                 else {
