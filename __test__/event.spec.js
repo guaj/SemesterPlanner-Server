@@ -70,8 +70,8 @@ describe("testing event api routes", () => {
                 endDate: new Date(),
                 startTime: new Date(),
                 endTime: new Date(),
-                recurrence: 'once'
-
+                recurrence: 'once',
+                type: 'appointment'
             }
         )
             .expect(200)

@@ -1,4 +1,3 @@
-const Event = require('../models/event.model');
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 
 module.exports = class EventValidator {
@@ -24,13 +23,13 @@ module.exports = class EventValidator {
         return new Promise(async (resolve, reject) => {
             let res = { 'errors': [] };
 
-            if (event.username == undefined || event.username == "") {
+            if (event.username === undefined || event.username === "") {
                 res.errors.push('Missing username');
             }
-            if (event.eventHeader == undefined || event.eventHeader == "") {
+            if (event.eventHeader === undefined || event.eventHeader === "") {
                 res.errors.push('Missing eventHeader');
             }
-            if (event.recurrence == undefined || event.recurrence == "") {
+            if (event.recurrence === undefined || event.recurrence === "") {
                 res.errors.push('Empty recurrence');
             }
             else {
@@ -38,18 +37,23 @@ module.exports = class EventValidator {
                     res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
                 }
             }
-            if (event.type == undefined || event.type == "") {
+            if (event.type === undefined || event.type === "") {
                 res.errors.push('Empty type');
             }
             else {
-                if (!['holiday', 'event', 'course'].includes(event.type)) {
+                if (!['holiday', 'event', 'course', 'study', 'appointment', 'workout'].includes(event.type)) {
                     res.errors.push('Invalid recurrence (holiday, event, course)')
                 }
                 else {
-                    if (event.type == 'course') {
+                    if (event.type === 'course' || event.type === 'study') {
                         if (!(await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog))) {
                             res.errors.push('Invalid course code or number')
+                        } else {
+                            event.subject = event.subject.toUpperCase();
                         }
+                    } else {
+                        event.subject = "";
+                        event.catalog = "";
                     }
                 }
             }
@@ -77,16 +81,16 @@ module.exports = class EventValidator {
     static validatePreCreateData(data) {
         return new Promise(async (resolve, reject) => {
             let res = { 'errors': [] };
-            if (data.startDate == undefined || data.startDate == "") {
+            if (data.startDate === undefined || data.startDate === "") {
                 res.errors.push('Missing startDate');
             }
-            if (data.endDate == undefined || data.endDate == "") {
+            if (data.endDate === undefined || data.endDate === "") {
                 res.errors.push('Missing endDate');
             }
-            if (data.startTime == undefined || data.startTime == "") {
+            if (data.startTime === undefined || data.startTime === "") {
                 res.errors.push('Missing startTime');
             }
-            if (data.endTime == undefined || data.endTime == "") {
+            if (data.endTime === undefined || data.endTime === "") {
                 res.errors.push('Missing endTime');
             }
 
