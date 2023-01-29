@@ -3,6 +3,7 @@ const CourseNotesRepository = require("../repository/courseNotesRepository")
 const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentRepository = require('../repository/studentRepository');
 const StudyRoomValidator = require('../validator/roomValidator')
+const MessageRepository = require('../repository/messageRepository')
 
 
 router.route('/').put((req, res) => {
@@ -155,6 +156,13 @@ router.route('/').delete(async (req, res) => {
         await StudentRepository.updateStudyRooms(participant, studyRooms)
           .catch(err => res.status(400).json(err));
       }
+
+      // Deletes associated messages
+      await MessageRepository.deleteAllFromRoomID(roomID).catch(err => res.status(400).json(err));
+
+      //Deletes associated courseNotes
+      await CourseNotesRepository.deleteAllFromRoomID(roomID).catch(err => res.status(400).json(err));
+
       StudyRoomRepository.deleteOne(roomID)
         .then(status => {
           res.status(200).json("deleted " + status + " room")
