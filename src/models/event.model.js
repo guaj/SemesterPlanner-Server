@@ -10,9 +10,12 @@ const ReccurencyTypes = {
 }
 
 const EventTypes = {
-    HOLIDAY: 'holiday',
-    EVENT: 'event',
-    COURSE: 'course'
+    // HOLIDAY: 'holiday',
+    // EVENT: 'event',
+    COURSE: 'course',
+    WORKOUT:'workout',
+    APPOINTMENT:'appointment',
+    STUDY:'study'
 }
 
 const eventSchema = new Schema({
@@ -29,7 +32,7 @@ const eventSchema = new Schema({
     actualEndTime: { type: Date },
     recurrence: { type: String, enum: ReccurencyTypes, required: true },
     color: { type: String, required: true },
-    type: { type: String, required: true },
+    type: { type: String, enum:EventTypes, required: true },
     subject: { type: String },
     catalog: { type: String },
     data: { type: String }

@@ -105,6 +105,15 @@ router.route('/update').post(async (req, res) => {
             if (req.body.color) {
                 event.color = req.body.color;
             }
+            if (req.body.type) {
+                event.type = req.body.type;
+                event.subject = req.body.subject;
+                event.catalog = req.body.catalog;
+            }
+            if (req.body.actualStartTime)
+                event.actualStartTime = req.body.actualStartTime;
+            if (req.body.actualEndTime)
+                event.actualEndTime = req.body.actualEndTime;
             EventRepository.updateOne(event)
                 .then(() => res.json(event))
                 .catch(err => res.status(400).json('Error: ' + err));

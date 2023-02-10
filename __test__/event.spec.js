@@ -74,8 +74,8 @@ describe("testing event api routes", () => {
                 actualEndTime: new Date(),
                 startTime: new Date(),
                 endTime: new Date(),
-                recurrence: 'once'
-
+                recurrence: 'once',
+                type: 'appointment'
             }
         )
             .expect(200)
