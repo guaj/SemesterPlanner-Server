@@ -35,6 +35,7 @@ const eventSchema = new Schema({
     type: { type: String, enum:EventTypes, required: true },
     subject: { type: String },
     catalog: { type: String },
+    studyHoursConfirmed: {type: Boolean},
     data: { type: String }
 }, {
     timestamps: true,

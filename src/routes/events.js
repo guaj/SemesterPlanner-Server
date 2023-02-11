@@ -114,6 +114,8 @@ router.route('/update').post(async (req, res) => {
                 event.actualStartTime = req.body.actualStartTime;
             if (req.body.actualEndTime)
                 event.actualEndTime = req.body.actualEndTime;
+            if (req.body.studyHoursConfirmed)
+                event.studyHoursConfirmed = req.body.studyHoursConfirmed;
             EventRepository.updateOne(event)
                 .then(() => res.json(event))
                 .catch(err => res.status(400).json('Error: ' + err));

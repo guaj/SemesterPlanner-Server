@@ -30,6 +30,7 @@ function createEvent(data) {
     }
     const subject = data.subject;
     const catalog = data.catalog;
+    const studyHoursConfirmed = false;
     return new Event({
         eventID,
         username,
@@ -46,7 +47,8 @@ function createEvent(data) {
         color,
         type,
         subject,
-        catalog
+        catalog,
+        studyHoursConfirmed
     })
 }
 
