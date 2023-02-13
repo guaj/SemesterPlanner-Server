@@ -48,4 +48,19 @@ module.exports = class MessageRepository {
                 .catch(err => reject(err))
         })
     }
+
+    /**
+     * Delete messages with given studyRoomID
+     * @param {string} studyRoomID The studyRoomID to delete messages from.
+     * @returns {Message} Returns a promise. Resolves with the status of the deletion.
+     */
+    static deleteAllFromRoomID(studyRoomID) {
+        return new Promise((resolve, reject) => {
+            Message.deleteMany({ studyRoomID: studyRoomID })
+                .then((status) => {
+                    resolve(status);
+                })
+                .catch(err => reject(err))
+        })
+    }
 }
