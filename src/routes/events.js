@@ -72,8 +72,8 @@ router.route('/update').post(async (req, res) => {
             if (req.body.endTime) {
                 event.endTime = new Date(req.body.endTime);
             }
-            if (req.body.reccurence) {
-                event.reccurence = req.body.reccurence;
+            if (req.body.recurrence) {
+                event.recurrence = req.body.recurrence;
             }
             if (req.body.color) {
                 event.color = req.body.color;
