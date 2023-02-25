@@ -1,5 +1,7 @@
 const CourseNotes = require('../models/courseNotes.model');
+const CourseNoteData = require('../models/courseNoteData.model');
 const createCourseNotes = require("../factory/courseNotesFactory");
+const createCourseNoteData = require("../factory/courseNoteDataFactory")
 const fs = require('fs');
 const util = require('util');
 
@@ -15,14 +17,19 @@ module.exports = class CourseNotesRepository {
      */
     static create(data) {
         return readFile(data.file.path).then((bufferedFile) => {
-                data.bufferedFile = bufferedFile
                 return new Promise((resolve, reject) => {
                     const newCourseNotes = createCourseNotes(data)
                     newCourseNotes.save((err, event) => {
                         if (err) {
-                            reject(err);
+                            reject("Could not upload file!");
                         }
-                        resolve(event);
+
+                        const courseNoteData = createCourseNoteData(event.courseNoteID, bufferedFile);
+                        courseNoteData.save((err) => {
+                            if (err)
+                                reject("Could not upload file; only file metadata was saved!");
+                            resolve(event);
+                        })
                     })
                 })
             }
@@ -65,9 +72,16 @@ module.exports = class CourseNotesRepository {
     static findOne(courseNoteID) {
         return new Promise((resolve, reject) => {
             CourseNotes.findOne({courseNoteID: courseNoteID.toString()}).then((courseNotes) => {
-                resolve(courseNotes);
-            })
-                .catch(err => reject(err))
+                CourseNoteData.findOne({courseNoteID: courseNoteID.toString()}).then((fileDataBuffer) => {
+                    let updatedCourseNote = JSON.stringify(courseNotes);
+                    updatedCourseNote = JSON.parse(updatedCourseNote);
+                    updatedCourseNote.bufferedFile = fileDataBuffer.bufferedFile;
+
+                    resolve(updatedCourseNote);
+                }).catch(() => {
+                    reject("File not found!")
+                });
+            }).catch(() => reject("File data not found!"))
         })
     }
 
@@ -78,11 +92,14 @@ module.exports = class CourseNotesRepository {
      */
     static deleteOne(courseNoteID) {
         return new Promise((resolve, reject) => {
-            CourseNotes.deleteOne({courseNoteID: courseNoteID.toString()})
-                .then((status) => {
-                    resolve(status.deletedCount);
-                })
-                .catch(err => reject(err))
+            CourseNoteData.deleteOne({courseNoteID: courseNoteID.toString()}).then(() => {
+                CourseNotes.deleteOne({courseNoteID: courseNoteID.toString()})
+                    .then((status) => {
+
+                        resolve(status.deletedCount);
+                    })
+                    .catch(() => reject("Could not delete file metadata!"))
+            }).catch(() => reject("Could not delete file!"))
         })
     }
 }
