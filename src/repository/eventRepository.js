@@ -45,10 +45,10 @@ module.exports = class EventRepository {
      * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
      */
     static findWeeklyStudyEventsByUsername(username) {
-        const today = new Date()
-        const oneWeek = new Date()
+        const today = new Date();
+        const oneWeek = new Date();
         
-        oneWeek.setDate(today.getDate() - 7)
+        oneWeek.setDate(today.getDate() - 7);
 
         return new Promise((resolve, reject) => {
             Event.find({ username: username.toString(), type: 'study', startDate: { '$gte':oneWeek, '$lte':today } }).then((events) => {
@@ -59,10 +59,10 @@ module.exports = class EventRepository {
     }
 
     static findMonthlyStudyEventsByUsername(username) {
-        const today = new Date()
-        const oneMonth= new Date()
+        const today = new Date();
+        const oneMonth= new Date();
         
-        oneMonth.setDate(today.getDate() - 30)
+        oneMonth.setDate(today.getDate() - 30);
 
         return new Promise((resolve, reject) => {
             Event.find({ username: username.toString(), type: 'study', startDate: { '$gte':oneMonth, '$lte':today } }).then((events) => {
@@ -73,10 +73,10 @@ module.exports = class EventRepository {
     }
 
     static findWeeklyEventsByUsername(username) {
-        const today = new Date()
-        const oneWeek = new Date()
+        const today = new Date();
+        const oneWeek = new Date();
         
-        oneWeek.setDate(today.getDate() - 7)
+        oneWeek.setDate(today.getDate() - 7);
 
         return new Promise((resolve, reject) => {
             Event.find({ username: username.toString(), startDate: { '$gte':oneWeek, '$lte':today } }).then((events) => {
@@ -87,10 +87,10 @@ module.exports = class EventRepository {
     }
 
     static findMonthlyEventsByUsername(username) {
-        const today = new Date()
-        const oneMonth= new Date()
+        const today = new Date();
+        const oneMonth= new Date();
         
-        oneMonth.setDate(today.getDate() - 30)
+        oneMonth.setDate(today.getDate() - 30);
 
         return new Promise((resolve, reject) => {
             Event.find({ username: username.toString(), startDate: { '$gte':oneMonth, '$lte':today } }).then((events) => {
