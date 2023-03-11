@@ -60,4 +60,19 @@ module.exports = class CourseNotesRepository {
                 .catch(err => reject(err))
         })
     }
+
+    /**
+     * Delete courseNotes with given studyRoomID
+     * @param {string} studyRoomID The studyRoomID to delete messages from.
+     * @returns {Message} Returns a promise. Resolves with the status of the deletion.
+     */
+    static deleteAllFromRoomID(studyRoomID) {
+        return new Promise((resolve, reject) => {
+            CourseNotes.deleteMany({ studyRoomID: studyRoomID })
+                .then((status) => {
+                    resolve(status);
+                })
+                .catch(err => reject(err))
+        })
+    }
 }
