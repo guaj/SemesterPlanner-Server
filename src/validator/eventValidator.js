@@ -66,6 +66,8 @@ module.exports = class EventValidator {
             if (event.description.length > 2048) {
                 res.errors.push('event description length exceeds 2048 characters');
             }
+            if (event.studyHoursConfirmed !== true && event.studyHoursConfirmed !== false)
+                res.errors.push('Invalid value for parameter studyHoursConfirmed: value must be boolean')
             if (res.errors[0]) {
                 reject(res);
             }

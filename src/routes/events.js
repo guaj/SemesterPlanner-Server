@@ -23,6 +23,33 @@ router.route('/event/:eventID').get((req, res) => {
 });
 
 /**
+ * Get course events of a certain student within a week
+ */
+router.route('/study-events-weekly/:username').get((req, res) => {
+    EventRepository.findWeeklyStudyEventsByUsername(req.params.username)
+        .then(events => res.status(200).json(events))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/events-weekly/:username').get((req, res) => {
+    EventRepository.findWeeklyEventsByUsername(req.params.username)
+        .then(events => res.status(200).json(events))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+router.route('/study-events-monthly/:username').get((req, res) => {
+    EventRepository.findMonthlyStudyEventsByUsername(req.params.username)
+        .then(events => res.status(200).json(events))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/events-monthly/:username').get((req, res) => {
+    EventRepository.findMonthlyEventsByUsername(req.params.username)
+        .then(events => res.status(200).json(events))
+        .catch(err => res.status(400).json('Error: ' + err));
+});
+
+
+/**
  * Delete an event by eventId
  */
 router.route('/:eventID').delete((req, res) => {
@@ -87,6 +114,8 @@ router.route('/update').post(async (req, res) => {
                 event.actualStartTime = req.body.actualStartTime;
             if (req.body.actualEndTime)
                 event.actualEndTime = req.body.actualEndTime;
+            if (req.body.studyHoursConfirmed)
+                event.studyHoursConfirmed = req.body.studyHoursConfirmed;
             EventRepository.updateOne(event)
                 .then(() => res.json(event))
                 .catch(err => res.status(400).json('Error: ' + err));

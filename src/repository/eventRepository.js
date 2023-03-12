@@ -40,6 +40,83 @@ module.exports = class EventRepository {
     }
 
     /**
+     * Find all events of student.
+     * @param {string} username The username of the student.
+     * @returns {[Event]} Returns a promise. Resolves with an array of events belonging to the student.
+     */
+    static findWeeklyStudyEventsByUsername(username) {
+        const today = new Date();
+        const oneWeek = new Date();
+        
+        oneWeek.setDate(today.getDate() - 7);
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), type: 'study', startDate: { '$gte':oneWeek, '$lte':today } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
+    static findMonthlyStudyEventsByUsername(username) {
+        const today = new Date();
+        const oneMonth= new Date();
+        
+        oneMonth.setDate(today.getDate() - 30);
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), type: 'study', startDate: { '$gte':oneMonth, '$lte':today } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
+    static findWeeklyEventsByUsername(username) {
+        const today = new Date();
+        const oneWeek = new Date();
+        
+        oneWeek.setDate(today.getDate() - 7);
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), startDate: { '$gte':oneWeek, '$lte':today } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
+    static findMonthlyEventsByUsername(username) {
+        const today = new Date();
+        const oneMonth= new Date();
+        
+        oneMonth.setDate(today.getDate() - 30);
+
+        return new Promise((resolve, reject) => {
+            Event.find({ username: username.toString(), startDate: { '$gte':oneMonth, '$lte':today } }).then((events) => {
+                resolve(events);
+            })
+                .catch(err => reject(err))
+        })
+    }
+
+    /**
+     * Find one event by its eventID.
+     * @param {string} eventID The eventID of the event.
+     * @returns {Event} Returns a promise. Resolves with an event.
+     */
+    static findOne(eventID) {
+        return new Promise((resolve, reject) => {
+            Event.findOne({ eventID: eventID.toString() }).then((event) => {
+                resolve(event);
+            })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
+
+    /**
      * Find events by course subject and catalog
      * @param {string} username the username of the student.
      * @param {string} subject The subject of the course.
