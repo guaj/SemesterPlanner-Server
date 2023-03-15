@@ -79,40 +79,43 @@ module.exports = class EventRepository {
             const endDate = new Date(event.endDate);
             endDate.setHours(0, 0, 0, 0); // required to ignore time on date comparisons
             if (event.recurrence === 'daily') {
-                startDate.setDate(startDate.getDate() + 1);
-                while (true) {
-                    const temp = cloneDeep(event);
-                    temp.startDate = cloneDeep(startDate);
-                    expandedEvents.push(temp);
-                    startDate.setDate(startDate.getDate() + 1);
-                    if (startDate > endDate) // loop needs to be terminated this way to satisfy sonarcloud's expectation
-                        break;
-                }
+                this.expandEvent(expandedEvents, event, 1, event.recurrence, startDate, endDate)
             } else if (event.recurrence === 'weekly') {
-                startDate.setDate(startDate.getDate() + 7);
-                while (true) {
-                    const temp = cloneDeep(event);
-                    temp.startDate = cloneDeep(startDate);
-                    expandedEvents.push(temp);
-                    startDate.setDate(startDate.getDate() + 7);
-                    if (startDate > endDate) // loop needs to be terminated this way to satisfy sonarcloud's expectation
-                        break;
-                }
+                this.expandEvent(expandedEvents, event, 7, event.recurrence, startDate, endDate)
             } else if (event.recurrence === 'monthly') {
-                startDate.setMonth(startDate.getMonth() + 1);
-                while (true) {
-                    const temp = cloneDeep(event);
-                    temp.startDate = cloneDeep(startDate);
-                    expandedEvents.push(temp);
-                    startDate.setMonth(startDate.getMonth() + 1);
-                    if (startDate > endDate) // loop needs to be terminated this way to satisfy sonarcloud's expectation
-                        break;
-                }
+                this.expandEvent(expandedEvents, event, 1, event.recurrence, startDate, endDate)
             }
         })
 
         return expandedEvents;
     };
+
+    /**
+     * method that takes a single event, expands it, and adds it to specified array
+     * @param expandedEventsList array of events into which the specified event's expansion will be added to
+     * @param event event for which the expansion is to be applied
+     * @param dateIncrement an integer for the increment required to the date; value are 1 (daily or monthly), 7 (weekly); other values may lead to unexpected behaviour
+     * @param incrementType a string of value 'daily', 'weekly', or 'monthly' depending on the type of increment specified in the 'dateIncrement' parameter
+     * @param startDate initial start date of the event to be expanded
+     * @param endDate event end date at which the expansion ends
+     */
+    static expandEvent(expandedEventsList, event, dateIncrement, incrementType, startDate, endDate) {
+        do {
+            if (incrementType === 'monthly')
+                startDate.setMonth(startDate.getMonth() + dateIncrement);
+            else if (incrementType === 'daily' || incrementType === 'weekly')
+                startDate.setDate(startDate.getDate() + dateIncrement);
+            else
+                break;
+
+            if (startDate > endDate) // loop needs to be terminated this way to satisfy sonarcloud's expectation
+                break;
+
+            const temp = cloneDeep(event);
+            temp.startDate = cloneDeep(startDate);
+            expandedEventsList.push(temp);
+        } while (true)
+    }
 
     /**
      * Find one event by its eventID.
