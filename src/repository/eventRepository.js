@@ -80,33 +80,27 @@ module.exports = class EventRepository {
             endDate.setHours(0, 0, 0, 0); // required to ignore time on date comparisons
             if (event.recurrence === 'daily') {
                 startDate.setDate(startDate.getDate() + 1);
-                while (true) {
+                while (startDate <= endDate) {
                     const temp = cloneDeep(event);
                     temp.startDate = cloneDeep(startDate);
                     expandedEvents.push(temp);
                     startDate.setDate(startDate.getDate() + 1);
-                    if (startDate > endDate) // loop needs to be terminated this way to satisfy sonarcloud's expectation
-                        break;
                 }
             } else if (event.recurrence === 'weekly') {
                 startDate.setDate(startDate.getDate() + 7);
-                while (true) {
+                while (startDate <= endDate) {
                     const temp = cloneDeep(event);
                     temp.startDate = cloneDeep(startDate);
                     expandedEvents.push(temp);
                     startDate.setDate(startDate.getDate() + 7);
-                    if (startDate > endDate) // loop needs to be terminated this way to satisfy sonarcloud's expectation
-                        break;
                 }
             } else if (event.recurrence === 'monthly') {
                 startDate.setMonth(startDate.getMonth() + 1);
-                while (true) {
+                while (startDate <= endDate) {
                     const temp = cloneDeep(event);
                     temp.startDate = cloneDeep(startDate);
                     expandedEvents.push(temp);
                     startDate.setMonth(startDate.getMonth() + 1);
-                    if (startDate > endDate) // loop needs to be terminated this way to satisfy sonarcloud's expectation
-                        break;
                 }
             }
         })
