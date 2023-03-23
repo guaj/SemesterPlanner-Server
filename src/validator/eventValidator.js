@@ -45,7 +45,7 @@ module.exports = class EventValidator {
                     res.errors.push('Invalid recurrence (holiday, event, course)')
                 }
                 else {
-                    if (event.type === 'course' || event.type === 'study') {
+                    if (event.type === 'course' || event.type === 'study' || event.type === 'exam') {
                         if (!(await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog))) {
                             res.errors.push('Invalid course code or number')
                         } else {
