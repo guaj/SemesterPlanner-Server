@@ -58,20 +58,4 @@ router.route('/logout').get(TokenVerify, (req, res) => {
   res.clearCookie("jwt").status(200).json("Successfully logged out.");
 })
 
-// router.route('/yyy').post((req, res) => {
-//   studentRepository.findOneByEmail(req.body.email)
-//     .then(user => {
-//       if (user == null) {
-//         console.log('Email does not match')
-//       } else {
-//         if (user.password !== req.body.password) {
-//           console.log('Password does not match')
-//         } else {
-//           res.json(user)
-//         }
-//       }
-//     })
-//     .catch(err => res.status(400).json('Error: ' + err));
-// });
-
 module.exports = router;
