@@ -107,28 +107,6 @@ describe("Testing student api routes", () => {
       })
   });
 
-  it("Get student by email", async () => {
-
-    let expected = user1.email
-
-    await request.get('/student/email/' + expected)
-      .expect(200)
-      .then((res) => {
-        assert.ok(res.body.email.includes(expected))
-      })
-  });
-
-  it("Get student by username", async () => {
-
-    let expected = user2.username
-
-    await request.get('/student/username/' + expected)
-      .expect(200)
-      .then((res) => {
-        assert.ok(res.body.username.includes(expected))
-      })
-  });
-
   it("Student login", async () => {
 
     let expected = user1.username
@@ -138,12 +116,34 @@ describe("Testing student api routes", () => {
         "email": user1.email,
         "password": user1.password
       })
-      .expect(200)
+        .expect(200)
       .then((res) => {
         assert.ok(res.body.profile.username.includes(expected))
-        token = res.body.token;
+        token = res.headers['set-cookie'][0].split(';')[0]
       })
   });
+
+    it("Get student by email", async () => {
+
+        let expected = user1.email
+
+        await request.get('/student/email/' + expected)
+            .expect(200).set('cookie', token)
+            .then((res) => {
+                assert.ok(res.body.email.includes(expected))
+            })
+    });
+
+    it("Get student by username", async () => {
+
+        let expected = user2.username
+
+        await request.get('/student/username/' + expected)
+            .expect(200).set('cookie', token)
+            .then((res) => {
+                assert.ok(res.body.username.includes(expected))
+            })
+    });
 
   it("Student bad login", async () => {
     await request.post('/login').send(
@@ -178,7 +178,7 @@ describe("Testing student api routes", () => {
         program: 'soen'
       }
     )
-      .set('authorization', token)
+      .set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.ok(res.body.includes(user2.email))
@@ -206,7 +206,7 @@ describe("Testing student api routes", () => {
         senderEmail: user1.email,
         receiverEmail: user2.email
       }
-    )
+    ).set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.deepEqual(res.body.senderEmail, user1.email)
@@ -221,7 +221,7 @@ describe("Testing student api routes", () => {
         senderEmail: user1.email,
         receiverEmail: 'does not exist'
       }
-    )
+    ).set('cookie', token)
       .expect(400)
       .then((res) => {
         assert.deepEqual(res.body, { "errors": ["Receiver does not exist"] })
@@ -234,7 +234,7 @@ describe("Testing student api routes", () => {
         senderEmail: user1.email,
         receiverEmail: user2.email
       }
-    )
+    ).set('cookie', token)
       .expect(400)
       .then((res) => {
         assert.deepEqual(res.body, { "errors": ["Friend request already exists"] })
@@ -243,7 +243,7 @@ describe("Testing student api routes", () => {
 
   it("Get outgoing requests", async () => {
     await request.get('/friend/outgoing-requests/' + user1.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body, [friendRequest])
       })
@@ -251,7 +251,7 @@ describe("Testing student api routes", () => {
 
   it("Get incoming requests", async () => {
     await request.get('/friend/incoming-requests/' + user2.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body, [friendRequest])
       })
@@ -263,7 +263,7 @@ describe("Testing student api routes", () => {
         email: user1.email,
         requestId: friendRequest._id
       }
-    )
+    ).set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.deepEqual(res.body, "Cancelled request to " + user2.email)
@@ -272,12 +272,12 @@ describe("Testing student api routes", () => {
 
   it("Verifying request deletion", async () => {
     await request.get('/friend/outgoing-requests/' + user1.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body, [])
       })
     await request.get('/friend/incoming-requests/' + user2.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body, [])
       })
@@ -289,7 +289,7 @@ describe("Testing student api routes", () => {
         senderEmail: user1.email,
         receiverEmail: user2.email
       }
-    )
+    ).set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.deepEqual(res.body.senderEmail, user1.email)
@@ -301,7 +301,7 @@ describe("Testing student api routes", () => {
         senderEmail: user3.email,
         receiverEmail: user2.email
       }
-    )
+    ).set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.deepEqual(res.body.senderEmail, user3.email)
@@ -313,7 +313,7 @@ describe("Testing student api routes", () => {
         senderEmail: user1.email,
         receiverEmail: user3.email
       }
-    )
+    ).set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.deepEqual(res.body.senderEmail, user1.email)
@@ -324,7 +324,7 @@ describe("Testing student api routes", () => {
 
   it("Get request by its ID", async () => {
     await request.get('/friend/id/' + friendRequest3._id)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body, friendRequest3)
       })
@@ -336,7 +336,7 @@ describe("Testing student api routes", () => {
         email: user2.email,
         requestId: friendRequest._id
       }
-    )
+    ).set('cookie', token)
       .expect(400)
       .then((res) => {
         assert.deepEqual(res.body, { "errors": ["Not the sender of the request"] })
@@ -350,7 +350,7 @@ describe("Testing student api routes", () => {
         requestId: friendRequest._id,
         answer: 'accepted'
       }
-    )
+    ).set('cookie', token)
       .expect(400)
       .then((res) => {
         assert.deepEqual(res.body, { "errors": ["Not the receiver of the request"] })
@@ -364,10 +364,9 @@ describe("Testing student api routes", () => {
         requestId: friendRequest._id,
         answer: 'accepted'
       }
-    )
-      //.expect(200)
+    ).set('cookie', token)
+      .expect(200)
       .then((res) => {
-        console.log(res.body)
         assert.deepEqual(res.body, 'Friend request with ' + user1.email + ' accepted.')
       })
     await request.post('/friend/answerFriendRequest').send(
@@ -376,7 +375,7 @@ describe("Testing student api routes", () => {
         requestId: friendRequest2._id,
         answer: 'accepted'
       }
-    )
+    ).set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.deepEqual(res.body, 'Friend request with ' + user3.email + ' accepted.')
@@ -384,20 +383,20 @@ describe("Testing student api routes", () => {
   });
 
   it("Verifying friends", async () => {
-    await request.get('/student/email/' + user1.email)
-      .expect(200)
-      .then((res) => {
-        assert.deepEqual(res.body.email, user1.email)
-        assert.deepEqual(res.body.friends, [user2.email])
-      })
+      await request.get('/student/email/' + user1.email)
+          .expect(200).set('cookie', token)
+          .then((res) => {
+              assert.deepEqual(res.body.email, user1.email)
+              assert.deepEqual(res.body.friends, [user2.email])
+          })
     await request.get('/student/email/' + user3.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body.email, user3.email)
         assert.deepEqual(res.body.friends, [user2.email])
       })
     await request.get('/student/email/' + user2.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body.email, user2.email)
         assert.deepEqual(res.body.friends, [user1.email, user3.email])
@@ -407,7 +406,7 @@ describe("Testing student api routes", () => {
   //Delete student tests
   it("Delete a Student ", async () => {
     let expected = '1 deleted'
-    await request.delete('/student/email/' + user1.email)
+    await request.delete('/student/email/' + user1.email).set('cookie', token)
       .expect(200)
       .then((res) => {
         assert.ok(res.body.includes(expected))
@@ -417,7 +416,7 @@ describe("Testing student api routes", () => {
 
   it("Verifying student deletion", async () => {
     await request.get('/student/email/' + user1.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body, null)
       })
@@ -426,13 +425,13 @@ describe("Testing student api routes", () => {
 
   it("Verifying friends after student deletion", async () => {
     await request.get('/student/email/' + user3.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body.email, user3.email)
         assert.deepEqual(res.body.friends, [user2.email])
       })
     await request.get('/student/email/' + user2.email)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body.email, user2.email)
         assert.deepEqual(res.body.friends, [user3.email])
@@ -441,14 +440,14 @@ describe("Testing student api routes", () => {
 
   it("Verifying request deletion after student deletion", async () => {
     await request.get('/friend/id/' + friendRequest3._id)
-      .expect(200)
+      .expect(200).set('cookie', token)
       .then((res) => {
         assert.deepEqual(res.body, null)
       })
   });
 
   it("Delete a non existent student ", async () => {
-    await request.delete('/student/email/' + user1.email)
+    await request.delete('/student/email/' + user1.email).set('cookie', token)
       .expect(400)
       .then((res) => {
         assert.deepEqual(res.body, { 'errors': ['Student does not exist'] });

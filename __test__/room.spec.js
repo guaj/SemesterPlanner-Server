@@ -1,6 +1,6 @@
 const { request, assert, generateString } = require("./helper/app");
 const { createRoom } = require("./helper/room_test_data");
-const { createUser } = require('./helper/student_test_data')
+const { createUser, getUserToken} = require('./helper/student_test_data')
 const dbHandler = require('./helper/db-handler')
 
 // 2O: Test deleting a room.
@@ -27,6 +27,7 @@ describe("testing room api routes", () => {
     let user2 = createUser();
     let user3 = createUser();
     let user4 = createUser();
+    let token;
 
     // Pre-test user creation
     it("Create 4 students", async () => {
@@ -59,6 +60,7 @@ describe("testing room api routes", () => {
             .then((res) => {
                 assert.ok(res.body.includes(user4.email))
             })
+        await getUserToken(user1).then((res) => {token = res})
     });
 
     let room1 = createRoom(user1.email)
@@ -67,7 +69,7 @@ describe("testing room api routes", () => {
     // Studyroom creation tests
     it("Create a study room", async () => {
 
-        await request.post('/room/').send(room1)
+        await request.post('/room/').send(room1).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.owner.includes(user1.email))
@@ -90,7 +92,7 @@ describe("testing room api routes", () => {
             color: generateString(10),
             description: generateString(2100),
             title: generateString(150),
-        })
+        }).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, expected)
@@ -100,7 +102,7 @@ describe("testing room api routes", () => {
 
     it("Get room by email", async () => {
         await request.get('/room/' + user1.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.ok(res.body[0].owner.includes(room1.owner));
                 room1ID = res.body[0].studyRoomID;
@@ -109,7 +111,7 @@ describe("testing room api routes", () => {
 
     it("Get room by studyRoomID", async () => {
         await request.get('/room/fetch/' + room1ID)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.ok(res.body.studyRoomID.includes(room1ID));
             })
@@ -117,7 +119,7 @@ describe("testing room api routes", () => {
 
     it("Verifying owner's participating rooms", async () => {
         await request.get('/student/email/' + user1.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.studyRooms, [room1ID]);
             })
@@ -130,7 +132,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: user2.email,
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(user2.email))
@@ -138,7 +140,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: user3.email,
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(user3.email))
@@ -146,7 +148,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: user4.email,
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(user4.email))
@@ -157,7 +159,7 @@ describe("testing room api routes", () => {
     it("Verifying studyRoom participants", async () => {
         let participants = [user1.email, user2.email, user3.email, user4.email];
         await request.get('/room/fetch/' + room1ID)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.participants, participants);
             })
@@ -165,7 +167,7 @@ describe("testing room api routes", () => {
 
     it("Verifying student's participating rooms", async () => {
         await request.get('/student/email/' + user2.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.studyRooms, [room1ID]);
             })
@@ -176,7 +178,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: user2.email,
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, { errors: ['Student is already present in studyroom'] })
@@ -188,7 +190,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: generateString(10),
             studyRoomID: generateString(10)
-        })
+        }).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, { "errors": ["Student does not exist", "StudyRoom does not exist"] })
@@ -199,7 +201,7 @@ describe("testing room api routes", () => {
         await request.post('/room/remove').send({
             email: user3.email,
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(user3.email + " removed from studyroom"));
@@ -209,7 +211,7 @@ describe("testing room api routes", () => {
     it("Verifying studyRoom participants", async () => {
         let participants = [user1.email, user2.email, user4.email];
         await request.get('/room/fetch/' + room1ID)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.participants, participants);
             })
@@ -217,7 +219,7 @@ describe("testing room api routes", () => {
 
     it("Verifying student's participating rooms", async () => {
         await request.get('/student/email/' + user3.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.studyRooms, []);
             })
@@ -227,7 +229,7 @@ describe("testing room api routes", () => {
         await request.post('/room/remove').send({
             email: user3.email,
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, { 'errors': ['Student is not in the studyRoom'] });
@@ -238,7 +240,7 @@ describe("testing room api routes", () => {
         await request.post('/room/remove').send({
             email: user1.email,
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, { 'errors': ['Cannot remove the owner from the studyRoom'] });
@@ -250,7 +252,7 @@ describe("testing room api routes", () => {
         await request.post('/room/remove').send({
             email: generateString(10),
             studyRoomID: generateString(10)
-        })
+        }).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, { "errors": ["Student does not exist", "StudyRoom does not exist"] })
@@ -266,20 +268,20 @@ describe("testing room api routes", () => {
     it("Create 2 study rooms", async () => {
 
         await request.post('/room/').send(room2)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.ok(res.body.owner.includes(user2.email));
                 room2ID = res.body.studyRoomID;
             })
 
         await request.post('/room/').send(room3)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.ok(res.body.owner.includes(user2.email));
                 room3ID = res.body.studyRoomID;
             })
         await request.get('/room/' + user2.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body[1].studyRoomID, room2ID);
                 assert.deepEqual(res.body[1].owner, user2.email);
@@ -292,7 +294,7 @@ describe("testing room api routes", () => {
     it("Deleting a studyroom", async () => {
         await request.delete('/room/').send({
             studyRoomID: room1ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes('deleted 1 room'))
@@ -301,12 +303,12 @@ describe("testing room api routes", () => {
 
     it("Verifying students' participating rooms", async () => {
         await request.get('/student/email/' + user1.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.studyRooms, []);
             })
         await request.get('/student/email/' + user2.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.studyRooms, [room2ID, room3ID]);
             })
@@ -315,7 +317,7 @@ describe("testing room api routes", () => {
     it("Deleting a nonexistent studyroom", async () => {
         await request.delete('/room/').send({
             studyRoomID: generateString(10)
-        })
+        }).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, { 'errors': ['StudyRoom does not exist'] })
@@ -327,7 +329,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: user1.email,
             studyRoomID: room2ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(user1.email))
@@ -335,7 +337,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: user3.email,
             studyRoomID: room2ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(user3.email))
@@ -343,7 +345,7 @@ describe("testing room api routes", () => {
         await request.post('/room/add').send({
             email: user4.email,
             studyRoomID: room2ID
-        })
+        }).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(user4.email))
@@ -353,7 +355,7 @@ describe("testing room api routes", () => {
 
     it("Delete a student that is owner of study rooms", async () => {
         let expected = '1 deleted'
-        await request.delete('/student/email/' + user2.email)
+        await request.delete('/student/email/' + user2.email).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.includes(expected))
@@ -363,7 +365,7 @@ describe("testing room api routes", () => {
 
     it('Verifying deletion of empty studyRoom', async () => {
         await request.get('/room/fetch/' + room3ID)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body, null);
             })
@@ -371,7 +373,7 @@ describe("testing room api routes", () => {
 
     it('Verifying ownership change of non-empty studyroom', async () => {
         await request.get('/room/fetch/' + room2ID)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.owner, user1.email);
             })

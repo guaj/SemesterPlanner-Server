@@ -9,6 +9,8 @@ const router = require('express').Router();
 const fs = require('fs');
 const Multer = require('multer');
 const TesseractRepository = require("../repository/tesseractRepository");
+const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+
 
 // create multer instance
 const multer = Multer({
@@ -29,7 +31,7 @@ const config = {
  * @param {String} url, url of image from which text will be extracted
  * @returns {String}, text from the image url provided
  */
-router.route("/url/").post((req, res) => {
+router.route("/url/").post(TokenVerify, (req, res) => {
     const imgUrl = req.body.url;
 
     tesseract
@@ -49,7 +51,7 @@ router.route("/url/").post((req, res) => {
  * as **form-data**, NOT x-www-form-urlencoded
  * @returns {String}, text from the image url provided
  */
-router.route("/img/").post(multer.single("img"), (req, res) => {
+router.route("/img/").post(TokenVerify, multer.single("img"), (req, res) => {
     const img = req.file;
 
     tesseract

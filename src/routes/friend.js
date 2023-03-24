@@ -1,18 +1,18 @@
 const router = require('express').Router();
 const StudentRepository = require('../repository/studentRepository')
-const FriendRequest = require('../models/friendRequest.model');
 const createFriendRequest = require('../factory/friendRequestFactory');
 const FriendRequestRepository = require('../repository/friendRequestRepository');
 const FriendValidator = require('../validator/friendValidator')
+const TokenVerify = require('../routes/tokenVerification').verifyJWTAuth
 
 /**
  * @author: Jasmin Guay
  * Endpoint to send a friend request.
  * @param {string} senderEmail : email of the sender
  * @param {string} receiverEmail : email of the students to be added
- * @return {FriendRequest} FrienRequest : FriendRequest of the friend request created.
+ * @return {FriendRequest} FriendRequest : FriendRequest of the friend request created.
  */
-router.route('/add').post(async (req, res) => {
+router.route('/add').post(TokenVerify, async (req, res) => {
 
   FriendValidator.validateCreateData(req.body).then(() => {
     const friendrequest = createFriendRequest(req.body);
@@ -31,7 +31,7 @@ router.route('/add').post(async (req, res) => {
  * @param {string} email : email of the student to retrieve the list.
  * @return {[string]} friends : a list of friends (usernames).
  */
-router.route('/:email').get(async (req, res) => {
+router.route('/:email').get(TokenVerify, async (req, res) => {
   const email = req.params.email.toString();
   const student = await StudentRepository.findOneByEmail(email);
 
@@ -43,7 +43,7 @@ router.route('/:email').get(async (req, res) => {
   }
 })
 
-router.route('/id/:id').get(async (req, res) => {
+router.route('/id/:id').get(TokenVerify, async (req, res) => {
 
   FriendRequestRepository.findByID(req.params.id)
     .then((request) => {
@@ -59,7 +59,7 @@ router.route('/id/:id').get(async (req, res) => {
  * @param {string} friends : list of updated friend list.
  * @return {[string]} the update friend list.
  */
-router.route('/updateFriendList').post(async (req, res) => {
+router.route('/updateFriendList').post(TokenVerify, async (req, res) => {
   const email = req.body.email.toString();
   const updatedFriendList = req.body.friends;
   let student = await StudentRepository.findOneByEmail(email);
@@ -91,7 +91,7 @@ router.route('/updateFriendList').post(async (req, res) => {
  * @param {"accepted" | "declined"} answer : answer to the friend request.
  * @return {string || null} studentUsername : username of the student added to the friend list if the request was accepted, null otherwise.
  */
-router.route('/answerFriendRequest').post(async (req, res) => {
+router.route('/answerFriendRequest').post(TokenVerify, async (req, res) => {
   FriendValidator.validateAcceptRequest(req.body.requestId, req.body.email, req.body.answer).then(() => {
     const requestID = req.body.requestId.toString();
     FriendRequestRepository.findByID(requestID).then(async request => {
@@ -124,7 +124,7 @@ async function addToFriendLists(student1, student2) {
  * @param email (string) : email of the student to fetch incoming requests
  * @return {[FriendRequest]} friendRequests  : list of friend requests sent to the specified student.
  */
-router.route("/incoming-requests/:email").get(async (req, res) => {
+router.route("/incoming-requests/:email").get(TokenVerify, async (req, res) => {
 
   FriendValidator.validateRetrieveRequest(req.params.email).then(async () => {
     const email = req.params.email.toString();
@@ -146,7 +146,7 @@ router.route("/incoming-requests/:email").get(async (req, res) => {
  * @param {string} email : email of the student to fetch outgoing requests
  * @return {[FriendRequest]} friendRequests  : list of friend requests received by the specified student.
  */
-router.route("/outgoing-requests/:email").get(async (req, res) => {
+router.route("/outgoing-requests/:email").get(TokenVerify, async (req, res) => {
   FriendValidator.validateRetrieveRequest(req.params.email).then(async () => {
     const email = req.params.email.toString();
     const friendRequests = await FriendRequestRepository.findBySenderEmail(email);
@@ -168,7 +168,7 @@ router.route("/outgoing-requests/:email").get(async (req, res) => {
  * @param email (string) : email of the request sender
  * @return {[FriendRequest]} friendRequests : list of friend requests received by the specified student.
  */
-router.route("/cancel-request").post(async (req, res) => {
+router.route("/cancel-request").post(TokenVerify, async (req, res) => {
   FriendValidator.validateCancelRequest(req.body.requestId, req.body.email).then(async () => {
     const requestID = req.body.requestId.toString();
     const deletedRequest = await FriendRequestRepository.deleteFriendRequest(requestID);
@@ -187,7 +187,7 @@ router.route("/cancel-request").post(async (req, res) => {
  * @param {string} searchInput : text input to search a user (email or username)
  * @return {{username: string, password: string} || null} : minimal object of the user found (if profile is not private)
  */
-router.route("/search").post(async (req, res) => {
+router.route("/search").post(TokenVerify, async (req, res) => {
   const searchInput = req.body.searchInput.toString();
 
   let user = await StudentRepository.findOneByEmail(searchInput);

@@ -139,7 +139,7 @@ router.route('/update').post(TokenVerify, async (req, res) => {
 /**
  * Add a user
  */
-router.route('/add').post(TokenVerify, (req, res) => {
+router.route('/add').post((req, res) => {
     StudentRepository.create(req.body)
         .then((newStudent) => res.json(`Student ${newStudent.email} added`).status(200))
         .catch(err => {
