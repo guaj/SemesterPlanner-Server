@@ -3,11 +3,13 @@ const EventRepository = require('../repository/eventRepository')
 const StudentRepository = require('../repository/studentRepository');
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 const _ = require('lodash');
+const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+
 
 /**
  * Get all events of a certain student
  */
-router.route('/:username').get((req, res) => {
+router.route('/:username').get(TokenVerify, (req, res) => {
     EventRepository.findAllbyStudentUsername(req.params.username)
         .then(events => res.status(200).json(events))
         .catch(err => res.status(400).json('Error: ' + err));
@@ -16,7 +18,7 @@ router.route('/:username').get((req, res) => {
 /**
  * Get event by eventId
  */
-router.route('/event/:eventID').get((req, res) => {
+router.route('/event/:eventID').get(TokenVerify, (req, res) => {
     EventRepository.findOneByID(req.params.eventID)
         .then(event => res.status(200).json(event))
         .catch(err => res.status(400).json('Error: ' + err));
@@ -25,24 +27,24 @@ router.route('/event/:eventID').get((req, res) => {
 /**
  * Get course events of a certain student within a week
  */
-router.route('/study-events-weekly/:username').get((req, res) => {
+router.route('/study-events-weekly/:username').get(TokenVerify, (req, res) => {
     EventRepository.findWeeklyStudyEventsByUsername(req.params.username)
         .then(events => res.status(200).json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-router.route('/events-weekly/:username').get((req, res) => {
+router.route('/events-weekly/:username').get(TokenVerify, (req, res) => {
     EventRepository.findWeeklyEventsByUsername(req.params.username)
         .then(events => res.status(200).json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
-router.route('/study-events-monthly/:username').get((req, res) => {
+router.route('/study-events-monthly/:username').get(TokenVerify, (req, res) => {
     EventRepository.findMonthlyStudyEventsByUsername(req.params.username)
         .then(events => res.status(200).json(events))
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-router.route('/events-monthly/:username').get((req, res) => {
+router.route('/events-monthly/:username').get(TokenVerify, (req, res) => {
     EventRepository.findMonthlyEventsByUsername(req.params.username)
         .then(events => res.status(200).json(events))
         .catch(err => res.status(400).json('Error: ' + err));
@@ -52,7 +54,7 @@ router.route('/events-monthly/:username').get((req, res) => {
 /**
  * Delete an event by eventId
  */
-router.route('/:eventID').delete((req, res) => {
+router.route('/:eventID').delete(TokenVerify, (req, res) => {
     EventRepository.deleteOne(req.params.eventID)
         .then(async (event) => {
             if (event.type === 'course') {
@@ -75,7 +77,7 @@ router.route('/:eventID').delete((req, res) => {
 /**
  * Update an event
  */
-router.route('/update').post(async (req, res) => {
+router.route('/update').post(TokenVerify, (req, res) => {
     EventRepository.findOneByID(req.body._id)
         .then((event) => {
             if (req.body.eventHeader) {
@@ -126,7 +128,7 @@ router.route('/update').post(async (req, res) => {
 /**
  * Add an event
  */
-router.route('/add').post(async (req, res) => {
+router.route('/add').post(TokenVerify, (req, res) => {
     EventRepository.create(req.body)
         .then(async (event) => {
             // Add course to student if doesn't already exist in student's courses list.
