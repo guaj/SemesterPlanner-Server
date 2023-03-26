@@ -26,7 +26,7 @@ const generateToken = (response, userId) => {
   };
 
   // generating the JWT token
-  const tokenJWT = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' }, {});
+  const tokenJWT = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' }, {});
 
   response.cookie('jwt', tokenJWT, {
     httpOnly: true,
