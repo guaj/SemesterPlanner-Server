@@ -2,6 +2,7 @@ const OpenDataFacultyRepository = require("../repository/conUOpenDataFacultyRepo
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 const OpenDataImportantDateRepository = require("../repository/conUOpenDataImportantDateRepository");
 const router = require('express').Router();
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 /** runs once on server start then refreshes open data once every 24 hours (if --odrefreshinterval param is not
@@ -28,7 +29,7 @@ if (process.env.npm_config_odrefresh === "true")
  * @param {String} departmentDescription: passed in the request body and added to the newly created record in the opendatafaculties collection
  * @returns {string} Returns a string with the operation's result.
  */
-router.route('/faculty/').post((req, res) => {
+router.route('/faculty/').post(TokenVerify, (req, res) => {
     OpenDataFacultyRepository.create(req.body)
         .then((faculty) => {
             res.json(`Faculty record ${faculty._id} created.`).status(200);
@@ -41,7 +42,7 @@ router.route('/faculty/').post((req, res) => {
  * get list of all faculty codes and faculty descriptions in the university
  * @returns [faculties] Returns an array of faculty codes and faculty descriptions in the university.
  */
-router.route('/faculty/').get(async (req, res) => {
+router.route('/faculty/').get(TokenVerify, async (req, res) => {
     OpenDataFacultyRepository.getFacultyList()
         .then((faculty) => {
             res.json(faculty).status(200);
@@ -56,7 +57,7 @@ router.route('/faculty/').get(async (req, res) => {
  * @param {String} facultyCode: passed in URL corresponds to the faculty of interest
  * @returns {[Faculty]} Returns an array of Faculty with the provided facultyCode param.
  */
-router.route('/faculty/:facultyCode').get(async (req, res) => {
+router.route('/faculty/:facultyCode').get(TokenVerify, async (req, res) => {
     const facultyCode = req.params.facultyCode.toString()
     OpenDataFacultyRepository.findAllByFacultyCode(facultyCode)
         .then((faculty) => {
@@ -78,7 +79,7 @@ router.route('/faculty/:facultyCode').get(async (req, res) => {
  * @param {String} crosslisted, passed as part of the request body and added to the newly created record in the opendatafaculties collection
  * @returns {String} Returns a string with the operation's result.
  */
-router.route('/course/').post((req, res) => {
+router.route('/course/').post(TokenVerify, (req, res) => {
     OpenDataCourseRepository.create(req.body)
         .then((course) => {
             res.json(`Course record ${course._id} created.`).status(200);
@@ -92,7 +93,7 @@ router.route('/course/').post((req, res) => {
  * @param {String} courseCode: passed in URL corresponds to the course code (eg. ENCS, SOEN, ENGR) of interest
  * @returns {[Course]} Returns an array of Courses associated with the courseCode param.
  */
-router.route('/course/:courseCode').get(async (req, res) => {
+router.route('/course/:courseCode').get(TokenVerify, async (req, res) => {
     const courseCode = req.params.courseCode.toString();
     OpenDataCourseRepository.findAllByCourseCode(courseCode)
         .then((course) => {
@@ -108,7 +109,7 @@ router.route('/course/:courseCode').get(async (req, res) => {
  * @param {String, Integer} courseNumber: passed in URL correspond to the course number (eg. 282, 490, 301)
  * @returns {[Course]} Returns a Course record associated with the courseCode and courseNumber param.
  */
-router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
+router.route('/course/:courseCode/:courseNumber').get(TokenVerify, async (req, res) => {
     const courseCode = req.params.courseCode.toString();
     const courseNumber = req.params.courseNumber.toString();
     OpenDataCourseRepository.findByCourseCodeAndNumber(courseCode, courseNumber)
@@ -125,7 +126,7 @@ router.route('/course/:courseCode/:courseNumber').get(async (req, res) => {
  * @param {String, Integer} courseNumber: passed in URL correspond to the course number (eg. 282, 490, 301)
  * @returns {[Course]} Returns a Course record associated with the courseCode and courseNumber param.
  */
-router.route('/course/studyhours/:courseCode/:courseNumber').get(async (req, res) => {
+router.route('/course/studyhours/:courseCode/:courseNumber').get(TokenVerify, async (req, res) => {
     const courseCode = req.params.courseCode.toString();
     const courseNumber = req.params.courseNumber.toString();
     OpenDataCourseRepository.findByCourseCodeAndNumber(courseCode, courseNumber)
@@ -141,7 +142,7 @@ router.route('/course/studyhours/:courseCode/:courseNumber').get(async (req, res
  * get all important dates
  * @returns {[ImportantDate]} Returns an array with the ImportantDate records.
  */
-router.route('/importantdates/').get(async (req, res) => {
+router.route('/importantdates/').get(TokenVerify, async (req, res) => {
     OpenDataImportantDateRepository.getAllImportantDates().then((importantDates) => {
         res.status(200).json(importantDates);
     }).catch((err) => {

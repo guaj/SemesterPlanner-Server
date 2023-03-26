@@ -1,3 +1,4 @@
+const {request} = require("./app");
 
 function createUser() {
   return {
@@ -11,7 +12,19 @@ function createUser() {
 
 }
 
+function getUserToken(user) {
+  return request.post('/login').send(
+      {
+        "email": user.email,
+        "password": user.password
+      })
+      .expect(200)
+      .then((res) => {
+        return res.headers['set-cookie'][0].split(';')[0];
+      })
+}
 
 
 
-module.exports = { createUser };
+
+module.exports = { createUser, getUserToken };
