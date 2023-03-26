@@ -15,7 +15,8 @@ const EventTypes = {
     COURSE: 'course',
     WORKOUT:'workout',
     APPOINTMENT:'appointment',
-    STUDY:'study'
+    STUDY:'study',
+    EXAM:'exam'
 }
 
 const eventSchema = new Schema({
