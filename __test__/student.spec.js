@@ -192,7 +192,7 @@ describe("Testing student api routes", () => {
         program: 'coen'
       }
     )
-      .expect(401)
+      .expect(403)
       .then((res) => {
         assert.deepEqual(res.body, { auth: false, message: 'No token found in request' })
       })
