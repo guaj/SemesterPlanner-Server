@@ -2,7 +2,7 @@ const OpenDataFacultyRepository = require("../repository/conUOpenDataFacultyRepo
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 const OpenDataImportantDateRepository = require("../repository/conUOpenDataImportantDateRepository");
 const router = require('express').Router();
-const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 /** runs once on server start then refreshes open data once every 24 hours (if --odrefreshinterval param is not

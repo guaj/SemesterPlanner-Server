@@ -9,7 +9,7 @@ const router = require('express').Router();
 const fs = require('fs');
 const Multer = require('multer');
 const TesseractRepository = require("../repository/tesseractRepository");
-const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 // create multer instance

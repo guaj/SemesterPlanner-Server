@@ -4,7 +4,7 @@ const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentRepository = require('../repository/studentRepository');
 const StudyRoomValidator = require('../validator/roomValidator')
 const MessageRepository = require('../repository/messageRepository')
-const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 router.route('/').put(TokenVerify, (req, res) => {

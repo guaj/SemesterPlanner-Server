@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const MessageRepository = require("../repository/messageRepository")
 const MessageValidator = require('../validator/messageValidator')
-const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 // Sending a message, requires studyRoomID (study room ID it belongs to), username and content

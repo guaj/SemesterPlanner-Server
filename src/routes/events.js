@@ -3,7 +3,7 @@ const EventRepository = require('../repository/eventRepository')
 const StudentRepository = require('../repository/studentRepository');
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 const _ = require('lodash');
-const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 /**

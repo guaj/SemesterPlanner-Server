@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 const StudentRepository = require('../repository/studentRepository');
 const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentValidator = require('../validator/studentValidator');

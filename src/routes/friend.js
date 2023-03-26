@@ -3,7 +3,7 @@ const StudentRepository = require('../repository/studentRepository')
 const createFriendRequest = require('../factory/friendRequestFactory');
 const FriendRequestRepository = require('../repository/friendRequestRepository');
 const FriendValidator = require('../validator/friendValidator')
-const TokenVerify = require('../routes/tokenVerification').verifyJWTAuth
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth
 
 /**
  * @author: Jasmin Guay
