@@ -9,7 +9,7 @@ module.exports = class StudentValidator {
      */
     static validateCreateData(data) {
         return new Promise(async (resolve, reject) => {
-            let res = { 'errors': [] };
+            let res = {'errors': []};
             if (data.username === undefined || data.username === "") {
                 res.errors.push('Missing username');
             }
@@ -25,11 +25,11 @@ module.exports = class StudentValidator {
             }
 
             if (data.username && data.email) {
-                let student = await Student.findOne({ username: data.username.toString() })
+                let student = await Student.findOne({username: data.username.toString()})
                 if (student != null) {
                     res.errors.push('Username already exists');
                 }
-                student = await Student.findOne({ email: data.email.toString() })
+                student = await Student.findOne({email: data.email.toString()})
                 if (student != null) {
                     res.errors.push('Email already exists');
                 }
@@ -38,7 +38,6 @@ module.exports = class StudentValidator {
                 reject(res);
             }
             resolve();
-            // TO DO: validate program and faculty
         })
 
 
@@ -51,14 +50,11 @@ module.exports = class StudentValidator {
      */
     static validateUpdateData(student) {
         return new Promise((resolve, reject) => {
-            let res = { 'errors': [] };
+            let res = {'errors': []};
 
             if ((student.privateProfile !== true && student.privateProfile !== false) || (student.privateProfile === undefined || student.privateProfile === '')) {
                 res.errors.push('Invalid parameter for privateProfile (should be true or false)')
             }
-
-            // TO DO: validate program and faculty
-
             if (res.errors[0]) {
                 reject(res);
             }
@@ -75,12 +71,11 @@ module.exports = class StudentValidator {
     static validateDelete(email) {
         return new Promise(async (resolve, reject) => {
             let student = undefined;
-            let res = { 'errors': [] };
+            let res = {'errors': []};
             if (email === undefined || email === "") {
                 res.errors.push('Invalid email');
-            }
-            else {
-                student = await Student.findOne({ email: email.toString() })
+            } else {
+                student = await Student.findOne({email: email.toString()})
                 if (!student) {
                     res.errors.push('Student does not exist');
                 }
