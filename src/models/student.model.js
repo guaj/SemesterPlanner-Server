@@ -14,10 +14,6 @@ const studentSchema = new Schema({
     calendarID: { type: String },
     courses: { type: [Object] }
 
-    // TODO
-    // calendar -> id of calendar
-    // friendList -> array of ObjectID's of other users
-    // chats -> array of chat ID's
 }, {
     timestamps: true,
 });
