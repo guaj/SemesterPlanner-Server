@@ -40,17 +40,18 @@ router.route('/').put(TokenVerify, (req, res) => {
 router.route('/').post(TokenVerify, (req, res) => {
   StudyRoomRepository.create(req.body)
     .then((room) => {
-      StudentRepository.findOneByEmail(req.body.owner)
-        .then((student) => {
-          let studyRooms = student.studyRooms;
-          studyRooms.push(room.studyRoomID);
-          StudentRepository.updateStudyRooms(req.body.owner, studyRooms)
-            .then(() => {
-              res.json(room).status(200)
-            })
-            .catch(err => res.status(400).json(err));
+        room.participants.forEach((participant) => {
+            StudentRepository.findOneByEmail(participant)
+                .then((student) => {
+                    let studyRooms = student.studyRooms;
+                    studyRooms.push(room.studyRoomID);
+                    StudentRepository.updateStudyRooms(participant, studyRooms)
+                        .then(() => {})
+                        .catch(err => res.status(400).json(err));
+                })
+                .catch(err => res.status(400).json(err));
         })
-        .catch(err => res.status(400).json(err));
+        res.json(room).status(200)
     })
 
     .catch(err => res.status(400).json(err));

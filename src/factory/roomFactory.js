@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 function createStudyRoom(data) {
     const studyRoomID = uuidv4();
     const owner = data.owner;
-    let color = '#808080'; // default gray color
+    let color = '#912338';
     if (data.color) {
         color = data.color;
     }
@@ -17,7 +17,7 @@ function createStudyRoom(data) {
         title = data.title;
     }
     const avatar = data.avatarText;
-    let participants = [owner];
+    let participants = data.participants;
     return new StudyRoom({
         studyRoomID,
         owner,

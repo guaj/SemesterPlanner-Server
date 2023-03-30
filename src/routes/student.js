@@ -5,6 +5,7 @@ const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentValidator = require('../validator/studentValidator');
 const FriendRequestRepository = require('../repository/friendRequestRepository');
 const bcrypt = require("bcrypt");
+const {generateToken} = require("../repository/tokenRepository");
 
 /**
  * Get all users
@@ -141,8 +142,11 @@ router.route('/update').post(TokenVerify, async (req, res) => {
  */
 router.route('/add').post((req, res) => {
     StudentRepository.create(req.body)
-        .then((newStudent) => res.json(`Student ${newStudent.email} added`).status(200))
+        .then((newStudent) => {
+            generateToken(res, newStudent._id)
+            res.json(`Student ${newStudent.email} added`).status(200)})
         .catch(err => {
+            console.log(err)
             res.status(400).json(err)
         });
 
