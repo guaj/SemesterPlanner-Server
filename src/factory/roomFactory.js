@@ -17,7 +17,7 @@ function createStudyRoom(data) {
         title = data.title;
     }
     const avatar = data.avatarText;
-    let participants = [owner];
+    let participants = data.participants;
     return new StudyRoom({
         studyRoomID,
         owner,
