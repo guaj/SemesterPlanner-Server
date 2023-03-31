@@ -28,14 +28,6 @@ module.exports = class EventValidator {
             if (event.eventHeader === undefined || event.eventHeader === "") {
                 res.errors.push('Missing eventHeader');
             }
-            // if (event.recurrence === undefined || event.recurrence === "") {
-            //     res.errors.push('Empty recurrence');
-            // }
-            // else {
-            //     if (!['once', 'daily', 'weekly', 'monthly'].includes(event.recurrence)) {
-            //         res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
-            //     }
-            // }
             EventValidator.#eventRecurrenceValidator(event, res);
             if (event.type === undefined || event.type === "") {
                 res.errors.push('Empty type');
