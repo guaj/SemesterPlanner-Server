@@ -19,8 +19,7 @@ module.exports = class EventValidator {
      * @param {Event} event event object.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateCreateData(event) {
-        return new Promise(async (resolve, reject) => {
+    static async validateCreateData(event) {
             let res = { 'errors': [] };
 
             if (event.username === undefined || event.username === "") {
@@ -69,10 +68,8 @@ module.exports = class EventValidator {
             if (event.studyHoursConfirmed !== true && event.studyHoursConfirmed !== false)
                 res.errors.push('Invalid value for parameter studyHoursConfirmed: value must be boolean')
             if (res.errors[0]) {
-                reject(res);
+                throw res;
             }
-            resolve();
-        })
     }
 
     /**
@@ -80,8 +77,7 @@ module.exports = class EventValidator {
      * @param {*} data data parameters.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validatePreCreateData(data) {
-        return new Promise(async (resolve, reject) => {
+    static async validatePreCreateData(data) {
             let res = { 'errors': [] };
             if (data.startDate === undefined || data.startDate === "") {
                 res.errors.push('Missing startDate');
@@ -99,9 +95,7 @@ module.exports = class EventValidator {
             // TO DO: validate times
 
             if (res.errors[0]) {
-                reject(res);
+                throw res;
             }
-            resolve();
-        })
     }
 }
