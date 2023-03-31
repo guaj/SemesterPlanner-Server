@@ -5,7 +5,7 @@ const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 // Sending a message, requires studyRoomID (study room ID it belongs to), username and content
-router.route('/send').post( (req, res) => {
+router.route('/send').post(TokenVerify, (req, res) => {
   MessageValidator.validateCreateData(req.body).then(() => {
     MessageRepository.create(req.body)
       .then((message) => {

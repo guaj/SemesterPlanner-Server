@@ -29,18 +29,30 @@ module.exports = class FriendValidator {
             }
         }
         if (student1 && student2) {
-            if (await StudentRepository.isInFriendList(data.senderEmail, data.receiverEmail))
-                res.errors.push('Students are already friends')
-
-            if (await FriendRequest.findOne({
-                senderEmail: data.senderEmail.toString(),
-                receiverEmail: data.receiverEmail.toString()
-            }))
-                res.errors.push('Friend request already exists')
+            await FriendValidator.#areFriends(data, res);
+            await FriendValidator.#friendRequestExists(data, res);
         }
         if (res.errors[0]) {
             throw res;
         }
+    }
+
+    static async #areFriends(data, res){
+        if (await StudentRepository.isInFriendList(data.senderEmail, data.receiverEmail))
+            res.errors.push('Students are already friends')
+    }
+
+    static async #friendRequestExists(data, res){
+        if (await FriendRequest.findOne({
+            senderEmail: data.senderEmail.toString(),
+            receiverEmail: data.receiverEmail.toString()
+        }))
+            res.errors.push('Friend request already exists')
+        else if (await FriendRequest.findOne({
+            senderEmail: data.receiverEmail.toString(),
+            receiverEmail: data.senderEmail.toString()
+        }))
+            res.errors.push('There is already a friend request sent to you by this user')
     }
 
     /**
