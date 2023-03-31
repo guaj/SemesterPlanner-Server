@@ -203,17 +203,6 @@ module.exports = class StudentRepository {
             .catch((err) => {
                 throw err;
             })
-        // return await new Promise(async (resolve, reject) => {
-        //     Student.findOne({ email: email1 })
-        //         .then((student) => {
-        //             student.friends.push(email2);
-        //             student.save()
-        //                 .then((student) => resolve(student))
-        //                 .catch((err) => reject(err))
-        //         })
-        //         .catch((err) => reject(err))
-        //
-        // })
     }
 
     /**
