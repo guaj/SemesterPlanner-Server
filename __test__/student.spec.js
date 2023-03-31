@@ -57,7 +57,7 @@ describe("Testing student api routes", () => {
 
   it("Adding an invalid student", async () => {
 
-    let expected = { 'errors': ['Missing password'] }
+    let expected = { 'errors': ['Missing password',  'Invalid parameter for privateProfile (should be true or false)'] }
 
     await request.post('/student/add').send(
       {

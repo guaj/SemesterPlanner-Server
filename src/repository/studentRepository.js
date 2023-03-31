@@ -189,10 +189,10 @@ module.exports = class StudentRepository {
      * @returns {Student} Returns a promise. Resolves with the updated student.
      */
     static async addToFriendList(email1, email2) {
-        await Student.findOne({email: email1})
-            .then((student) => {
+        return await Student.findOne({email: email1})
+            .then(async (student) => {
                 student.friends.push(email2);
-                student.save()
+                return await student.save()
                     .then((student) => {
                         return student;
                     })
@@ -203,6 +203,17 @@ module.exports = class StudentRepository {
             .catch((err) => {
                 throw err;
             })
+        // return await new Promise(async (resolve, reject) => {
+        //     Student.findOne({ email: email1 })
+        //         .then((student) => {
+        //             student.friends.push(email2);
+        //             student.save()
+        //                 .then((student) => resolve(student))
+        //                 .catch((err) => reject(err))
+        //         })
+        //         .catch((err) => reject(err))
+        //
+        // })
     }
 
     /**
@@ -212,12 +223,7 @@ module.exports = class StudentRepository {
      * @returns {Boolean} true if student2 is part of student1 friend list, false otherwise
      */
     static async isInFriendList(student1, student2) {
-        await Student.findOne({email: student1.toString()})
-            .then((res) => {
-                return (res != null && res.friends.some((friend) => friend === student2));
-            })
-            .catch(() => {
-                return false;
-            })
+        let res = await Student.findOne({email: student1.toString()});
+        return (res != null && res.friends.some((friend) => friend === student2));
     }
 }
