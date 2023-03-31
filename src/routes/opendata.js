@@ -62,7 +62,7 @@ router.route('/faculty/:facultyCode').get(TokenVerify, async (req, res) => {
     OpenDataFacultyRepository.findAllByFacultyCode(facultyCode)
         .then((faculty) => {
             res.json(faculty).status(200);
-            console.info(`List of departments in faculty \'${facultyCode}\' fetched:\n` + faculty + "\n")
+            console.info(`List of departments in faculty '${facultyCode}' fetched:\n` + faculty + "\n")
         })
         .catch(err => res.status(400).json('Error: ' + err));
 })
@@ -98,7 +98,7 @@ router.route('/course/:courseCode').get(TokenVerify, async (req, res) => {
     OpenDataCourseRepository.findAllByCourseCode(courseCode)
         .then((course) => {
             res.json(course).status(200);
-            console.info(`List of courses with course code \'${courseCode}\' fetched:\n` + course + "\n")
+            console.info(`List of courses with course code '${courseCode}' fetched:\n` + course + "\n")
         })
         .catch(err => res.status(400).json('Error: ' + err));
 })
@@ -115,7 +115,7 @@ router.route('/course/:courseCode/:courseNumber').get(TokenVerify, async (req, r
     OpenDataCourseRepository.findByCourseCodeAndNumber(courseCode, courseNumber)
         .then((course) => {
             res.json(course).status(200);
-            console.info(`Record of course with course \'${courseCode} ${courseNumber}\' fetched:\n` + course + "\n")
+            console.info(`Record of course with course '${courseCode} ${courseNumber}' fetched:\n` + course + "\n")
         })
         .catch(err => res.status(400).json('Error: ' + err));
 })
@@ -131,7 +131,7 @@ router.route('/course/studyhours/:courseCode/:courseNumber').get(TokenVerify, as
     const courseNumber = req.params.courseNumber.toString();
     OpenDataCourseRepository.findByCourseCodeAndNumber(courseCode, courseNumber)
         .then((course) => {
-            console.info(`Record of course with course \'${courseCode} ${courseNumber}\' fetched:\n` + course + "\n")
+            console.info(`Record of course with course '${courseCode} ${courseNumber}' fetched:\n` + course + "\n")
             let studyHours = parseFloat(course.classUnit) * 1.5;
             res.status(200).json({ 'studyHours': studyHours });
         })
