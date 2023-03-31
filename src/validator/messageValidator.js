@@ -50,7 +50,7 @@ module.exports = class MessageValidator {
     static async validateBulkRetrieveIgnore(amount, ignore) {
         let res = {'errors': []};
         if (!isNaN(amount)) {
-            if (amount === undefined || amount === "") {
+            if (amount === undefined || amount == "") {
                 res.errors.push('Amount is missing');
             }
             if (parseInt(amount) < 1) {
@@ -60,7 +60,7 @@ module.exports = class MessageValidator {
             res.errors.push('Amount is not a number')
         }
         if (!isNaN(ignore)) {
-            if (ignore === undefined || ignore === "") {
+            if (ignore === undefined || ignore == "") {
                 res.errors.push('Ignore is missing');
             }
             if (parseInt(ignore) < 1) {
@@ -82,7 +82,7 @@ module.exports = class MessageValidator {
     static async validateBulkRetrieve(amount) {
         let res = {'errors': []};
         if (!isNaN(amount)) {
-            if (amount === undefined || amount === "") {
+            if (amount === undefined || amount == "") {
                 res.errors.push('Amount is missing');
             }
             if (parseInt(amount) < 1) {
