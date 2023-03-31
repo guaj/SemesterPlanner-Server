@@ -28,33 +28,20 @@ module.exports = class EventValidator {
             if (event.eventHeader === undefined || event.eventHeader === "") {
                 res.errors.push('Missing eventHeader');
             }
-            if (event.recurrence === undefined || event.recurrence === "") {
-                res.errors.push('Empty recurrence');
-            }
-            else {
-                if (!['once', 'daily', 'weekly', 'monthly'].includes(event.recurrence)) {
-                    res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
-                }
-            }
+            // if (event.recurrence === undefined || event.recurrence === "") {
+            //     res.errors.push('Empty recurrence');
+            // }
+            // else {
+            //     if (!['once', 'daily', 'weekly', 'monthly'].includes(event.recurrence)) {
+            //         res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
+            //     }
+            // }
+            EventValidator.#eventRecurrenceValidator(event, res);
             if (event.type === undefined || event.type === "") {
                 res.errors.push('Empty type');
             }
             else {
-                if (!['holiday', 'event', 'course', 'study', 'appointment', 'workout', 'exam'].includes(event.type)) {
-                    res.errors.push('Invalid recurrence (holiday, event, course)')
-                }
-                else {
-                    if (event.type === 'course' || event.type === 'study' || event.type === 'exam') {
-                        if (!(await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog))) {
-                            res.errors.push('Invalid course code or number')
-                        } else {
-                            event.subject = event.subject.toUpperCase();
-                        }
-                    } else {
-                        event.subject = "";
-                        event.catalog = "";
-                    }
-                }
+                await EventValidator.#eventTypeValidator(event, res)
             }
             if (!this.validateColor(event.color)) {
                 res.errors.push('Invalid hex color');
@@ -70,6 +57,35 @@ module.exports = class EventValidator {
             if (res.errors[0]) {
                 throw res;
             }
+    }
+
+    static #eventRecurrenceValidator(event, res){
+        if (event.recurrence === undefined || event.recurrence === "") {
+            res.errors.push('Empty recurrence');
+        }
+        else {
+            if (!['once', 'daily', 'weekly', 'monthly'].includes(event.recurrence)) {
+                res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
+            }
+        }
+    }
+
+    static async #eventTypeValidator(event, res){
+        if (!['holiday', 'event', 'course', 'study', 'appointment', 'workout', 'exam'].includes(event.type)) {
+            res.errors.push('Invalid type (holiday, event, course)')
+        }
+        else {
+            if (event.type === 'course' || event.type === 'study' || event.type === 'exam') {
+                if (!(await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog))) {
+                    res.errors.push('Invalid course code or number')
+                } else {
+                    event.subject = event.subject.toUpperCase();
+                }
+            } else {
+                event.subject = "";
+                event.catalog = "";
+            }
+        }
     }
 
     /**
