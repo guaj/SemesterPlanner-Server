@@ -146,7 +146,6 @@ router.route('/add').post((req, res) => {
             generateToken(res, newStudent._id)
             res.json(`Student ${newStudent.email} added`).status(200)})
         .catch(err => {
-            console.log(err)
             res.status(400).json(err)
         });
 

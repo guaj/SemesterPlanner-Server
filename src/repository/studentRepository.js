@@ -214,10 +214,10 @@ module.exports = class StudentRepository {
     static async isInFriendList(student1, student2) {
         await Student.findOne({email: student1.toString()})
             .then((res) => {
-                return (res != null && res.friends.some((friend) => friend === student2))
+                return (res != null && res.friends.some((friend) => friend === student2));
             })
             .catch(() => {
-                throw false
+                return false;
             })
     }
 }
