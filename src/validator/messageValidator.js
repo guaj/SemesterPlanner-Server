@@ -14,10 +14,7 @@ module.exports = class MessageValidator {
         if (data.email === undefined || data.email === "") {
             res.errors.push('Missing email (message author)');
         } else {
-            student = await Student.findOne({email: data.email.toString()})
-            if (!student) {
-                res.errors.push('Message author does not exist');
-            }
+            student = await MessageValidator.#checkStudent(data, res);
         }
         if (data.content === undefined || data.content === "") {
             res.errors.push('Missing message content');
@@ -28,10 +25,7 @@ module.exports = class MessageValidator {
         if (data.studyRoomID === undefined || data.studyRoomID === "") {
             res.errors.push('Missing studyRoomID');
         } else {
-            room = await StudyRoom.findOne({studyRoomID: data.studyRoomID.toString()})
-            if (!room) {
-                res.errors.push('StudyRoom does not exist');
-            }
+            room = await MessageValidator.#checkRoom(data, res);
         }
         if (room && student && !room.participants.includes(student.email)) {
             res.errors.push('Message author does not belong to studyRoom');
@@ -39,6 +33,22 @@ module.exports = class MessageValidator {
         if (res.errors[0]) {
             throw res;
         }
+    }
+
+    static async #checkStudent(data, res) {
+        let student = await Student.findOne({email: data.email.toString()})
+        if (!student) {
+            res.errors.push('Message author does not exist');
+        }
+        return student;
+    }
+
+    static async #checkRoom(data, res){
+        let room = await StudyRoom.findOne({studyRoomID: data.studyRoomID.toString()})
+        if (!room) {
+            res.errors.push('StudyRoom does not exist');
+        }
+        return room;
     }
 
     /**

@@ -5,14 +5,15 @@ const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
 // Sending a message, requires studyRoomID (study room ID it belongs to), username and content
-router.route('/send').post(TokenVerify, (req, res) => {
-  const studyRoomID = req.body.studyRoomID.toString();
+router.route('/send').post( (req, res) => {
   MessageValidator.validateCreateData(req.body).then(() => {
     MessageRepository.create(req.body)
       .then((message) => {
-        let io = req.app.get('socketio');
-        io.to(studyRoomID).emit('newMessage', message)
-        res.json(message).status(200)
+          const studyRoomID = req.body.studyRoomID.toString();
+
+          let io = req.app.get('socketio');
+          io.to(studyRoomID).emit('newMessage', message)
+          res.json(message).status(200)
       })
   })
     .catch(err => res.status(400).json(err));
