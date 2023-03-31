@@ -20,10 +20,9 @@ module.exports = class StudyRoomValidator {
      * @param {*} studyroom StudyRoom created object. It should contain: owner, title, description.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateStudyRoom(studyroom) {
-        return new Promise(async (resolve, reject) => {
+    static async validateStudyRoom(studyroom) {
             let res = { 'errors': [] };
-            if (studyroom.owner == undefined || studyroom.owner == "") {
+            if (studyroom.owner === undefined || studyroom.owner == "") {
                 res.errors.push('Missing owner');
             }
             else {
@@ -43,10 +42,8 @@ module.exports = class StudyRoomValidator {
             }
 
             if (res.errors[0]) {
-                reject(res);
+                throw res;
             }
-            resolve();
-        })
     }
 
     /**
@@ -54,10 +51,9 @@ module.exports = class StudyRoomValidator {
      * @param {*} studyroom Updated studyroom object.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateUpdateData(studyroom) {
-        return new Promise(async (resolve, reject) => {
+    static async validateUpdateData(studyroom) {
             let res = { 'errors': [] };
-            if (studyroom.owner == undefined || studyroom.owner == "") {
+            if (studyroom.owner === undefined || studyroom.owner == "") {
                 res.errors.push('Invalid new room owner');
             }
             else {
@@ -78,10 +74,8 @@ module.exports = class StudyRoomValidator {
                 res.errors.push('Room cannot have fewer than 1 participants');
             }
             if (res.errors[0]) {
-                reject(res);
+                throw res;
             }
-            resolve();
-        })
     }
 
     /**
@@ -90,39 +84,34 @@ module.exports = class StudyRoomValidator {
      * @param {string} studyRoomID The studyRoom's studyRoomID.  
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateAddingStudent(targetEmail, studyRoomID) {
-        return new Promise(async (resolve, reject) => {
-            let student = undefined;
-            let room = undefined;
-            let res = { 'errors': [] };
-            if (targetEmail == undefined || targetEmail == "") {
-                res.errors.push('Invalid student email');
+    static async validateAddingStudent(targetEmail, studyRoomID) {
+        let student = undefined;
+        let room = undefined;
+        let res = {'errors': []};
+        if (targetEmail === undefined || targetEmail == "") {
+            res.errors.push('Invalid student email');
+        } else {
+            student = await Student.findOne({email: targetEmail})
+            if (!student) {
+                res.errors.push('Student does not exist');
             }
-            else {
-                student = await Student.findOne({ email: targetEmail })
-                if (!student) {
-                    res.errors.push('Student does not exist');
-                }
+        }
+        if (studyRoomID === undefined || studyRoomID == "") {
+            res.errors.push('Invalid studyRoomID');
+        } else {
+            room = await StudyRoom.findOne({studyRoomID: studyRoomID})
+            if (!room) {
+                res.errors.push('StudyRoom does not exist');
             }
-            if (studyRoomID == undefined || studyRoomID == "") {
-                res.errors.push('Invalid studyRoomID');
+        }
+        if (student && room) {
+            if (room.participants.includes(student.email)) {
+                res.errors.push('Student is already present in studyroom');
             }
-            else {
-                room = await StudyRoom.findOne({ studyRoomID: studyRoomID })
-                if (!room) {
-                    res.errors.push('StudyRoom does not exist');
-                }
-            }
-            if (student && room) {
-                if (room.participants.includes(student.email)) {
-                    res.errors.push('Student is already present in studyroom');
-                }
-            }
-            if (res.errors[0]) {
-                reject(res);
-            }
-            resolve();
-        })
+        }
+        if (res.errors[0]) {
+            throw res;
+        }
     }
 
     /**
@@ -131,42 +120,37 @@ module.exports = class StudyRoomValidator {
      * @param {string} studyRoomID The studyRoom's studyRoomID.  
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateDeletingStudent(email, studyRoomID) {
-        return new Promise(async (resolve, reject) => {
-            let student = undefined;
-            let room = undefined;
-            let res = { 'errors': [] };
-            if (email == undefined || email == "") {
-                res.errors.push('Invalid student email');
+    static async validateDeletingStudent(email, studyRoomID) {
+        let student = undefined;
+        let room = undefined;
+        let res = {'errors': []};
+        if (email === undefined || email == "") {
+            res.errors.push('Invalid student email');
+        } else {
+            student = await Student.findOne({email: email})
+            if (!student) {
+                res.errors.push('Student does not exist');
             }
-            else {
-                student = await Student.findOne({ email: email })
-                if (!student) {
-                    res.errors.push('Student does not exist');
-                }
+        }
+        if (studyRoomID === undefined || studyRoomID == "") {
+            res.errors.push('Invalid studyRoomID');
+        } else {
+            room = await StudyRoom.findOne({studyRoomID: studyRoomID})
+            if (!room) {
+                res.errors.push('StudyRoom does not exist');
             }
-            if (studyRoomID == undefined || studyRoomID == "") {
-                res.errors.push('Invalid studyRoomID');
+        }
+        if (student && room) {
+            if (!room.participants.includes(student.email)) {
+                res.errors.push('Student is not in the studyRoom');
             }
-            else {
-                room = await StudyRoom.findOne({ studyRoomID: studyRoomID })
-                if (!room) {
-                    res.errors.push('StudyRoom does not exist');
-                }
+            if (email === room.owner) {
+                res.errors.push('Cannot remove the owner from the studyRoom');
             }
-            if (student && room) {
-                if (!room.participants.includes(student.email)) {
-                    res.errors.push('Student is not in the studyRoom');
-                }
-                if (email == room.owner) {
-                    res.errors.push('Cannot remove the owner from the studyRoom');
-                }
-            }
-            if (res.errors[0]) {
-                reject(res);
-            }
-            resolve();
-        })
+        }
+        if (res.errors[0]) {
+            throw res;
+        }
     }
 
 
@@ -175,23 +159,19 @@ module.exports = class StudyRoomValidator {
      * @param {string} studyRoomID The studyRoom's studyRoomID.  
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateDelete(studyRoomID) {
-        return new Promise(async (resolve, reject) => {
-            let room = undefined;
-            let res = { 'errors': [] };
-            if (studyRoomID == undefined || studyRoomID == "") {
-                res.errors.push('Invalid studyRoomID');
+    static async validateDelete(studyRoomID) {
+        let room = undefined;
+        let res = {'errors': []};
+        if (studyRoomID == undefined || studyRoomID == "") {
+            res.errors.push('Invalid studyRoomID');
+        } else {
+            room = await StudyRoom.findOne({studyRoomID: studyRoomID})
+            if (!room) {
+                res.errors.push('StudyRoom does not exist');
             }
-            else {
-                room = await StudyRoom.findOne({ studyRoomID: studyRoomID })
-                if (!room) {
-                    res.errors.push('StudyRoom does not exist');
-                }
-            }
-            if (res.errors[0]) {
-                reject(res);
-            }
-            resolve();
-        })
+        }
+        if (res.errors[0]) {
+            throw res;
+        }
     }
 }

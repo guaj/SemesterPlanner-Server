@@ -126,7 +126,7 @@ router.route('/update').post(TokenVerify, async (req, res) => {
             if (req.body.faculty) {
                 student.faculty = req.body.faculty;
             }
-            if (req.body.privateProfile) {
+            if (req.body.privateProfile !== undefined) {
                 student.privateProfile = req.body.privateProfile;
             }
 
@@ -146,7 +146,6 @@ router.route('/add').post((req, res) => {
             generateToken(res, newStudent._id)
             res.json(`Student ${newStudent.email} added`).status(200)})
         .catch(err => {
-            console.log(err)
             res.status(400).json(err)
         });
 
