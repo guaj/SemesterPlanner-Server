@@ -140,14 +140,10 @@ module.exports = class StudyRoomValidator {
                 res.errors.push('StudyRoom does not exist');
             }
         }
-        if (student && room) {
-            if (!room.participants.includes(student.email)) {
-                res.errors.push('Student is not in the studyRoom');
-            }
-            if (email === room.owner) {
-                res.errors.push('Cannot remove the owner from the studyRoom');
-                console.log()
-            }
+        if (student && room && !room.participants.includes(student.email))
+            res.errors.push('Student is not in the studyRoom');
+        if (student && room && email === room.owner) {
+            res.errors.push('Cannot remove the owner from the studyRoom');
         }
         if (res.errors[0]) {
             throw res;
