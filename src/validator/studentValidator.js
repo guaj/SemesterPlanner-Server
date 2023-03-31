@@ -19,7 +19,7 @@ module.exports = class StudentValidator {
             res.errors.push('Missing password');
         }
 
-        if ((data.privateProfile !== true && data.privateProfile !== false && data.privateProfile !== undefined) || data.privateProfile === undefined) {
+        if (data.privateProfile !== true && data.privateProfile !== false) {
             res.errors.push('Invalid parameter for privateProfile (should be true or false)');
         }
 
@@ -45,7 +45,7 @@ module.exports = class StudentValidator {
      */
     static async validateUpdateData(student) {
             let res = {'errors': []};
-            if ((student.privateProfile !== true && student.privateProfile !== false) || (student.privateProfile === undefined || student.privateProfile === '')) {
+            if (student.privateProfile !== true && student.privateProfile !== false) {
                 res.errors.push('Invalid parameter for privateProfile (should be true or false)')
             }
             if (res.errors[0]) {

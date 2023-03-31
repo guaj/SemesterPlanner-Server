@@ -146,6 +146,7 @@ module.exports = class StudyRoomValidator {
             }
             if (email === room.owner) {
                 res.errors.push('Cannot remove the owner from the studyRoom');
+                console.log()
             }
         }
         if (res.errors[0]) {
