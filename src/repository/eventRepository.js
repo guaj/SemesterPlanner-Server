@@ -168,16 +168,17 @@ module.exports = class EventRepository {
 
     static async #updateCourseList(event){
         if (event.type === 'course' || event.type === 'study' || event.type === 'exam') {
-            let courses = await EventRepository.findByCourse(event.username, event.subject, event.catalog);
-            if (courses.length === 0) {
-                let student = await StudentRepository.findOneByUsername(event.username);
-                let studentCourses = student.courses;
-                let index = studentCourses.findIndex(function (course) {
-                    return (course.subject === event.subject && course.catalog === event.catalog);
-                });
-                studentCourses.splice(index, 1);
-                await StudentRepository.updateCourses(event.username, studentCourses);
-            }
+            EventRepository.findByCourse(event.username, event.subject, event.catalog).then(async (courses) => {
+                if (courses.length === 0) {
+                    let student = await StudentRepository.findOneByUsername(event.username);
+                    let studentCourses = student.courses;
+                    let index = studentCourses.findIndex(function (course) {
+                        return (course.subject === event.subject && course.catalog === event.catalog);
+                    });
+                    studentCourses.splice(index, 1);
+                    await StudentRepository.updateCourses(event.username, studentCourses);
+                }
+            })
         }
     }
 
