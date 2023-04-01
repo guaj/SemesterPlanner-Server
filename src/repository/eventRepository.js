@@ -3,6 +3,8 @@ const { createEvent } = require("../factory/eventFactory");
 const EventValidator = require('../validator/eventValidator')
 const {cloneDeep} = require("lodash");
 const StudentRepository = require("./studentRepository");
+const OpenDataCourseRepository = require("./conUOpenDataCourseRepository");
+const _ = require("lodash");
 
 module.exports = class EventRepository {
 
@@ -16,8 +18,9 @@ module.exports = class EventRepository {
             EventValidator.validatePreCreateData(data).then(() => {
                 const newEvent = createEvent(data)
                 EventValidator.validateCreateData(newEvent).then(() => {
-                    newEvent.save((err, event) => {
+                    newEvent.save(async (err, event) => {
                         if (err) { reject(err); }
+                        await EventRepository.#addToCourseList(event);
                         resolve(event);
                     })
                 })
@@ -25,6 +28,26 @@ module.exports = class EventRepository {
             })
                 .catch(errs => reject(errs));
         })
+    }
+
+    static async #addToCourseList(event) {
+        // Add course to student if it doesn't already exist in student's courses list.
+        if (event.type === 'course') {
+            let student = await StudentRepository.findOneByUsername(event.username)
+            let courses = student.courses;
+            let conUCourse = await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog)
+            let course = {
+                'title': conUCourse.title,
+                'subject': event.subject,
+                'catalog': event.catalog,
+                'classUnit': conUCourse.classUnit,
+                'studyHours': (parseFloat(conUCourse.classUnit) * 1.5).toString()
+            }
+            if (!(courses.some(item => _.isEqual(item, course)))) {
+                courses.push(course);
+                await StudentRepository.updateCourses(event.username, courses);
+            }
+        }
     }
 
     /**
@@ -212,6 +235,7 @@ module.exports = class EventRepository {
                             reject(err);
                         }
                         await EventRepository.#updateCourseList(originalEvent);
+                        await EventRepository.#addToCourseList(updatedEvent);
                         resolve(updatedEvent);
                     })
                 })
