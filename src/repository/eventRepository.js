@@ -205,7 +205,7 @@ module.exports = class EventRepository {
     static updateOne(event) {
         return new Promise((resolve, reject) => {
             EventValidator.validateCreateData(event).then(() => {
-                this.findOne(event.eventID).then((originalEvent) => {
+                this.findOneByID(event._id).then((originalEvent) => {
                     event.save(async (err, updatedEvent) => {
                         if (err) {
                             reject(err);
