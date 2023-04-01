@@ -2,6 +2,7 @@ const Event = require('../models/event.model');
 const { createEvent } = require("../factory/eventFactory");
 const EventValidator = require('../validator/eventValidator')
 const {cloneDeep} = require("lodash");
+const StudentRepository = require("./studentRepository");
 
 module.exports = class EventRepository {
 
@@ -165,6 +166,21 @@ module.exports = class EventRepository {
         })
     }
 
+    static async #updateCourseList(event){
+        if (event.type === 'course' || event.type === 'study' || event.type === 'exam') {
+            let courses = await EventRepository.findByCourse(event.username, event.subject, event.catalog);
+            if (courses.length === 0) {
+                let student = await StudentRepository.findOneByUsername(event.username);
+                let studentCourses = student.courses;
+                let index = studentCourses.findIndex(function (course) {
+                    return (course.subject === event.subject && course.catalog === event.catalog);
+                });
+                studentCourses.splice(index, 1);
+                await StudentRepository.updateCourses(event.username, studentCourses);
+            }
+        }
+    }
+
     /**
      * Delete one event by its eventID.
      * @param {string} eventID The eventID of the event.
@@ -173,7 +189,8 @@ module.exports = class EventRepository {
     static deleteOne(eventID) {
         return new Promise((resolve, reject) => {
             Event.findOneAndDelete({ _id: eventID.toString() })
-                .then((event) => {
+                .then(async (event) => {
+                    await EventRepository.#updateCourseList(event);
                     resolve(event);
                 })
                 .catch(err => reject(err))
@@ -188,9 +205,14 @@ module.exports = class EventRepository {
     static updateOne(event) {
         return new Promise((resolve, reject) => {
             EventValidator.validateCreateData(event).then(() => {
-                event.save((err, event) => {
-                    if (err) { reject(err); }
-                    resolve(event);
+                this.findOne(event.eventID).then((originalEvent) => {
+                    event.save(async (err, updatedEvent) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        await EventRepository.#updateCourseList(originalEvent);
+                        resolve(updatedEvent);
+                    })
                 })
             })
                 .catch(errs => reject(errs));

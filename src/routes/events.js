@@ -56,19 +56,7 @@ router.route('/events-monthly/:username').get(TokenVerify, (req, res) => {
  */
 router.route('/:eventID').delete(TokenVerify, (req, res) => {
     EventRepository.deleteOne(req.params.eventID)
-        .then(async (event) => {
-            if (event.type === 'course') {
-                let courses = await EventRepository.findByCourse(event.username, event.subject, event.catalog);
-                if (courses.length === 0) {
-                    let student = await StudentRepository.findOneByUsername(event.username);
-                    let studentCourses = student.courses;
-                    let index = studentCourses.findIndex(function (course) {
-                        return (course.subject === event.subject && course.catalog === event.catalog);
-                    });
-                    studentCourses.splice(index, 1);
-                    await StudentRepository.updateCourses(event.username, studentCourses);
-                }
-            }
+        .then(async () => {
             res.status(200).json(`Event deleted`);
         })
         .catch(err => res.status(400).json('Error: ' + err));
