@@ -1,8 +1,5 @@
 const router = require('express').Router();
-const EventRepository = require('../repository/eventRepository')
-const StudentRepository = require('../repository/studentRepository');
-const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
-const _ = require('lodash');
+const EventRepository = require('../repository/eventRepository');
 const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 
 
@@ -56,19 +53,7 @@ router.route('/events-monthly/:username').get(TokenVerify, (req, res) => {
  */
 router.route('/:eventID').delete(TokenVerify, (req, res) => {
     EventRepository.deleteOne(req.params.eventID)
-        .then(async (event) => {
-            if (event.type === 'course') {
-                let courses = await EventRepository.findByCourse(event.username, event.subject, event.catalog);
-                if (courses.length === 0) {
-                    let student = await StudentRepository.findOneByUsername(event.username);
-                    let studentCourses = student.courses;
-                    let index = studentCourses.findIndex(function (course) {
-                        return (course.subject === event.subject && course.catalog === event.catalog);
-                    });
-                    studentCourses.splice(index, 1);
-                    await StudentRepository.updateCourses(event.username, studentCourses);
-                }
-            }
+        .then(() => {
             res.status(200).json(`Event deleted`);
         })
         .catch(err => res.status(400).json('Error: ' + err));
@@ -130,26 +115,7 @@ router.route('/update').post(TokenVerify, (req, res) => {
  */
 router.route('/add').post(TokenVerify, async (req, res) => {
     EventRepository.create(req.body)
-        .then(async (event) => {
-            // Add course to student if doesn't already exist in student's courses list.
-            if (event.type === 'course') {
-                let student = await StudentRepository.findOneByUsername(event.username)
-                let courses = student.courses;
-                let conUCourse = await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog)
-                let course = {
-                    'title': conUCourse.title,
-                    'subject': event.subject,
-                    'catalog': event.catalog,
-                    'classUnit': conUCourse.classUnit,
-                    'studyHours': (parseFloat(conUCourse.classUnit) * 1.5).toString()
-                }
-                if (!(courses.some(item => _.isEqual(item, course)))) {
-                    courses.push(course);
-                    await StudentRepository.updateCourses(event.username, courses);
-                }
-
-            }
-
+        .then((event) => {
             res.status(200).json(event)
         })
         .catch(err => { res.status(400).json(err); });
