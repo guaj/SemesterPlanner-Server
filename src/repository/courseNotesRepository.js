@@ -5,6 +5,16 @@ const createCourseNoteData = require("../factory/courseNoteDataFactory")
 const fs = require('fs');
 const util = require('util');
 
+const Multer = require('multer');
+
+// create multer instance
+const multer = Multer({
+    dest: "tmp/files",
+    limits: {
+        fileSize: 8000000
+    }
+});
+
 // makes the asynchronous fs.readFile(...) method return a promise; the use of asynchronous fs.readFile(...) instead
 // of synchronous fs.readFileSync(...) for scalability and performance improvement
 const readFile = util.promisify(fs.readFile);
@@ -100,6 +110,17 @@ module.exports = class CourseNotesRepository {
                     })
                     .catch(() => reject("Could not delete file metadata!"))
             }).catch(() => reject("Could not delete file!"))
+        })
+    }
+
+    static fileUploadErrorMiddleware(req, res, next) {
+        const upload = multer.single('file');
+
+        upload(req, res, function (err) {
+            if (err) {
+                res.status(400).json(err);
+            } else
+                next();
         })
     }
 }

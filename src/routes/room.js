@@ -4,15 +4,6 @@ const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentRepository = require('../repository/studentRepository');
 const StudyRoomValidator = require('../validator/roomValidator')
 
-const Multer = require('multer');
-
-// create multer instance
-const multer = Multer({
-    dest: "tmp/files",
-    limits: {
-        fileSize: 8000000
-    }
-});
 
 router.route('/').put((req, res) => {
   StudyRoomRepository.findOne(req.body.studyRoomID)
@@ -87,7 +78,7 @@ router.route('/add').post(async (req, res) => {
         let participants = room.participants;
         participants.push(email);
         StudyRoomRepository.updateParticipants(ID, participants)
-          .then((room) => {
+          .then(() => {
             StudentRepository.findOneByEmail(email)
               .then((student) => {
                 let studyRooms = student.studyRooms;
@@ -116,7 +107,7 @@ router.route('/remove').post(async (req, res) => {
         const participantIndex = participants.indexOf(email);
         participants.splice(participantIndex, 1);
         StudyRoomRepository.updateParticipants(ID, participants)
-          .then((room) => {
+          .then(() => {
             StudentRepository.findOneByEmail(email)
               .then((student) => {
                 let studyRooms = student.studyRooms;
@@ -177,11 +168,11 @@ router.route('/').delete(async (req, res) => {
 // upload a file to the database;  file must be sent as multipart form request
 // the user should send the study room ID and the file owner email under the 'studyRoomID' and 'email' parameters
 // in the request
-router.route("/file").post(multer.single("file"), async (req, res) => {
+router.route("/file").post(CourseNotesRepository.fileUploadErrorMiddleware, async (req, res) => {
     req.body.file = req.file
 
     await CourseNotesRepository.create(req.body)
-        .then(() => res.status(201).json("successfully uploaded"))
+        .then(() => res.status(201).json("File successfully uploaded"))
         .catch(err => res.status(400).json(err));
 });
 
