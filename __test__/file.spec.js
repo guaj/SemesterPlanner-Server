@@ -47,7 +47,7 @@ describe("Testing room api file routes", () => {
     });
 
     it("Upload a file to the study room", async () => {
-        await request.post('/room/file').attach('file', '.\\__test__\\helper\\file\\test_file.txt')
+        await request.post('/room/file').attach('file', './__test__/helper/file/test_file.txt')
             .field('studyRoomID', roomID)
             .field('email', student.email)
             .expect(201)
