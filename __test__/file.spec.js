@@ -1,6 +1,6 @@
 const { request, assert } = require("./helper/app");
 const { createRoom } = require("./helper/room_test_data");
-const { createUser } = require('./helper/student_test_data')
+const { createUser, getUserToken } = require('./helper/student_test_data')
 const dbHandler = require('./helper/db-handler')
 const {Buffer, Blob} = require("buffer");
 
@@ -25,6 +25,7 @@ describe("Testing room api file routes", () => {
     let room = createRoom(student.email);
     let roomID;
     let courseNoteID;
+    let token;
 
     // Pre-test user creation
     it("Create a student", async () => {
@@ -35,10 +36,12 @@ describe("Testing room api file routes", () => {
             .then((res) => {
                 assert.ok(res.body.includes(student.email))
             })
+
+        await getUserToken(student).then((res) => {token = res})
     });
 
     it("Create a study room", async () => {
-        await request.post('/room/').send(room)
+        await request.post('/room/').send(room).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.ok(res.body.owner.includes(student.email))
@@ -47,7 +50,7 @@ describe("Testing room api file routes", () => {
     });
 
     it("Upload a file to the study room", async () => {
-        await request.post('/room/file').attach('file', './__test__/helper/file/test_file.txt')
+        await request.post('/room/file').set('cookie', token).attach('file', './__test__/helper/file/test_file.txt')
             .field('studyRoomID', roomID)
             .field('email', student.email)
             .expect(201)
@@ -58,7 +61,7 @@ describe("Testing room api file routes", () => {
 
     it("Fetch file list for the study room", async () => {
         await request.get(`/room/files/${roomID}`)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 expect(res.body[0].studyRoomID).toEqual(roomID);
                 expect(res.body[0].email).toEqual(student.email);
@@ -71,7 +74,7 @@ describe("Testing room api file routes", () => {
 
     it("Download a file from the study room and check its contents", async () => {
         await request.get(`/room/file/${courseNoteID}`)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then(async (res) => {
                 const bufferedFile = Buffer.from(res.body.bufferedFile.data, "base64");
                 const file = new Blob([bufferedFile], {type: res.body.filetype});
@@ -80,7 +83,7 @@ describe("Testing room api file routes", () => {
     })
 
     it("Deleting file from the study room", async () => {
-        await request.delete(`/room/file/${courseNoteID}`)
+        await request.delete(`/room/file/${courseNoteID}`).set('cookie', token)
             .expect(200)
             .then((res) => {
                 expect(res.body).toEqual('deleted 1 file');
@@ -89,7 +92,7 @@ describe("Testing room api file routes", () => {
 
     it("Fetch file list for the study room", async () => {
         await request.get(`/room/files/${roomID}`)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 expect(res.body).toEqual([]);
             })
