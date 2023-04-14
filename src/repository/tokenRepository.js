@@ -7,10 +7,13 @@ const verifyJWTAuth = (request, response, next) => {
     // No token: 403
     response.status(403).json({ auth: false, message: 'No token found in request' });
   } else {
-    jwt.verify(headerToken.split("=")[1], process.env.ACCESS_TOKEN_SECRET, {}, (err, decoded) => {
+    headers = headerToken.split(';');
+    jwt_token = headers.filter(element => element.includes("jwt"))
+
+    jwt.verify(jwt_token[0].split("=")[1], process.env.ACCESS_TOKEN_SECRET, {}, (err, decoded) => {
       if (err) {
           // Bad token: 403
-          response.status(401).json({ auth: false, message: 'User authentication failed' });
+          response.status(401).json({ auth: false, message: 'User authentication failed'});
       } else {
         request.userId = decoded.id;
 
@@ -31,7 +34,7 @@ const generateToken = (response, userId) => {
   response.cookie('jwt', tokenJWT, {
     httpOnly: true,
     secure: true,
-    sameSite: "lax"
+    sameSite: "none"
   })
 }
 
