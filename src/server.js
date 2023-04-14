@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-var bodyParser = require('body-parser')
+let bodyParser = require('body-parser')
 const mongoose = require('mongoose');
 
 // Allows us to include environment variables in .env file
@@ -14,7 +14,7 @@ if (process.env.NODE_ENV !== 'test') {
   server = app.listen(port, () => console.log(`Listening on port ${port}`))
 }
 
-var io = require('socket.io')(server, {
+let io = require('socket.io')(server, {
   cors: {
     origin: process.env.CLIENT_BASE_URL,
     methods: ["GET", "POST"]
@@ -22,12 +22,19 @@ var io = require('socket.io')(server, {
 });
 app.set('socketio', io);
 
+// this configuration is required to ensure cookie is set on client-side
+const corsOptions = {
+  origin: process.env.CLIENT_BASE_URL,
+  credentials: true,
+};
+
 // Middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json({limit: '8mb'}));    // Allows us to parse json for our Mongo DB
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.disable("x-powered-by"); // disable fingerprinting of the website's technology
 
 // Connect to MongoDB
 const uri = process.env.ATLAS_URI;
@@ -73,7 +80,7 @@ io.sockets.on('connection', function (socket) {
 });
 
 // Handle unhandled promise rejections
-process.on("unhandledRejection", (err, promise) => {
+process.on("unhandledRejection", (err) => {
   console.log(`Unhandled Promise: ${err} ${err.stack}`);
   // Close server & exit process
   process.exit(1);

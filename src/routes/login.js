@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const studentRepository = require('../repository/studentRepository')
 const LoginValidator = require('../validator/loginValidator')
+const {generateToken} = require("../repository/tokenRepository");
 
 /**
  * Login
@@ -25,14 +25,10 @@ router.post('/', async (request, response) => {
         return;
       }
 
-      const tokenPayload = {
-        id: user.id,
-      };
-      // generating the JWT token
-      const tokenJWT = jwt.sign(tokenPayload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' }, {});
+      generateToken(response, user.id)
+
       const responsePayload = {
         auth: true,
-        token: tokenJWT,
         profile: {
           username: user.username,
           email: user.email,
@@ -48,20 +44,8 @@ router.post('/', async (request, response) => {
     .catch(err => response.status(400).json(err));
 });
 
-router.route('/yyy').post((req, res) => {
-  studentRepository.findOneByEmail(req.body.email)
-    .then(user => {
-      if (user == null) {
-        console.log('Email does not match')
-      } else {
-        if (user.password !== req.body.password) {
-          console.log('Password does not match')
-        } else {
-          res.json(user)
-        }
-      }
-    })
-    .catch(err => res.status(400).json('Error: ' + err));
-});
+router.route('/logout').get((req, res) => {
+  res.clearCookie("jwt").status(200).json("Successfully logged out.");
+})
 
 module.exports = router;

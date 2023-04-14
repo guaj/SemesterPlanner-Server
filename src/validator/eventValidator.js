@@ -1,4 +1,3 @@
-const Event = require('../models/event.model');
 const OpenDataCourseRepository = require("../repository/conUOpenDataCourseRepository");
 
 module.exports = class EventValidator {
@@ -20,38 +19,21 @@ module.exports = class EventValidator {
      * @param {Event} event event object.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validateCreateData(event) {
-        return new Promise(async (resolve, reject) => {
+    static async validateCreateData(event) {
             let res = { 'errors': [] };
 
-            if (event.username == undefined || event.username == "") {
+            if (event.username === undefined || event.username === "") {
                 res.errors.push('Missing username');
             }
-            if (event.eventHeader == undefined || event.eventHeader == "") {
+            if (event.eventHeader === undefined || event.eventHeader === "") {
                 res.errors.push('Missing eventHeader');
             }
-            if (event.recurrence == undefined || event.recurrence == "") {
-                res.errors.push('Empty recurrence');
-            }
-            else {
-                if (!['once', 'daily', 'weekly', 'monthly'].includes(event.recurrence)) {
-                    res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
-                }
-            }
-            if (event.type == undefined || event.type == "") {
+            EventValidator.#eventRecurrenceValidator(event, res);
+            if (event.type === undefined || event.type === "") {
                 res.errors.push('Empty type');
             }
             else {
-                if (!['holiday', 'event', 'course'].includes(event.type)) {
-                    res.errors.push('Invalid recurrence (holiday, event, course)')
-                }
-                else {
-                    if (event.type == 'course') {
-                        if (!(await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog))) {
-                            res.errors.push('Invalid course code or number')
-                        }
-                    }
-                }
+                await EventValidator.#eventTypeValidator(event, res)
             }
             if (!this.validateColor(event.color)) {
                 res.errors.push('Invalid hex color');
@@ -62,11 +44,40 @@ module.exports = class EventValidator {
             if (event.description.length > 2048) {
                 res.errors.push('event description length exceeds 2048 characters');
             }
+            if (event.studyHoursConfirmed !== true && event.studyHoursConfirmed !== false)
+                res.errors.push('Invalid value for parameter studyHoursConfirmed: value must be boolean')
             if (res.errors[0]) {
-                reject(res);
+                throw res;
             }
-            resolve();
-        })
+    }
+
+    static #eventRecurrenceValidator(event, res){
+        if (event.recurrence === undefined || event.recurrence === "") {
+            res.errors.push('Empty recurrence');
+        }
+        else {
+            if (!['once', 'daily', 'weekly', 'monthly'].includes(event.recurrence)) {
+                res.errors.push('Invalid recurrence (once, daily, weekly, monthly)')
+            }
+        }
+    }
+
+    static async #eventTypeValidator(event, res){
+        if (!['holiday', 'event', 'course', 'study', 'appointment', 'workout', 'exam'].includes(event.type)) {
+            res.errors.push('Invalid type (holiday, event, course)')
+        }
+        else {
+            if (event.type === 'course' || event.type === 'study' || event.type === 'exam') {
+                if (!(await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog))) {
+                    res.errors.push('Invalid course code or number')
+                } else {
+                    event.subject = event.subject.toUpperCase();
+                }
+            } else {
+                event.subject = "";
+                event.catalog = "";
+            }
+        }
     }
 
     /**
@@ -74,28 +85,25 @@ module.exports = class EventValidator {
      * @param {*} data data parameters.
      * @returns {[string]} Returns a promise. Resolves with nothing, rejects with array of errors.
      */
-    static validatePreCreateData(data) {
-        return new Promise(async (resolve, reject) => {
+    static async validatePreCreateData(data) {
             let res = { 'errors': [] };
-            if (data.startDate == undefined || data.startDate == "") {
+            if (data.startDate === undefined || data.startDate === "") {
                 res.errors.push('Missing startDate');
             }
-            if (data.endDate == undefined || data.endDate == "") {
+            if (data.endDate === undefined || data.endDate === "") {
                 res.errors.push('Missing endDate');
             }
-            if (data.startTime == undefined || data.startTime == "") {
+            if (data.startTime === undefined || data.startTime === "") {
                 res.errors.push('Missing startTime');
             }
-            if (data.endTime == undefined || data.endTime == "") {
+            if (data.endTime === undefined || data.endTime === "") {
                 res.errors.push('Missing endTime');
             }
 
             // TO DO: validate times
 
             if (res.errors[0]) {
-                reject(res);
+                throw res;
             }
-            resolve();
-        })
     }
 }

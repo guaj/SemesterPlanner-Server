@@ -1,6 +1,6 @@
 // INCOMPLETE
 const { request, assert, generateString } = require("./helper/app");
-const { createUser } = require('./helper/student_test_data')
+const { createUser, getUserToken} = require('./helper/student_test_data')
 const dbHandler = require('./helper/db-handler')
 
 jest.setTimeout(60000);
@@ -33,6 +33,8 @@ function createCourse(username, title, subject, catalog) {
         endDate: new Date(),
         startTime: new Date(),
         endTime: new Date(),
+        actualStartTime: new Date(),
+        actualEndTime: new Date(),
         recurrence: 'once',
         type: 'course',
         subject: subject,
@@ -43,6 +45,7 @@ function createCourse(username, title, subject, catalog) {
 describe("testing event api routes", () => {
 
     let user1 = createUser();
+    let token;
 
     // Pre-test setups creation
     it("Create student", async () => {
@@ -54,6 +57,7 @@ describe("testing event api routes", () => {
             .then((res) => {
                 assert.ok(res.body.includes(user1.email))
             })
+        await getUserToken(user1).then((res) => {token = res})
     });
 
     //Event creation
@@ -68,12 +72,14 @@ describe("testing event api routes", () => {
                 description: desc,
                 startDate: new Date(),
                 endDate: new Date(),
+                actualStartTime: new Date(),
+                actualEndTime: new Date(),
                 startTime: new Date(),
                 endTime: new Date(),
-                recurrence: 'once'
-
+                recurrence: 'once',
+                type: 'appointment'
             }
-        )
+        ).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.deepEqual(res.body.username, user1.username);
@@ -83,8 +89,8 @@ describe("testing event api routes", () => {
 
     it("get event", async () => {
 
-        await request.get('/events/event/' + event1.eventID)
-            .expect(200)
+        await request.get('/events/event/' + event1._id)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body, event1)
             })
@@ -93,7 +99,7 @@ describe("testing event api routes", () => {
     it("Create course events", async () => {
         await request.post('/events/add').send(
             createCourse(user1.username, 'Soen 490 Captsone Meeting 1', 'SOEN', '490')
-        )
+        ).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.deepEqual(res.body.username, user1.username);
@@ -101,14 +107,14 @@ describe("testing event api routes", () => {
             })
         await request.post('/events/add').send(
             createCourse(user1.username, 'Soen 490 Captsone Meeting 2', 'SOEN', '490')
-        )
+        ).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.deepEqual(res.body.username, user1.username);
             })
         await request.post('/events/add').send(
             createCourse(user1.username, 'Soen 321 Captsone Meeting', 'SOEN', '321')
-        )
+        ).set('cookie', token)
             .expect(200)
             .then((res) => {
                 assert.deepEqual(res.body.username, user1.username);
@@ -117,8 +123,8 @@ describe("testing event api routes", () => {
 
     it("get event", async () => {
 
-        await request.get('/events/event/' + event2.eventID)
-            .expect(200)
+        await request.get('/events/event/' + event2._id)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body, event2)
             })
@@ -127,7 +133,7 @@ describe("testing event api routes", () => {
     it("check student courses", async () => {
 
         await request.get('/student/email/' + user1.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body.courses,
                     [
@@ -150,13 +156,15 @@ describe("testing event api routes", () => {
                 endDate: new Date(),
                 startTime: new Date(),
                 endTime: new Date(),
+                actualStartTime: new Date(),
+                actualEndTime: new Date(),
                 recurrence: 'once',
                 type: 'course',
                 subject: 'SOEN',
                 catalog: '590'
 
             }
-        )
+        ).set('cookie', token)
             .expect(400)
             .then((res) => {
                 assert.deepEqual(res.body, { "errors": ["Invalid course code or number"] });
@@ -166,7 +174,7 @@ describe("testing event api routes", () => {
     it("get student study hours", async () => {
 
         await request.get('/student/studyhours/' + user1.email)
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body, { "studyHours": 10.5 })
             })
@@ -175,7 +183,7 @@ describe("testing event api routes", () => {
     it("get course study hours", async () => {
 
         await request.get('/opendata/course/studyhours/SOEN/490')
-            .expect(200)
+            .expect(200).set('cookie', token)
             .then((res) => {
                 assert.deepEqual(res.body, { "studyHours": 6 })
             })

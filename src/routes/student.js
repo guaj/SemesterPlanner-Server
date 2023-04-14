@@ -1,14 +1,16 @@
 const router = require('express').Router();
-const TokenVerify = require('./tokenVerification').verifyJWTAuth;
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
 const StudentRepository = require('../repository/studentRepository');
 const StudyRoomRepository = require('../repository/studyRoomRepository');
 const StudentValidator = require('../validator/studentValidator');
 const FriendRequestRepository = require('../repository/friendRequestRepository');
+const bcrypt = require("bcrypt");
+const {generateToken} = require("../repository/tokenRepository");
 
 /**
  * Get all users
  */
-router.route('/').get((req, res) => {
+router.route('/').get(TokenVerify, (req, res) => {
     StudentRepository.findAll()
         .then(users => res.status(200).json(users))
         .catch(err => res.status(400).json(err));
@@ -17,7 +19,7 @@ router.route('/').get((req, res) => {
 /**
  * Get user by ID
  */
-router.route('/id/:id').get((req, res) => {
+router.route('/id/:id').get(TokenVerify, (req, res) => {
     StudentRepository.findOneByID(req.params.id)
         .then(user => res.json(user))
         .catch(err => res.status(400).json(err));
@@ -26,7 +28,7 @@ router.route('/id/:id').get((req, res) => {
 /**
  * Get user by username
  */
-router.route('/username/:username').get((req, res) => {
+router.route('/username/:username').get(TokenVerify, (req, res) => {
     StudentRepository.findOneByUsername(req.params.username)
         .then(user => res.json(user))
         .catch(err => res.status(400).json(err));
@@ -35,7 +37,7 @@ router.route('/username/:username').get((req, res) => {
 /**
  * Get user by email
  */
-router.route('/email/:email').get((req, res) => {
+router.route('/email/:email').get(TokenVerify, (req, res) => {
     StudentRepository.findOneByEmail(req.params.email)
         .then(user => res.json(user))
         .catch(err => res.status(400).json(err));
@@ -44,7 +46,7 @@ router.route('/email/:email').get((req, res) => {
 /**
  * Delete a user by ID
  */
-router.route('/:id').delete((req, res) => {
+router.route('/:id').delete(TokenVerify, (req, res) => {
     StudentRepository.deleteOne(req.params.id)
         .then(status => res.json(`${status} deleted`))
         .catch(err => res.status(400).json(err));
@@ -53,7 +55,7 @@ router.route('/:id').delete((req, res) => {
 /**
  * Delete a user by email
  */
-router.route('/email/:email').delete((req, res) => {
+router.route('/email/:email').delete(TokenVerify, (req, res) => {
     StudentValidator.validateDelete(req.params.email).then(() => {
         StudyRoomRepository.findAllbyStudentEmail(req.params.email.toString()).then(async (rooms) => {
             // If the room has no participants left, delete the room.
@@ -61,12 +63,12 @@ router.route('/email/:email').delete((req, res) => {
             if (rooms.length > 0) {
                 for (let room of rooms) {
                     let participants = room.participants
-                    if (participants.length == 1) {
+                    if (participants.length === 1) {
                         await StudyRoomRepository.deleteOne(room.studyRoomID);
                     }
                     else {
                         participants.shift();
-                        if (room.owner == req.params.email) {
+                        if (room.owner === req.params.email) {
                             room.owner = participants[0];
                             StudyRoomRepository.updateOne(room);
                         }
@@ -124,7 +126,7 @@ router.route('/update').post(TokenVerify, async (req, res) => {
             if (req.body.faculty) {
                 student.faculty = req.body.faculty;
             }
-            if (req.body.privateProfile) {
+            if (req.body.privateProfile !== undefined) {
                 student.privateProfile = req.body.privateProfile;
             }
 
@@ -138,9 +140,11 @@ router.route('/update').post(TokenVerify, async (req, res) => {
 /**
  * Add a user
  */
-router.route('/add').post(async (req, res) => {
+router.route('/add').post((req, res) => {
     StudentRepository.create(req.body)
-        .then((newStudent) => res.json(`Student ${newStudent.email} added`).status(200))
+        .then((newStudent) => {
+            generateToken(res, newStudent._id)
+            res.json(`Student ${newStudent.email} added`).status(200)})
         .catch(err => {
             res.status(400).json(err)
         });
@@ -152,7 +156,7 @@ router.route('/add').post(async (req, res) => {
  * @param {string} email Student email
  * @return {number} Total number of studyhours 
  */
-router.route('/studyhours/:email').get((req, res) => {
+router.route('/studyhours/:email').get(TokenVerify, (req, res) => {
     StudentRepository.findOneByEmail(req.params.email)
         .then((student) => {
             let courses = student.courses;
@@ -170,15 +174,10 @@ router.route('/studyhours/:email').get((req, res) => {
  * @param {string} email Student email
  * @return {[String]} Array of course subjects + catalogs
  */
-router.route('/courses/:email').get((req, res) => {
+router.route('/courses/:email').get(TokenVerify, (req, res) => {
     StudentRepository.findOneByEmail(req.params.email)
         .then((student) => {
-            let courses = student.courses;
-            let courseNames = [];
-            for (let course of courses) {
-                courseNames.push({ 'subject': course.subject, 'catalog': course.catalog, 'title': course.title })
-            }
-            res.status(200).json({ 'courses': courseNames })
+            res.status(200).json({ 'courses': student.courses })
         })
         .catch(err => res.status(400).json(err));
 });

@@ -8,6 +8,9 @@ const tesseract = require("node-tesseract-ocr");
 const router = require('express').Router();
 const fs = require('fs');
 const Multer = require('multer');
+const TesseractRepository = require("../repository/tesseractRepository");
+const TokenVerify = require('../repository/tokenRepository').verifyJWTAuth;
+
 
 // create multer instance
 const multer = Multer({
@@ -28,7 +31,7 @@ const config = {
  * @param {String} url, url of image from which text will be extracted
  * @returns {String}, text from the image url provided
  */
-router.route("/url/").post((req, res) => {
+router.route("/url/").post(TokenVerify, (req, res) => {
     const imgUrl = req.body.url;
 
     tesseract
@@ -48,16 +51,15 @@ router.route("/url/").post((req, res) => {
  * as **form-data**, NOT x-www-form-urlencoded
  * @returns {String}, text from the image url provided
  */
-router.route("/img/").post(multer.single("img"), (req, res) => {
+router.route("/img/").post(TokenVerify, multer.single("img"), (req, res) => {
     const img = req.file;
 
     tesseract
         .recognize(img.path, config)
         .then((text) => {
-            res.json(text).status(200);
+            res.json(TesseractRepository.imageToJson(text)).status(200);
         })
         .catch((error) => {
-            console.log(error.message)
             res.json(error.message).status(400);
         }).finally(() => {
         fs.unlink(img.path, (err) => {

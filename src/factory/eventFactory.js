@@ -17,6 +17,8 @@ function createEvent(data) {
     const endDate = new Date(data.endDate);
     const startTime = new Date(data.startTime);
     const endTime = new Date(data.endTime);
+    const actualStartTime = new Date(data.actualStartTime);
+    const actualEndTime = new Date(data.actualEndTime);
     const recurrence = data.recurrence;
     let color = '#808080'; // default gray color
     if (data.color) {
@@ -28,6 +30,7 @@ function createEvent(data) {
     }
     const subject = data.subject;
     const catalog = data.catalog;
+    const studyHoursConfirmed = false;
     return new Event({
         eventID,
         username,
@@ -38,11 +41,14 @@ function createEvent(data) {
         endDate,
         startTime,
         endTime,
+        actualStartTime,
+        actualEndTime,
         recurrence: recurrence,
         color,
         type,
         subject,
-        catalog
+        catalog,
+        studyHoursConfirmed
     })
 }
 
