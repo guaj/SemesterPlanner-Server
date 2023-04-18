@@ -4,7 +4,6 @@ const EventValidator = require('../validator/eventValidator')
 const {cloneDeep} = require("lodash");
 const StudentRepository = require("./studentRepository");
 const OpenDataCourseRepository = require("./conUOpenDataCourseRepository");
-const _ = require("lodash");
 
 module.exports = class EventRepository {
 
@@ -33,8 +32,8 @@ module.exports = class EventRepository {
     static async #addToCourseList(event) {
         // Add course to student if it doesn't already exist in student's courses list.
         if (event.type === 'course') {
-            let student = await StudentRepository.findOneByUsername(event.username)
-            let courses = student.courses;
+            // let student = await StudentRepository.findOneByUsername(event.username)
+            // let courses = student.courses;
             let conUCourse = await OpenDataCourseRepository.findByCourseCodeAndNumber(event.subject, event.catalog)
             let course = {
                 'title': conUCourse.title,
@@ -43,10 +42,10 @@ module.exports = class EventRepository {
                 'classUnit': conUCourse.classUnit,
                 'studyHours': (parseFloat(conUCourse.classUnit) * 1.5).toString()
             }
-            if (!(courses.some(item => _.isEqual(item, course)))) {
-                courses.push(course);
-                await StudentRepository.updateCourses(event.username, courses);
-            }
+            // if (!(courses.some(item => _.isEqual(item, course)))) {
+            //     courses.push(course);
+                await StudentRepository.addToCourseList(event.username, course);
+            // }
         }
     }
 
@@ -198,8 +197,7 @@ module.exports = class EventRepository {
                     let index = studentCourses.findIndex(function (course) {
                         return (course.subject === event.subject && course.catalog === event.catalog);
                     });
-                    studentCourses.splice(index, 1);
-                    await StudentRepository.updateCourses(event.username, studentCourses);
+                    await StudentRepository.deleteFromCourseList(event.username, studentCourses[index]);
                 }
             })
         }

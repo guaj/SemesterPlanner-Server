@@ -167,16 +167,32 @@ module.exports = class StudentRepository {
     }
 
     /**
-     * Update a student's courses
+     * Add a course to a student's course list
      * @param {string} username The username of the student.
-     * @param {[String]} courses An array of course objects.
+     * @param {{String}} course The course to be added, passed as a dictionary.
      * @returns {Student}  Returns a promise. Resolves with the updated student.
      */
-    static async updateCourses(username, courses) {
+    static async addToCourseList(username, course) {
         return await new Promise((resolve, reject) => {
             Student.updateOne(
                 { username: username.toString() },
-                { courses: courses })
+                { $addToSet: {courses: course} })
+                .then((student) => { resolve(student); })
+                .catch(err => reject(err))
+        })
+    }
+
+    /**
+     * Delete a course from a student's course list
+     * @param {string} username The username of the student.
+     * @param {{String}} course The course to be deleted, passed as a dictionary.
+     * @returns {Student}  Returns a promise. Resolves with the updated student.
+     */
+    static async deleteFromCourseList(username, course) {
+        return await new Promise((resolve, reject) => {
+            Student.updateOne(
+                { username: username.toString() },
+                { $pull: {courses: course} })
                 .then((student) => { resolve(student); })
                 .catch(err => reject(err))
         })
