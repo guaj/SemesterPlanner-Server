@@ -115,7 +115,6 @@ router.route('/course/:courseCode/:courseNumber').get(TokenVerify, async (req, r
     OpenDataCourseRepository.findByCourseCodeAndNumber(courseCode, courseNumber)
         .then((course) => {
             res.json(course).status(200);
-            console.info(`Record of course with course '${courseCode} ${courseNumber}' fetched:\n` + course + "\n")
         })
         .catch(err => res.status(400).json('Error: ' + err));
 })
